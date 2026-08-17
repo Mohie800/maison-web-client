@@ -1,0 +1,122 @@
+import { getTranslations } from "next-intl/server";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { buildHref, PAGE_SIZE, type PlpFilters } from "../filters";
+
+/**
+ * Offset pagination. The API returns `{ items, total, page, limit }` with no
+ * `hasMore`, so the page count is derived.
+ */
+export async function Pagination({
+  filters,
+  total,
+}: {
+  filters: PlpFilters;
+  total: number;
+}) {
+  const t = await getTranslations("Catalog");
+  const pageCount = Math.ceil(total / PAGE_SIZE);
+  if (pageCount <= 1) return null;
+
+  const current = Math.min(filters.page, pageCount);
+  const pages = pageNumbers(current, pageCount);
+
+  return (
+    <nav
+      aria-label={t("pagination")}
+      className="mt-10 flex items-center justify-center gap-2"
+    >
+      <PageLink
+        href={buildHref(filters, { page: current - 1 })}
+        disabled={current <= 1}
+        label={t("previous")}
+      >
+        {/* Direction-aware: in Arabic "previous" points right. */}
+        <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />
+      </PageLink>
+
+      {pages.map((page, i) =>
+        page === "…" ? (
+          <span key={`gap-${i}`} className="text-caption text-ink-tertiary px-2">
+            …
+          </span>
+        ) : (
+          <Link
+            key={page}
+            href={buildHref(filters, { page })}
+            aria-current={page === current ? "page" : undefined}
+            className={`text-caption flex size-9 items-center justify-center rounded-[10px] ${
+              page === current
+                ? "bg-invert font-semibold text-white"
+                : "border-line text-ink-secondary border"
+            }`}
+          >
+            {page}
+          </Link>
+        ),
+      )}
+
+      <PageLink
+        href={buildHref(filters, { page: current + 1 })}
+        disabled={current >= pageCount}
+        label={t("next")}
+      >
+        <ChevronRight className="size-4 rtl:rotate-180" aria-hidden />
+      </PageLink>
+    </nav>
+  );
+}
+
+function PageLink({
+  href,
+  disabled,
+  label,
+  children,
+}: {
+  href: string;
+  disabled: boolean;
+  label: string;
+  children: React.ReactNode;
+}) {
+  if (disabled) {
+    return (
+      <span
+        aria-disabled="true"
+        className="border-line text-ink-tertiary flex size-9 items-center justify-center rounded-[10px] border opacity-40"
+      >
+        {children}
+      </span>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className="border-line text-ink-secondary flex size-9 items-center justify-center rounded-[10px] border"
+    >
+      {children}
+    </Link>
+  );
+}
+
+/** 1 … 4 [5] 6 … 12 — always shows first, last, and the current neighbourhood. */
+function pageNumbers(current: number, pageCount: number): (number | "…")[] {
+  if (pageCount <= 7) {
+    return Array.from({ length: pageCount }, (_, i) => i + 1);
+  }
+
+  const pages = new Set<number>([1, pageCount, current]);
+  if (current - 1 > 1) pages.add(current - 1);
+  if (current + 1 < pageCount) pages.add(current + 1);
+
+  const sorted = [...pages].sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+
+  sorted.forEach((page, i) => {
+    if (i > 0 && page - sorted[i - 1] > 1) out.push("…");
+    out.push(page);
+  });
+
+  return out;
+}

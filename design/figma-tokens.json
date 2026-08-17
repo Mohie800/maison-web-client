@@ -1,0 +1,238 @@
+{
+  "$meta": {
+    "source": "Figma — Maison Sale — Web",
+    "fileKey": "cev4PFbiDVfp0GB2tZETZL",
+    "nodes": {
+      "designSystem": "651:112",
+      "handoff": "651:271"
+    },
+    "note": "Source of truth for colour tokens. Light values are verifiable via the Figma MCP `get_variable_defs` on node 651:112; light+dark pairs come from the HANDOFF frame (651:271). To resync: re-read those nodes, update this file, then run `npm run tokens`.",
+    "doNotEdit": "src/styles/tokens.css is generated from this file. Edit here, not there."
+  },
+  "color": {
+    "bg-base": {
+      "light": "#FFFFFF",
+      "dark": "#010413",
+      "tw": "base"
+    },
+    "bg-surface": {
+      "light": "#F7F8FA",
+      "dark": "#12151C",
+      "tw": "surface"
+    },
+    "bg-tint": {
+      "light": "#EEF0F4",
+      "dark": "#1A1D27",
+      "tw": "tint"
+    },
+    "text-primary": {
+      "light": "#010413",
+      "dark": "#F9FAFB",
+      "tw": "ink"
+    },
+    "text-secondary": {
+      "light": "#5A5F72",
+      "dark": "#9CA3AF",
+      "tw": "ink-secondary"
+    },
+    "text-tertiary": {
+      "light": "#8E93A6",
+      "dark": "#6B7280",
+      "tw": "ink-tertiary"
+    },
+    "text-on-accent": {
+      "light": "#064E3B",
+      "dark": "#064E3B",
+      "tw": "on-accent"
+    },
+    "border-default": {
+      "light": "#E2E4EA",
+      "dark": "#2A2D3A",
+      "tw": "line"
+    },
+    "border-subtle": {
+      "light": "#F0F1F5",
+      "dark": "#1E2530",
+      "tw": "line-subtle"
+    },
+    "border-focus": {
+      "light": "#56B0D3",
+      "dark": "#56B0D3",
+      "tw": "focus"
+    },
+    "accent-aqua": {
+      "light": "#56F1A3",
+      "dark": "#56F1A3",
+      "tw": "aqua"
+    },
+    "accent-gold": {
+      "light": "#F6C90E",
+      "dark": "#F6C90E",
+      "tw": "gold"
+    },
+    "accent-azure": {
+      "light": "#56B0D3",
+      "dark": "#56B0D3",
+      "tw": "azure"
+    },
+    "semantic-success": {
+      "light": "#22C55E",
+      "dark": "#34D399",
+      "tw": "success"
+    },
+    "semantic-warning": {
+      "light": "#F59E0B",
+      "dark": "#FBBF24",
+      "tw": "warning"
+    },
+    "semantic-error": {
+      "light": "#EF4444",
+      "dark": "#F87171",
+      "tw": "error"
+    },
+    "surface-invert": {
+      "light": "#010413",
+      "dark": "#0F1117",
+      "tw": "invert"
+    },
+    "t-action": {
+      "light": "#059669",
+      "dark": "#34D399",
+      "tw": "action"
+    },
+    "t-action-tint": {
+      "light": "#ECFDF5",
+      "dark": "#064E3B",
+      "tw": "action-tint"
+    },
+    "t-info": {
+      "light": "#2563EB",
+      "dark": "#60A5FA",
+      "tw": "info"
+    },
+    "t-purple-500": {
+      "light": "#8B5CF6",
+      "dark": "#A78BFA",
+      "tw": "purple"
+    },
+    "t-ink-900": {
+      "light": "#111827",
+      "dark": "#F9FAFB",
+      "tw": "ink-900"
+    },
+    "t-ink-800": {
+      "light": "#1F2937",
+      "dark": "#E5E7EB",
+      "tw": "ink-800"
+    },
+    "t-ink-700": {
+      "light": "#374151",
+      "dark": "#D1D5DB",
+      "tw": "ink-700"
+    },
+    "t-ink-500": {
+      "light": "#6B7280",
+      "dark": "#9CA3AF",
+      "tw": "ink-500"
+    },
+    "t-ink-400": {
+      "light": "#9CA3AF",
+      "dark": "#6B7280",
+      "tw": "ink-400"
+    },
+    "t-border-200": {
+      "light": "#E5E7EB",
+      "dark": "#2A2D3A",
+      "tw": "line-200"
+    },
+    "t-fill-100": {
+      "light": "#F3F4F6",
+      "dark": "#1E2530",
+      "tw": "fill-100"
+    },
+    "t-fill-50": {
+      "light": "#F9FAFB",
+      "dark": "#0F1117",
+      "tw": "fill-50"
+    },
+    "t-success-tint2": {
+      "light": "#D1FAE5",
+      "dark": "#064E3B",
+      "tw": "success-tint2",
+      "_note": "Light from the Figma variable collection. Dark is INFERRED — it mirrors t/action-tint's dark, since the HANDOFF dark table omits this token. Confirm with design."
+    },
+    "t-ink-550": {
+      "light": "#8B949E",
+      "dark": "#6B7280",
+      "tw": "ink-550",
+      "_note": "Search placeholder in the header (Figma 651:556). Absent from the HANDOFF dark table — dark value INFERRED as t/ink-500's dark. Confirm with design."
+    }
+  },
+  "typography": {
+    "$note": "Inter. size/lineHeight in px, per HANDOFF frame.",
+    "display": {
+      "size": 32,
+      "lineHeight": 44,
+      "weight": 700
+    },
+    "h1": {
+      "size": 26,
+      "lineHeight": 36,
+      "weight": 700
+    },
+    "h2": {
+      "size": 22,
+      "lineHeight": 30,
+      "weight": 700
+    },
+    "h3": {
+      "size": 20,
+      "lineHeight": 28,
+      "weight": 600
+    },
+    "body-lg": {
+      "size": 16,
+      "lineHeight": 24,
+      "weight": 400
+    },
+    "body": {
+      "size": 14,
+      "lineHeight": 20,
+      "weight": 400
+    },
+    "label": {
+      "size": 13,
+      "lineHeight": 18,
+      "weight": 600
+    },
+    "caption": {
+      "size": 12,
+      "lineHeight": 16,
+      "weight": 400
+    },
+    "micro": {
+      "size": 10,
+      "lineHeight": 14,
+      "weight": 700
+    }
+  },
+  "spacing": [
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    32,
+    40,
+    56
+  ],
+  "radius": [
+    6,
+    8,
+    10,
+    12,
+    16,
+    20
+  ]
+}

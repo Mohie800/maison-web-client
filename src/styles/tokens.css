@@ -1,0 +1,146 @@
+/**
+ * GENERATED FILE — DO NOT EDIT.
+ * Source: design/figma-tokens.json  ·  Regenerate: npm run tokens
+ * Figma: cev4PFbiDVfp0GB2tZETZL (design system node 651:112)
+ */
+
+:root {
+  --bg-base: #FFFFFF;
+  --bg-surface: #F7F8FA;
+  --bg-tint: #EEF0F4;
+  --text-primary: #010413;
+  --text-secondary: #5A5F72;
+  --text-tertiary: #8E93A6;
+  --text-on-accent: #064E3B;
+  --border-default: #E2E4EA;
+  --border-subtle: #F0F1F5;
+  --border-focus: #56B0D3;
+  --accent-aqua: #56F1A3;
+  --accent-gold: #F6C90E;
+  --accent-azure: #56B0D3;
+  --semantic-success: #22C55E;
+  --semantic-warning: #F59E0B;
+  --semantic-error: #EF4444;
+  --surface-invert: #010413;
+  --t-action: #059669;
+  --t-action-tint: #ECFDF5;
+  --t-info: #2563EB;
+  --t-purple-500: #8B5CF6;
+  --t-ink-900: #111827;
+  --t-ink-800: #1F2937;
+  --t-ink-700: #374151;
+  --t-ink-500: #6B7280;
+  --t-ink-400: #9CA3AF;
+  --t-border-200: #E5E7EB;
+  --t-fill-100: #F3F4F6;
+  --t-fill-50: #F9FAFB;
+  --t-success-tint2: #D1FAE5;
+  --t-ink-550: #8B949E;
+}
+
+.dark {
+  --bg-base: #010413;
+  --bg-surface: #12151C;
+  --bg-tint: #1A1D27;
+  --text-primary: #F9FAFB;
+  --text-secondary: #9CA3AF;
+  --text-tertiary: #6B7280;
+  --text-on-accent: #064E3B;
+  --border-default: #2A2D3A;
+  --border-subtle: #1E2530;
+  --border-focus: #56B0D3;
+  --accent-aqua: #56F1A3;
+  --accent-gold: #F6C90E;
+  --accent-azure: #56B0D3;
+  --semantic-success: #34D399;
+  --semantic-warning: #FBBF24;
+  --semantic-error: #F87171;
+  --surface-invert: #0F1117;
+  --t-action: #34D399;
+  --t-action-tint: #064E3B;
+  --t-info: #60A5FA;
+  --t-purple-500: #A78BFA;
+  --t-ink-900: #F9FAFB;
+  --t-ink-800: #E5E7EB;
+  --t-ink-700: #D1D5DB;
+  --t-ink-500: #9CA3AF;
+  --t-ink-400: #6B7280;
+  --t-border-200: #2A2D3A;
+  --t-fill-100: #1E2530;
+  --t-fill-50: #0F1117;
+  --t-success-tint2: #064E3B;
+  --t-ink-550: #6B7280;
+}
+
+@theme inline {
+  --color-base: var(--bg-base);
+  --color-surface: var(--bg-surface);
+  --color-tint: var(--bg-tint);
+  --color-ink: var(--text-primary);
+  --color-ink-secondary: var(--text-secondary);
+  --color-ink-tertiary: var(--text-tertiary);
+  --color-on-accent: var(--text-on-accent);
+  --color-line: var(--border-default);
+  --color-line-subtle: var(--border-subtle);
+  --color-focus: var(--border-focus);
+  --color-aqua: var(--accent-aqua);
+  --color-gold: var(--accent-gold);
+  --color-azure: var(--accent-azure);
+  --color-success: var(--semantic-success);
+  --color-warning: var(--semantic-warning);
+  --color-error: var(--semantic-error);
+  --color-invert: var(--surface-invert);
+  --color-action: var(--t-action);
+  --color-action-tint: var(--t-action-tint);
+  --color-info: var(--t-info);
+  --color-purple: var(--t-purple-500);
+  --color-ink-900: var(--t-ink-900);
+  --color-ink-800: var(--t-ink-800);
+  --color-ink-700: var(--t-ink-700);
+  --color-ink-500: var(--t-ink-500);
+  --color-ink-400: var(--t-ink-400);
+  --color-line-200: var(--t-border-200);
+  --color-fill-100: var(--t-fill-100);
+  --color-fill-50: var(--t-fill-50);
+  --color-success-tint2: var(--t-success-tint2);
+  --color-ink-550: var(--t-ink-550);
+
+  --text-display: 2rem;
+  --text-display--line-height: 2.75rem;
+  --text-display--font-weight: 700;
+  --text-h1: 1.625rem;
+  --text-h1--line-height: 2.25rem;
+  --text-h1--font-weight: 700;
+  --text-h2: 1.375rem;
+  --text-h2--line-height: 1.875rem;
+  --text-h2--font-weight: 700;
+  --text-h3: 1.25rem;
+  --text-h3--line-height: 1.75rem;
+  --text-h3--font-weight: 600;
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.5rem;
+  --text-body-lg--font-weight: 400;
+  --text-body: 0.875rem;
+  --text-body--line-height: 1.25rem;
+  --text-body--font-weight: 400;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.125rem;
+  --text-label--font-weight: 600;
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1rem;
+  --text-caption--font-weight: 400;
+  --text-micro: 0.625rem;
+  --text-micro--line-height: 0.875rem;
+  --text-micro--font-weight: 700;
+
+  /* Designed spacing scale (px): 4, 8, 12, 16, 20, 24, 32, 40, 56
+     Use the standard Tailwind scale: 4→p-1, 8→p-2, 12→p-3, 16→p-4,
+     20→p-5, 24→p-6, 32→p-8, 40→p-10, 56→p-14. Anything else: [Npx]. */
+
+  --radius-6: 0.375rem;
+  --radius-8: 0.5rem;
+  --radius-10: 0.625rem;
+  --radius-12: 0.75rem;
+  --radius-16: 1rem;
+  --radius-20: 1.25rem;
+}

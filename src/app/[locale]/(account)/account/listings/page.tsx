@@ -32,8 +32,9 @@ import type { Locale } from "@/i18n/routing";
  * **Eight tabs, not the design's four.** `expired`, `withdrawn` and `rejected`
  * are inventory the seller still owns, and the counts sum to `all` (GAP-44).
  *
- * **Edit is omitted.** It needs the sell wizard, which isn't built, and the API
- * only accepts edits to drafts anyway. Delete is shown for drafts only, which
+ * **Edit is omitted.** The API only accepts edits to drafts — a live listing is
+ * immutable and has to be withdrawn and recreated — so the frame's Edit button
+ * would fail on every row it is drawn against. Delete is shown for drafts only, which
  * is the one destructive action the API actually permits.
  */
 export const metadata: Metadata = { robots: { index: false } };
@@ -45,16 +46,16 @@ export const metadata: Metadata = { robots: { index: false } };
  */
 const STATUS_TONE: Record<string, string> = {
   live: "bg-action-tint text-action",
-  pending: "bg-[#FEF3C7] text-[#92400E]",
-  pending_review: "bg-[#FEF3C7] text-[#92400E]",
-  pending_payment: "bg-[#FEF3C7] text-[#92400E]",
-  draft: "bg-tint text-ink-secondary",
-  sold: "bg-invert text-white",
-  sold_out: "bg-invert text-white",
-  traded: "bg-invert text-white",
-  rejected: "bg-[#FEE2E2] text-[#991B1B]",
-  expired: "bg-tint text-ink-tertiary",
-  withdrawn: "bg-tint text-ink-tertiary",
+  pending: "bg-warn-tint text-amber-deep",
+  pending_review: "bg-warn-tint text-amber-deep",
+  pending_payment: "bg-warn-tint text-amber-deep",
+  draft: "bg-fill-100 text-ink-500",
+  sold: "bg-info-tint text-info",
+  sold_out: "bg-info-tint text-info",
+  traded: "bg-info-tint text-info",
+  rejected: "bg-error-tint text-error",
+  expired: "bg-warn-tint text-amber-deep",
+  withdrawn: "bg-fill-100 text-ink-500",
 };
 
 export default async function MyListingsPage({

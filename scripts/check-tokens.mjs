@@ -10,9 +10,17 @@
  *
  * Anything genuinely off-scale belongs in brackets — `rounded-[14px]` — which
  * is explicit about being a one-off.
+ *
+ * Brackets are the escape hatch for a *measurement*, never for a *colour*. A
+ * raw hex does not flip between light and dark, so `bg-[#FEF3C7]` stays a light
+ * yellow on a dark page while everything around it inverts. Twenty-nine of them
+ * had accumulated by 2026-08-30 — ten were token values typed by hand and four
+ * were a token's dark value hardcoded, so they were wrong in light mode. This
+ * check exists so that cannot come back.
  */
+
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -41,6 +49,25 @@ const BUILTIN_TEXT = new Set([
 ]);
 const BUILTIN_RADII = new Set(["none", "full", "sm", "md", "lg", "xl", "2xl", "3xl"]);
 
+/**
+ * Surfaces that are deliberately one fixed colour in both themes, and whose
+ * values have no token. Both were verified against their frames.
+ */
+const HEX_ALLOWED = new Set([
+  "src/features/home/components/ai-search-banner.tsx",
+  "src/features/stories/components/story-viewer.tsx",
+]);
+
+/**
+ * `bg-[#fff]`, `text-[#112233]`, `from-[#abc]` and friends.
+ *
+ * Built fresh per call. A shared /g regex carries lastIndex between uses and
+ * silently starts matching mid-line — which is exactly how this rule first
+ * shipped passing over a file that did contain a raw hex.
+ */
+const rawHex = () =>
+  /(?:bg|text|border|from|via|to|fill|stroke|ring|shadow|outline|decoration|accent|caret)-[#[0-9a-fA-F]{3,8}]/g;
+
 function* files(dir) {
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
@@ -58,9 +85,19 @@ for (const file of files(join(root, "src"))) {
   const source = readFileSync(file, "utf8");
   const lines = source.split("\n");
 
+  const relative = file.slice(root.length + 1).split(sep).join("/");
+
   lines.forEach((line, i) => {
     const report = (cls, kind) =>
-      problems.push(`${file.slice(root.length + 1)}:${i + 1}  ${cls}  (unknown ${kind})`);
+      problems.push(`${relative}:${i + 1}  ${cls}  (${kind})`);
+
+    // A raw hex never flips between light and dark.
+    if (!HEX_ALLOWED.has(relative)) {
+      const hits = [...line.matchAll(rawHex())];
+      for (const m of hits) {
+        report(m[0], "raw hex — use a token, or add the file to HEX_ALLOWED");
+      }
+    }
 
     // Colour utilities. Gradient stops (from-/via-/to-) are left out: this
     // codebase doesn't use them, and 'to-' matches too much English prose.

@@ -69,7 +69,7 @@ export default async function HelpContactPage({
       {query.error && (
         <p
           role="alert"
-          className="text-error flex items-center gap-2 rounded-12 bg-[#FEE2E2] px-4 py-3 text-[13px]"
+          className="text-error flex items-center gap-2 rounded-12 bg-error-tint px-4 py-3 text-[13px]"
         >
           <AlertCircle className="size-4 shrink-0" aria-hidden />
           {t(

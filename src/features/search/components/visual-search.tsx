@@ -118,7 +118,7 @@ export function VisualSearch() {
         {error && (
           <p
             role="alert"
-            className="text-error flex w-full items-center gap-2 rounded-12 bg-[#FEE2E2] px-4 py-3 text-[13px]"
+            className="text-error flex w-full items-center gap-2 rounded-12 bg-error-tint px-4 py-3 text-[13px]"
           >
             <TriangleAlert className="size-4 shrink-0" aria-hidden />
             {error}

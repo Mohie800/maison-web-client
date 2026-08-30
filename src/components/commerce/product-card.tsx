@@ -29,7 +29,7 @@ const CONDITION_TONE: Record<string, string> = {
   new_with_tags: "bg-action-tint text-action",
   new_without_tags: "bg-action-tint text-action",
   like_new: "bg-action-tint text-action",
-  good: "bg-[#FEF3C7] text-[#92400E]",
+  good: "bg-warn-tint text-amber-text",
   fair: "bg-tint text-ink-secondary",
 };
 
@@ -88,7 +88,7 @@ export async function ProductCard({
             stay dark on top of a photo either way. `text-aqua` is safe as a
             token — `accent-aqua` holds #56F1A3 in both themes.
           */
-          <span className="rounded-ee-12 text-aqua absolute top-0 start-0 flex h-7 items-center bg-[#111827] px-3 text-[11px] font-bold tracking-wide uppercase">
+          <span className="rounded-ee-12 text-aqua absolute top-0 start-0 flex h-7 items-center bg-ink-900 px-3 text-[11px] font-bold tracking-wide uppercase">
             {badge}
           </span>
         ) : card.discountPercent ? (

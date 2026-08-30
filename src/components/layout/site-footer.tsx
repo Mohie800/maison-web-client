@@ -65,7 +65,7 @@ const PAYMENT_METHODS = ["Mada", "STC", "Tabby", "Tamara", "Visa", "MC"];
 const CR_NUMBER = "7054068460";
 const VAT_NUMBER = "314734077200003";
 
-const RULE = "h-px w-full shrink-0 bg-[#e2e4ea]";
+const RULE = "h-px w-full shrink-0 bg-line";
 
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
@@ -165,7 +165,7 @@ export async function SiteFooter() {
 
         <div className="flex items-center gap-5">
           {/* ZATCA VAT certificate mark — needs its own light plate. */}
-          <div className="rounded-6 flex h-12 w-[100px] shrink-0 items-center justify-center border border-[#e2e4ea] bg-white">
+          <div className="rounded-6 flex h-12 w-[100px] shrink-0 items-center justify-center border border-line bg-white">
             <Image
               src="/brand/zatca-vat.png"
               alt={t("marks.vat")}
@@ -196,7 +196,7 @@ export async function SiteFooter() {
             {PAYMENT_METHODS.map((method) => (
               <li
                 key={method}
-                className="rounded-6 flex h-[26px] items-center justify-center border border-[#e2e4ea]/80 px-[10px] text-[10px] font-medium text-white/80"
+                className="rounded-6 flex h-[26px] items-center justify-center border border-line/80 px-[10px] text-[10px] font-medium text-white/80"
               >
                 {method}
               </li>

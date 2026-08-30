@@ -145,7 +145,7 @@ export function SignUpForm({
             aria-hidden
             className={`flex size-5 shrink-0 items-center justify-center rounded-[5px] border transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-focus ${
               accepted
-                ? "border-transparent bg-[#064e3b] text-white"
+                ? "border-transparent bg-on-accent text-white"
                 : "border-line-200 bg-fill-50"
             }`}
           >

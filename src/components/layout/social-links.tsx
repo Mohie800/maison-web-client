@@ -40,7 +40,7 @@ export async function SocialLinks({ label }: { label: string }) {
         {CHANNELS.map(({ key, label: name, Icon }) => {
           const href = t(`social.${key}`);
           const circle =
-            "flex size-[38px] items-center justify-center rounded-full border border-[#e2e4ea]/85 text-white/85";
+            "flex size-[38px] items-center justify-center rounded-full border border-line/85 text-white/85";
 
           return (
             <li key={key}>

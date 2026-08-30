@@ -28,7 +28,7 @@ export async function AiSearchBanner({ deal }: { deal?: Listing | null }) {
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-col items-start gap-6 bg-[#0f1723] px-4 py-10 lg:h-[220px] lg:flex-row lg:items-center lg:gap-10 lg:px-20 lg:py-0">
           <div className="flex min-w-0 flex-1 flex-col items-start gap-3">
-            <span className="bg-base flex h-7 items-center rounded-[14px] px-3 text-[10px] font-bold text-[#6b7280]">
+            <span className="bg-base flex h-7 items-center rounded-[14px] px-3 text-[10px] font-bold text-ink-500">
               {t("aiBadge")}
             </span>
 
@@ -56,7 +56,7 @@ export async function AiSearchBanner({ deal }: { deal?: Listing | null }) {
                   className="shrink-0"
                 />
                 {/* Gradient text, #83e7b9 → #56b0d3, per the design. */}
-                <span className="bg-gradient-to-r from-[#83e7b9] to-[#56b0d3] bg-clip-text text-[14px] font-bold text-transparent">
+                <span className="bg-gradient-to-r from-[#83e7b9] to-azure bg-clip-text text-[14px] font-bold text-transparent">
                   {t("tryAiSearch")}
                 </span>
               </Link>
@@ -97,13 +97,13 @@ export async function AiSearchBanner({ deal }: { deal?: Listing | null }) {
 
                 <span className="flex min-w-0 flex-1 flex-col gap-0.5">
                   <span
-                    className="truncate text-[13px] font-semibold text-[#111827]"
+                    className="truncate text-[13px] font-semibold text-ink-900"
                     dir="auto"
                   >
                     {deal.title}
                   </span>
                   <span className="flex items-center gap-2">
-                    <span className="text-[14px] font-bold text-[#56f1a3]">
+                    <span className="text-[14px] font-bold text-aqua">
                       {formatPrice(deal.price, deal.currency ?? "SAR")}
                     </span>
                     <span className="text-ink-500 text-[11px]">

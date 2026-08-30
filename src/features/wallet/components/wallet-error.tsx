@@ -19,7 +19,7 @@ export async function WalletError({ code }: { code: string | null }) {
   return (
     <p
       role="alert"
-      className="text-label flex items-center gap-2 rounded-12 bg-[#FEE2E2] px-4 py-3 text-[#991B1B]"
+      className="text-label flex items-center gap-2 rounded-12 bg-error-tint px-4 py-3 text-error"
     >
       <AlertCircle className="size-4 shrink-0" aria-hidden />
       {t(key)}

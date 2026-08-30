@@ -85,7 +85,7 @@ export async function AuctionsTeaser({ cards }: { cards: Card[] }) {
                     </span>
                   </div>
                   {card.auction?.endsAt && (
-                    <span className="text-error flex h-[22px] w-fit items-center rounded-[11px] bg-[#450a0a] px-2 text-[11px] font-bold">
+                    <span className="text-error flex h-[22px] w-fit items-center rounded-[11px] bg-error-tint px-2 text-[11px] font-bold">
                       <AuctionCountdown
                         endsAt={card.auction.endsAt}
                         endedLabel={t("ended")}
@@ -117,7 +117,7 @@ export async function EndingSoonSection({ cards }: { cards: Card[] }) {
   if (cards.length === 0) return null;
 
   return (
-    <section className="bg-[#0f1117]">
+    <section className="bg-ink-900">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 py-12 lg:px-20">
         {/* R — 651:1344 */}
         <div className="flex items-center justify-between gap-4">
@@ -146,12 +146,12 @@ export async function EndingSoonSection({ cards }: { cards: Card[] }) {
             return (
               <article
                 key={card.id}
-                className="flex flex-col overflow-hidden rounded-16 border border-[#2a2d3a] bg-[#1a1d27]"
+                className="flex flex-col overflow-hidden rounded-16 border border-ink-700 bg-ink-800"
               >
                 {/* ImgWrap — 651:1354 */}
                 <Link
                   href={`/products/${card.id}`}
-                  className="relative block h-[200px] bg-[#2a2d3a]"
+                  className="relative block h-[200px] bg-ink-700"
                 >
                   {photo && (
                     // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12

@@ -58,6 +58,14 @@ export const listingSchema = z.object({
   currentBid: z.string().nullish(),
   bidCount: z.number().nullish(),
   entryFeeAmount: z.string().nullish(),
+  auctionDurationHours: z.number().nullish(),
+  minBidIncrementPercent: z.number().nullish(),
+  minBidIncrementAbsolute: z.union([z.string(), z.number()]).nullish(),
+  antiSnipeWindowSeconds: z.number().nullish(),
+  antiSnipeExtensionSeconds: z.number().nullish(),
+  buyerPremiumPercent: z.number().nullish(),
+  paymentWindowHours: z.number().nullish(),
+  winningBidderId: z.string().nullish(),
 
   specialTags: z.array(z.string()).nullish(),
   finalSale: z.boolean().nullish(),
@@ -74,9 +82,102 @@ export const listingSchema = z.object({
   createdAt: z.string().nullish(),
 
   photos: z.array(listingPhotoSchema).nullish(),
+
+  /**
+   * Joined on the list endpoint since GAP-34 — the same three objects `/trends`
+   * returns, alongside the raw ids. `GET /listings/{id}` overrides `seller`,
+   * `brand` and `category` below with its fuller records.
+   */
+  seller: z
+    .object({
+      id: z.string(),
+      handle: z.string().nullish(),
+      profilePic: z.string().nullish(),
+      isVerified: z.boolean().nullish(),
+      isTopSeller: z.boolean().nullish(),
+    })
+    .nullish(),
+  brand: z.object({ id: z.string(), name: z.string() }).nullish(),
+  category: z.object({ id: z.string(), name: z.string() }).nullish(),
 });
 
 export type Listing = z.infer<typeof listingSchema>;
+
+/**
+ * The fuller relations `GET /listings/{id}` embeds.
+ *
+ * The list endpoint now joins the same three (GAP-34), but thinner: a seller
+ * handle, a brand name, a category name. The detail endpoint returns whole
+ * records — bio, follower counts, brand logo — plus `defects`, which is why the
+ * split survives. (Re-verified 2026-08-28.)
+ */
+
+export const listingSellerSchema = z.object({
+  id: z.string(),
+  fullName: z.string().nullish(),
+  /** The handle is `username` here — `GET /sellers/{id}` calls it the same. */
+  username: z.string().nullish(),
+  profilePic: z.string().nullish(),
+  city: z.string().nullish(),
+  country: z.string().nullish(),
+  bio: z.string().nullish(),
+  isPro: z.boolean().nullish(),
+  /** `verifiedAt` carries when; `isVerified` answers whether. Both are sent. */
+  verifiedAt: z.string().nullish(),
+  isVerified: z.boolean().nullish(),
+  isFastShipper: z.boolean().nullish(),
+  isTopSeller: z.boolean().nullish(),
+  followersCount: z.number().nullish(),
+  followingCount: z.number().nullish(),
+  itemsSoldCount: z.number().nullish(),
+  responseRatePercent: z.number().nullish(),
+  avgShipTimeHours: z.number().nullish(),
+  ratingAvg: z.union([z.string(), z.number()]).nullish(),
+  ratingCount: z.number().nullish(),
+  lastActiveAt: z.string().nullish(),
+  createdAt: z.string().nullish(),
+});
+
+export type ListingSeller = z.infer<typeof listingSellerSchema>;
+
+export const listingBrandSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  nameEn: z.string().nullish(),
+  nameAr: z.string().nullish(),
+  slug: z.string().nullish(),
+  logoUrl: z.string().nullish(),
+  isOfficial: z.boolean().nullish(),
+  verifiedAt: z.string().nullish(),
+});
+
+export const listingCategorySchema = z.object({
+  id: z.string(),
+  parentId: z.string().nullish(),
+  slug: z.string().nullish(),
+  name: z.string(),
+  nameEn: z.string().nullish(),
+  nameAr: z.string().nullish(),
+  iconUrl: z.string().nullish(),
+});
+
+export const listingDetailSchema = listingSchema.extend({
+  seller: listingSellerSchema.nullish(),
+  brand: listingBrandSchema.nullish(),
+  category: listingCategorySchema.nullish(),
+  /** Always `[]` on current data; shape unconfirmed, so it stays opaque. */
+  defects: z.array(z.unknown()).nullish(),
+});
+
+export type ListingDetail = z.infer<typeof listingDetailSchema>;
+
+/** `isVerified` is the documented field; `verifiedAt` is the older spelling. */
+export function isVerifiedSeller(seller: {
+  isVerified?: boolean | null;
+  verifiedAt?: string | null;
+}): boolean {
+  return seller.isVerified ?? Boolean(seller.verifiedAt);
+}
 
 export const paginatedListingsSchema = z.object({
   items: z.array(listingSchema),

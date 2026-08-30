@@ -86,18 +86,44 @@ export const paginatedCardsSchema = z.object({
   limit: z.number().nullish(),
 });
 
-/** `GET /trends/top-stores` — sellers ranked by units sold this week. */
+/**
+ * `GET /trends/top-stores` — sellers ranked by sales this week.
+ *
+ * The seller is **nested**, not flat. This was written flat and every field was
+ * `.nullish()`, so when the shape changed zod kept parsing and the rail silently
+ * rendered blank names and `/sellers/undefined` links (found 2026-08-28). Hence
+ * `seller` is required here: if this moves again we want a loud parse failure,
+ * not six dead cards.
+ */
 export const topStoreSchema = z.object({
-  id: z.string().nullish(),
-  userId: z.string().nullish(),
-  handle: z.string().nullish(),
-  name: z.string().nullish(),
-  fullName: z.string().nullish(),
-  profilePic: z.string().nullish(),
-  isVerified: z.boolean().nullish(),
-  ratingAvg: z.union([z.string(), z.number()]).nullish(),
-  ratingCount: z.number().nullish(),
-  unitsSold: z.number().nullish(),
+  rank: z.number().nullish(),
+  salesCount: z.number().nullish(),
+  revenue: z.number().nullish(),
+  currency: z.string().nullish(),
+  growthPercent: z.number().nullish(),
+  followersCount: z.number().nullish(),
+  categoryType: z.string().nullish(),
+  seller: z.object({
+    id: z.string(),
+    fullName: z.string().nullish(),
+    username: z.string().nullish(),
+    profilePic: z.string().nullish(),
+    isVerified: z.boolean().nullish(),
+    isPro: z.boolean().nullish(),
+    ratingAvg: z.union([z.string(), z.number()]).nullish(),
+    ratingCount: z.number().nullish(),
+  }),
+  previewListings: z
+    .array(
+      z.object({
+        id: z.string(),
+        title: z.string().nullish(),
+        price: z.union([z.string(), z.number()]).nullish(),
+        currency: z.string().nullish(),
+        coverPhotoUrl: z.string().nullish(),
+      }),
+    )
+    .nullish(),
 });
 
 export const topStoresSchema = z.object({
@@ -126,6 +152,82 @@ export const storySchema = z.object({
       verifiedAt: z.string().nullish(),
     })
     .nullish(),
+  /** Per-viewer, and only sent to an authenticated caller. */
+  seen: z.boolean().nullish(),
+  /** The story's product card. Null on every story in the current data. */
+  listing: z
+    .object({
+      id: z.string(),
+      title: z.string().nullish(),
+      price: z.union([z.string(), z.number()]).nullish(),
+      originalPrice: z.union([z.string(), z.number()]).nullish(),
+      currency: z.string().nullish(),
+      condition: z.string().nullish(),
+      coverPhotoUrl: z.string().nullish(),
+      category: z.object({ id: z.string(), name: z.string() }).nullish(),
+    })
+    .nullish(),
+  listingPhotoUrl: z.string().nullish(),
+  expiresAt: z.string().nullish(),
 });
 
 export type Story = z.infer<typeof storySchema>;
+
+/**
+ * `GET /stories?groupBy=user` — one row per author, which is the unit the
+ * stories bar and `GET /stories/{userId}` both work in (GAP-30).
+ *
+ * The server sorts these the way a stories bar sorts: authors with something
+ * unseen first, then by recency. That rule lives there rather than being
+ * reimplemented per client, so the order is taken as given.
+ *
+ * `hasUnseen` is true while *any* of that author's stories is unwatched, and is
+ * per-viewer — so a response carrying it must never be shared between users.
+ */
+export const storyGroupSchema = z.object({
+  userId: z.string(),
+  user: storySchema.shape.user,
+  authorPhotoUrl: z.string().nullish(),
+  storyCount: z.number().nullish(),
+  hasUnseen: z.boolean().nullish(),
+  isSelf: z.boolean().nullish(),
+  lastStoryAt: z.string().nullish(),
+  latestStory: storySchema.nullish(),
+  storyIds: z.array(z.string()).nullish(),
+});
+
+export type StoryGroup = z.infer<typeof storyGroupSchema>;
+
+/**
+ * `GET /search/trending` — the Trend Hub's "Trending Categories" (`651:1889`).
+ *
+ * Measured from a `search_events` table since GAP-54, over the same seven-day
+ * windows the seller leaderboard uses. Two flags decide what a chip may say:
+ *
+ * - `source` is `measured` or `seed`. A `seed` row is the curated starter list
+ *   with `searchCount: 0` — never put a number on it.
+ * - `growthPercent` is null when the term has no previous-window baseline. Fall
+ *   back to `formattedCount`; it is never a fabricated `+100%`.
+ */
+export const trendingSearchSchema = z.object({
+  term: z.string(),
+  searchCount: z.number().nullish(),
+  formattedCount: z.string().nullish(),
+  growthPercent: z.number().nullish(),
+  formattedGrowth: z.string().nullish(),
+  source: z.enum(["measured", "seed"]).nullish(),
+});
+
+export type TrendingSearch = z.infer<typeof trendingSearchSchema>;
+
+export const trendingSearchesSchema = z.object({
+  trendingSearches: z.array(trendingSearchSchema),
+  /** The windows the growth figure compares, so a chip can label itself. */
+  window: z
+    .object({
+      currentStart: z.string().nullish(),
+      previousStart: z.string().nullish(),
+      days: z.number().nullish(),
+    })
+    .nullish(),
+});

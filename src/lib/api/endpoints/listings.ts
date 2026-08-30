@@ -1,7 +1,8 @@
 import { apiFetch } from "../client";
 import { parseResponse } from "../parse";
 import { ApiError } from "../errors";
-import { listingSchema, paginatedListingsSchema } from "../schemas/listing";
+import { listingDetailSchema, paginatedListingsSchema } from "../schemas/listing";
+import { listingFacetsSchema } from "../schemas/catalog";
 
 export interface ListingQuery {
   page?: number;
@@ -17,6 +18,16 @@ export interface ListingQuery {
   maxPrice?: number;
   city?: string;
   country?: string;
+  /** Fixed by BUG-01 — `total` now reflects the filter. Whole percent, 0–100. */
+  minDiscountPercent?: number;
+  /** Comma-separated. Multiple tags are AND — an item must carry every one. */
+  specialTags?: string;
+  /**
+   * Resolves to the material and matches either `attributes.materialId` or the
+   * material's name/slug in `attributes.material` (GAP-35) — so it works on
+   * rows the backfill hasn't reached.
+   */
+  materialId?: string;
   /** Backend shipped the wider set; `ending_soon` needs saleMode=auction. */
   sort?:
     | "price_asc"
@@ -33,12 +44,18 @@ export interface ListingQuery {
 /**
  * GET /listings.
  *
- * `saleMode`, price range, city/country and the wider sort set all landed in the
- * backend's gaps drop and are verified working. Two caveats remain: `materialId`
- * 500s for every value, and `specialTags` / `minDiscountPercent` return a `total`
- * that ignores the filter (BUG-01, BUG-02 in API-GAPS-ROUND-2). Don't add query
- * params speculatively — unknown ones are ignored server-side, which reads as a
- * filter that silently does nothing.
+ * `saleMode`, price range, city/country and the wider sort set are verified
+ * working, and BUG-01 / BUG-02 are fixed: `specialTags` and `minDiscountPercent`
+ * now filter `total` as well as `items`, and `materialId` 400s on a malformed
+ * value instead of 500ing on every value (re-verified 2026-08-23).
+ *
+ * `discount_desc` is fixed (GAP-33): it orders by the real saving,
+ * `(originalPrice − price) / originalPrice`, across the whole filtered
+ * catalogue rather than one page, and undiscounted rows rank last instead of
+ * being dropped — so `total` still matches what the pages contain.
+ *
+ * Don't add query params speculatively — unknown ones are ignored server-side,
+ * which reads as a filter that silently does nothing.
  */
 export async function getListings(query: ListingQuery = {}) {
   const data = await apiFetch<unknown>("/listings", {
@@ -51,48 +68,41 @@ export async function getListings(query: ListingQuery = {}) {
 /**
  * A single listing for the product page.
  *
- * ⚠️ `GET /listings/{id}` currently returns 500 for every existing listing
- * (verified 2026-08-17 across multiple ids, anonymous and authenticated; a
- * non-existent id correctly returns 404, so the route resolves and then throws).
- * Reported as API-24.
+ * Returns `ListingDetail` — the same columns as a card plus the `seller`,
+ * `brand`, `category` and `defects` joins, which exist on this endpoint only.
  *
- * Until it's fixed, this falls back to locating the same record through
- * `GET /listings`, which works. That is the same entity from a working
- * endpoint — not invented data — but it is a workaround with real limits:
- * it scans a bounded number of pages, so a listing beyond that window will
- * 404 in the UI even though it exists.
- *
- * Delete `findListingViaList` and the try/catch the day API-24 lands.
+ * This used to fall back to scanning `GET /listings`, because `GET /listings/{id}`
+ * returned 500 for every real id (API-24). That was a missing `brands.is_official`
+ * column: the query 404s cleanly on an unknown id — before the broken join runs —
+ * and only throws once a parent row is found. The migration fixed it; verified
+ * 200 on 2026-08-23. The scan is gone, and with it the two limits it carried —
+ * listings outside the first three pages 404ing, and cards standing in for
+ * details with no seller or brand attached.
  */
+/**
+ * Option counts for the sidebar, taking the same filters as the grid (GAP-31).
+ *
+ * Non-fatal by design: the panel renders without counts if this fails, so a
+ * facet outage degrades the sidebar rather than the page.
+ */
+export async function getListingFacets(query: ListingQuery = {}) {
+  const data = await apiFetch<unknown>("/listings/facets", {
+    params: { status: "live", ...query },
+    next: { revalidate: 120, tags: ["listings"] },
+  });
+  return parseResponse(listingFacetsSchema, data, "GET /listings/facets");
+}
+
 export async function getListing(id: string) {
   try {
     const data = await apiFetch<unknown>(`/listings/${id}`, {
       next: { revalidate: 60, tags: ["listings", `listing:${id}`] },
     });
-    return parseResponse(listingSchema, data, `GET /listings/${id}`);
+    return parseResponse(listingDetailSchema, data, `GET /listings/${id}`);
   } catch (error) {
     if (error instanceof ApiError && error.isNotFound) return null;
-
-    console.error(
-      `[api] GET /listings/${id} failed (${
-        error instanceof ApiError ? error.status : "unknown"
-      }) — falling back to list scan. See API-24.`,
-    );
-    return findListingViaList(id);
+    throw error;
   }
-}
-
-const FALLBACK_PAGE_SIZE = 100;
-const FALLBACK_MAX_PAGES = 3;
-
-async function findListingViaList(id: string) {
-  for (let page = 1; page <= FALLBACK_MAX_PAGES; page++) {
-    const result = await getListings({ page, limit: FALLBACK_PAGE_SIZE });
-    const match = result.items.find((item) => item.id === id);
-    if (match) return match;
-    if (result.page * result.limit >= result.total) break;
-  }
-  return null;
 }
 
 /** Same category, excluding the current listing — "You may also like". */
@@ -133,9 +143,11 @@ export async function getJustListed(limit = 5) {
 /**
  * "Featured Listings".
  *
- * There is no `featured` flag or endpoint. `specialTags` exists on the model
- * but is not filterable. Newest-first is the honest approximation until the
- * backend exposes curation — flagged alongside API-06.
+ * `specialTags` became filterable in the round-2 fixes, but there is still no
+ * `featured` tag — live data carries only `luxury`, `authentic` and
+ * `limited_edition`, none of which means "editorially picked". Newest-first
+ * stays the honest approximation until the backend exposes curation (API-06);
+ * the alternative is dressing up a tag as a promise the API isn't making.
  */
 export async function getFeaturedListings(limit = 4) {
   const result = await getListings({ sort: "created_at_desc", limit });
@@ -146,14 +158,12 @@ export async function getFeaturedListings(limit = 4) {
 /**
  * The steepest genuine discount, for the AI-search compare card.
  *
- * Sorting by `discount_desc` is safe — the `total` mismatch in BUG-01 affects
- * `minDiscountPercent` (a filter), not sorting. Returns null unless the listing
- * really does carry an `originalPrice` above its price, so the card only ever
- * shows a real saving.
+ * One row, ranked server-side. `discount_desc` used to sort by price ascending,
+ * so this ranked a page of results locally; GAP-33 made it order by the real
+ * saving across the whole filtered catalogue, which is both correct past the
+ * first page and one request instead of a hundred rows.
  */
 export async function getBestDeal() {
   const result = await getListings({ sort: "discount_desc", limit: 1 });
-  const listing = result.items[0];
-  if (!listing?.originalPrice || !listing.price) return null;
-  return Number(listing.originalPrice) > Number(listing.price) ? listing : null;
+  return result.items[0] ?? null;
 }

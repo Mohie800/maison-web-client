@@ -46,15 +46,24 @@ export const authSessionSchema = z.object({
 export type AuthSession = z.infer<typeof authSessionSchema>;
 
 /**
- * Returned by POST /auth/register. Note it does NOT return tokens — the user
- * is not authenticated until they verify the OTP, and `userId` is what
- * verify-otp needs.
+ * Returned by POST /auth/register and, since GAP-29, by POST /auth/resend-otp
+ * in the same shape. Note it does NOT return tokens — the user is not
+ * authenticated until they verify the OTP, and `userId` is what verify-otp
+ * needs.
+ *
+ * `expiresAt` is read off the persisted row, so the countdown can't desync from
+ * the code. `resendAvailableAt` is enforced as well as reported: a resend
+ * inside the window is a 400.
  */
 export const registrationSchema = z.object({
   userId: z.string(),
   channel: z.enum(["email", "phone"]),
   destination: z.string(),
   message: z.string(),
+  expiresAt: z.string().nullish(),
+  expiresInSeconds: z.number().nullish(),
+  resendAvailableAt: z.string().nullish(),
+  resendCooldownSeconds: z.number().nullish(),
 });
 
 export type Registration = z.infer<typeof registrationSchema>;

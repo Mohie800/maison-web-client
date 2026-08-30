@@ -11,6 +11,7 @@ import {
   type OrderTab,
   type PaginatedOrders,
 } from "../schemas/order";
+import { reviewableSchema } from "../schemas/review";
 
 export const ORDERS_PAGE_SIZE = 10;
 
@@ -56,4 +57,20 @@ export async function getInvoice(orderId: string): Promise<Invoice | null> {
     if (error instanceof ApiError) return null;
     throw error;
   }
+}
+
+/**
+ * Delivered items in an order that the buyer has not reviewed yet.
+ * `GET /reviews/orders/{orderId}/reviewable` — buyer only.
+ */
+export async function getReviewableItems(orderId: string) {
+  const data = await serverApiFetch<unknown>(
+    `/reviews/orders/${orderId}/reviewable`,
+    { cache: "no-store" },
+  );
+  return parseResponse(
+    reviewableSchema,
+    data,
+    "GET /reviews/orders/{id}/reviewable",
+  );
 }

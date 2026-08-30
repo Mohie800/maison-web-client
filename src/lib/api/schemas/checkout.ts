@@ -2,9 +2,10 @@ import { z } from "zod";
 import { listingSchema } from "./listing";
 
 /**
- * Cart and checkout contracts, all verified against the live API on 2026-08-17.
- * None of this is in the OpenAPI spec — request DTOs only, and
- * `ShipmentSelectionDto` is documented as an empty object (API-26).
+ * Cart and checkout contracts, all verified against the live API on 2026-08-17
+ * and re-checked 2026-08-29. Request DTOs are in the OpenAPI spec; responses
+ * still are not (API-05), so every response shape here is observed rather than
+ * documented.
  *
  * Money in this area comes back as **numbers**, not the decimal strings used by
  * `/listings`. Normalised to strings here so the rest of the app has one rule:
@@ -81,19 +82,17 @@ export type PaymentType = (typeof PAYMENT_TYPES)[number];
 /** Types that carry card details rather than a wallet phone or redirect. */
 export const CARD_PAYMENT_TYPES: PaymentType[] = ["card", "mada"];
 
-export const paymentMethodSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  brand: z.string().nullish(),
-  last4: z.string().nullish(),
-  cardholderName: z.string().nullish(),
-  expiryMonth: z.number().nullish(),
-  expiryYear: z.number().nullish(),
-  walletPhone: z.string().nullish(),
-  isDefault: z.boolean().nullish(),
-});
-
-export type PaymentMethod = z.infer<typeof paymentMethodSchema>;
+/**
+ * Checkout and the wallet read the same `GET /payment-methods`, so they share
+ * one schema. This file used to carry its own copy declaring `brand` and
+ * `last4`; the API sends **`cardBrand`** and **`cardLast4`**, so both were
+ * always null and the saved-card row could never show "Visa •••• 4242".
+ * Verified against a real saved card on 2026-08-29.
+ */
+export {
+  paymentMethodSchema,
+  type PaymentMethod,
+} from "./wallet";
 
 /* -------------------------------------------------------- shipping option */
 
@@ -129,7 +128,16 @@ export const sellerGroupSchema = z.object({
   availableShippingOptions: z.array(shippingOptionSchema),
   chosenShippingOptionId: z.string().nullish(),
   subtotal: money,
+  /** What the buyer is charged for this parcel — 0 when the seller absorbs it. */
   shippingAmount: money,
+  /**
+   * GAP-45. `included_in_price` only when *every* line in the group says so: a
+   * parcel has one shipping charge and can't half-absorb it, and a bundle line
+   * whose listing can't be resolved counts as not absorbed.
+   */
+  shippingPayer: z.string().nullish(),
+  /** What the parcel costs to send, whoever pays — the value being covered. */
+  parcelShippingAmount: money,
 });
 
 export type SellerGroup = z.infer<typeof sellerGroupSchema>;
@@ -153,7 +161,7 @@ export const checkoutPreviewSchema = z.object({
 
 export type CheckoutPreview = z.infer<typeof checkoutPreviewSchema>;
 
-/** `ShipmentSelectionDto` — shape confirmed empirically, not from the spec. */
+/** `ShipmentSelectionDto` — both fields required; the spec documents it now. */
 export interface ShipmentSelection {
   sellerId: string;
   shippingOptionId: string;

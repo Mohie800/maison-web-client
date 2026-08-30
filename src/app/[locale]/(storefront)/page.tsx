@@ -8,15 +8,18 @@ import {
   getJustListed,
 } from "@/lib/api/endpoints/listings";
 import {
-  getStories,
+  getStoryGroups,
   getTopStores,
   getTrending,
 } from "@/lib/api/endpoints/discovery";
-import { categoryIndex, listingToCard } from "@/lib/api/adapters";
+import { listingToCard } from "@/lib/api/adapters";
+import {
+  AuctionsTeaser,
+  EndingSoonSection,
+} from "@/features/home/components/auction-sections";
 import { Hero } from "@/features/home/components/hero";
 import { PromoBanner } from "@/features/home/components/promo-banner";
 import {
-  AuctionRail,
   CategoryRail,
   ProductRail,
   JustListedSection,
@@ -80,19 +83,16 @@ export default async function HomePage({
     getBanners("home_mid"),
     getTrending(7),
     getTopStores(6),
-    getStories(),
+    getStoryGroups(),
     getFeaturedListings(4),
     getJustListed(20),
     getEndingSoonAuctions(4),
     getBestDeal().catch(() => null),
   ]);
 
-  // Gives raw-listing cards the same joined category shape /trends returns.
-  const catIndex = categoryIndex(categories);
-
   return (
     <>
-      <StoriesBar stories={stories} />
+      <StoriesBar groups={stories} />
 
       <Hero />
 
@@ -104,11 +104,11 @@ export default async function HomePage({
         title={t("featuredTitle")}
         subtitle={t("featuredSubtitle")}
         actionHref="/products"
-        cards={featured.map((l) => listingToCard(l, catIndex))}
+        cards={featured.map((l) => listingToCard(l))}
         surface="surface"
       />
 
-      <AuctionRail cards={auctions.map((l) => listingToCard(l, catIndex))} />
+      <AuctionsTeaser cards={auctions.map((l) => listingToCard(l))} />
 
       <TopSellersRail stores={topStores} />
 
@@ -116,12 +116,12 @@ export default async function HomePage({
 
       <TrendingRail cards={trending} />
 
-      <AuctionRail ending cards={auctions.map((l) => listingToCard(l, catIndex))} />
+      <EndingSoonSection cards={auctions.map((l) => listingToCard(l))} />
 
       <TrustBar />
 
       <JustListedSection
-        cards={justListed.map((l) => listingToCard(l, catIndex))}
+        cards={justListed.map((l) => listingToCard(l))}
         categories={categories}
       />
     </>

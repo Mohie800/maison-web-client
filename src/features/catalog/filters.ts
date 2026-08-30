@@ -22,14 +22,19 @@ export const FILTER_SUPPORT = {
   price: true,
   saleMode: true,
 
-  /**
-   * `minDiscountPercent` filters `items` but leaves `total` unfiltered
-   * (BUG-01), so enabling it would show "5 items" above an empty grid and offer
-   * pages that don't exist. Off until the count query is fixed.
+/**
+   * BUG-01 is fixed — `minDiscountPercent` filters `total` and pages in the
+   * database (verified 2026-08-23: `?minDiscountPercent=20` → total 46,
+   * items 46). The sidebar control is built to the design's own thresholds
+   * (Figma `672:94`).
    */
-  discount: false,
-  /** `materialId` returns 500 for every value, including real ids (BUG-02). */
-  material: false,
+  discount: true,
+  /**
+   * On since GAP-35: the filter resolves the id and matches the material's
+   * name or slug as well as `attributes.materialId`, so it returns rows the
+   * backfill hasn't stamped. Verified 2026-08-28 — cotton returns 4 listings.
+   */
+  material: true,
   /** `attributes` JSON isn't filterable, so size can't be queried at all. */
   size: false,
 } as const;
@@ -57,11 +62,29 @@ export interface PlpFilters {
   saleMode?: string;
   minPrice?: string;
   maxPrice?: string;
+  /** Whole percent, 0–100. The API 400s outside that range. */
+  minDiscountPercent?: string;
+  materialId?: string;
   sort: SortValue;
   page: number;
 }
 
 export const SALE_MODES = ["fixed", "negotiable", "auction", "trade"] as const;
+
+/**
+ * Discount thresholds, from the design's filter panel (Figma `672:94`) — the
+ * six "N% or more" rows, in its order.
+ *
+ * Drawn as checkboxes there but only ever one is ticked, and "20% or more"
+ * already contains "40% or more", so ticking both would be meaningless. It
+ * behaves as a single choice, which is also what `minDiscountPercent` accepts.
+ *
+ * The design puts a facet count beside each row ("3,867"), and `GET
+ * /listings/facets` now returns them (GAP-31) — including these buckets, which
+ * is why the panel prefers the server's list over this one. This stays as the
+ * fallback for when the facet call fails.
+ */
+export const DISCOUNT_THRESHOLDS = [20, 30, 40, 50, 60, 70] as const;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -86,6 +109,8 @@ export function parseFilters(params: SearchParams): PlpFilters {
     saleMode: first(params.saleMode),
     minPrice: first(params.minPrice),
     maxPrice: first(params.maxPrice),
+    minDiscountPercent: first(params.minDiscountPercent),
+    materialId: first(params.materialId),
     sort: SORT_OPTIONS.some((o) => o.value === sort)
       ? (sort as SortValue)
       : DEFAULT_SORT,
@@ -121,7 +146,19 @@ export function toListingQuery(filters: PlpFilters): ListingQuery {
     ...(FILTER_SUPPORT.price && numeric(filters.maxPrice) !== undefined
       ? { maxPrice: numeric(filters.maxPrice) }
       : {}),
+    // Out-of-range values are dropped rather than sent — the API 400s on them.
+    ...(FILTER_SUPPORT.discount && percentage(filters.minDiscountPercent) !== undefined
+      ? { minDiscountPercent: percentage(filters.minDiscountPercent) }
+      : {}),
+    ...(FILTER_SUPPORT.material && filters.materialId
+      ? { materialId: filters.materialId }
+      : {}),
   };
+}
+
+function percentage(value: string | undefined): number | undefined {
+  const n = numeric(value);
+  return n !== undefined && n <= 100 ? Math.floor(n) : undefined;
 }
 
 function numeric(value: string | undefined): number | undefined {
@@ -134,6 +171,8 @@ function numeric(value: string | undefined): number | undefined {
 export function buildHref(
   filters: PlpFilters,
   patch: Partial<PlpFilters>,
+  /** The search results page carries the same filter model on its own path. */
+  base = "/products",
 ): string {
   const next = { ...filters, ...patch };
   const params = new URLSearchParams();
@@ -145,13 +184,16 @@ export function buildHref(
   if (next.saleMode) params.set("saleMode", next.saleMode);
   if (next.minPrice) params.set("minPrice", next.minPrice);
   if (next.maxPrice) params.set("maxPrice", next.maxPrice);
+  if (next.minDiscountPercent)
+    params.set("minDiscountPercent", next.minDiscountPercent);
+  if (next.materialId) params.set("materialId", next.materialId);
   if (next.sort !== DEFAULT_SORT) params.set("sort", next.sort);
 
   const page = patch.page ?? 1;
   if (page > 1) params.set("page", String(page));
 
   const query = params.toString();
-  return query ? `/products?${query}` : "/products";
+  return query ? `${base}?${query}` : base;
 }
 
 export function hasActiveFilters(filters: PlpFilters): boolean {
@@ -162,6 +204,8 @@ export function hasActiveFilters(filters: PlpFilters): boolean {
       filters.search ||
       filters.saleMode ||
       filters.minPrice ||
-      filters.maxPrice,
+      filters.maxPrice ||
+      filters.materialId ||
+      filters.minDiscountPercent,
   );
 }

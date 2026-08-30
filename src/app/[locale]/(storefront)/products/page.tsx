@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
-import { getBrands, getCategoryTree } from "@/lib/api/endpoints/catalog";
-import { getListings } from "@/lib/api/endpoints/listings";
+import {
+  getBrands,
+  getCategoryTree,
+  getMaterials,
+} from "@/lib/api/endpoints/catalog";
+import { getListingFacets, getListings } from "@/lib/api/endpoints/listings";
 import { listingToCard } from "@/lib/api/adapters";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { ProductCard } from "@/components/commerce/product-card";
@@ -9,7 +13,12 @@ import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { FilterPanel } from "@/features/catalog/components/filter-panel";
 import { PlpToolbar } from "@/features/catalog/components/plp-toolbar";
 import { Pagination } from "@/features/catalog/components/pagination";
-import { parseFilters, toListingQuery } from "@/features/catalog/filters";
+import {
+  buildHref,
+  PAGE_SIZE,
+  parseFilters,
+  toListingQuery,
+} from "@/features/catalog/filters";
 import type { Locale } from "@/i18n/routing";
 
 /**
@@ -51,10 +60,13 @@ export default async function ProductsPage({
   const activeLocale = (await getLocale()) as Locale;
   const filters = parseFilters(await searchParams);
 
-  const [result, categories, rawBrands] = await Promise.all([
+  const [result, categories, rawBrands, facets, materials] = await Promise.all([
     getListings(toListingQuery(filters)),
     getCategoryTree(),
     getBrands(),
+    // Non-fatal: the sidebar renders without counts rather than failing the page.
+    getListingFacets(toListingQuery(filters)).catch(() => null),
+    getMaterials().catch(() => []),
   ]);
 
   const brands = rawBrands.map((brand) => ({
@@ -80,6 +92,8 @@ export default async function ProductsPage({
           filters={filters}
           categories={categories}
           brands={brands}
+          facets={facets}
+          materials={materials}
         />
 
         <div className="min-w-0 flex-1">
@@ -107,7 +121,12 @@ export default async function ProductsPage({
             </div>
           )}
 
-          <Pagination filters={filters} total={result.total} />
+          <Pagination
+            page={filters.page}
+            total={result.total}
+            pageSize={PAGE_SIZE}
+            buildHref={(page) => buildHref(filters, { page })}
+          />
         </div>
       </div>
     </div>

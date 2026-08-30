@@ -27,6 +27,9 @@ const SWATCHES: Record<string, string> = {
   purple: "#8B5CF6",
 };
 
+/** Foreign keys the blob carries alongside real attributes — a raw UUID chip. */
+const INTERNAL_KEYS = new Set(["materialId", "brandId", "categoryId"]);
+
 export async function ProductAttributes({
   attributes,
 }: {
@@ -35,7 +38,8 @@ export async function ProductAttributes({
   const t = await getTranslations("Pdp");
 
   const rows = Object.entries(attributes ?? {}).filter(
-    ([, value]) =>
+    ([key, value]) =>
+      !INTERNAL_KEYS.has(key) &&
       value !== null && value !== undefined && value !== "" &&
       !(Array.isArray(value) && value.length === 0),
   );

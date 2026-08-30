@@ -18,13 +18,31 @@ import type { Locale } from "@/i18n/routing";
 
 /* ----------------------------------------------------------- categories */
 
+/**
+ * Card accents — Figma `651:605`. Each card takes the next colour in the run,
+ * used for both the image band behind the photo and the Browse pill.
+ *
+ * Gold is the exception on text: green on gold fails contrast, so the frame
+ * uses a dark amber there (`651:632`).
+ */
 const CATEGORY_TONE = [
-  "bg-aqua text-on-accent",
-  "bg-azure text-white",
-  "bg-gold text-black",
-  "bg-purple text-white",
+  { band: "bg-aqua", link: "bg-aqua text-action" },
+  { band: "bg-focus", link: "bg-focus text-action" },
+  { band: "bg-gold", link: "bg-gold text-amber-text" },
+  { band: "bg-purple", link: "bg-purple text-action" },
 ];
 
+/**
+ * Shop by Category — Figma `651:601`.
+ *
+ * The band shows `imageUrl`, the photograph, not `iconUrl` — the small mark
+ * that belongs on chips. Both arrived with GAP-31, along with `listingCount`,
+ * which rolls up the subtree.
+ *
+ * The design's second line ("Clothing, shoes, accessories") has no field behind
+ * it: categories carry no description. It's built from the category's own first
+ * three children, which is real data reading the way the design intends.
+ */
 export async function CategoryRail({ categories }: { categories: Category[] }) {
   const t = await getTranslations("Home");
   const locale = (await getLocale()) as Locale;
@@ -37,34 +55,52 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
         actionHref="/categories"
       />
 
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {categories.slice(0, 4).map((category, index) => {
-          const image = resolveMediaUrl(category.iconUrl);
+          const image = resolveMediaUrl(category.imageUrl ?? category.iconUrl);
+          const tone = CATEGORY_TONE[index % CATEGORY_TONE.length];
+          const children = (category.children ?? [])
+            .slice(0, 3)
+            .map((child) => pickLocalized(child, "name", locale))
+            .join(", ");
+
           return (
             <article
               key={category.id}
               className="bg-base border-line flex flex-col overflow-hidden rounded-16 border"
             >
-              <div className="bg-surface flex aspect-[4/3] items-center justify-center">
+              {/* Band — 651:607 */}
+              <div className={`h-[180px] ${tone.band}`}>
                 {image ? (
                   // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                  <img src={image} alt="" className="size-20 object-contain" />
+                  <img
+                    src={image}
+                    alt=""
+                    className="size-full object-cover"
+                    loading="lazy"
+                  />
                 ) : null}
               </div>
-              <div className="flex flex-1 flex-col gap-2 p-5">
-                <h3 className="text-h3">
+              {/* Ctn — 651:609 */}
+              <div className="flex flex-1 flex-col gap-1.5 p-4">
+                <h3 className="text-[18px] font-semibold" dir="auto">
                   {pickLocalized(category, "name", locale)}
                 </h3>
-                <p className="text-caption text-ink-tertiary">
-                  {t("subcategories", {
-                    count: category.children?.length ?? 0,
-                  })}
-                </p>
+                {children && (
+                  <p className="text-ink-500 truncate text-[12px]" dir="auto">
+                    {children}
+                  </p>
+                )}
+                {category.listingCount != null && (
+                  <p className="text-action text-[12px] font-medium">
+                    {t("itemsCount", {
+                      count: formatCount(category.listingCount, locale),
+                    })}
+                  </p>
+                )}
                 <Link
                   href={`/products?categoryId=${category.id}`}
-                  className={`text-label mt-3 flex h-9 items-center justify-center rounded-[18px] font-semibold ${
-                    CATEGORY_TONE[index % CATEGORY_TONE.length]
-                  }`}
+                  className={`mt-auto flex h-8 items-center justify-center rounded-[16px] px-3.5 text-[12px] font-medium ${tone.link}`}
                 >
                   {t("browse")}
                 </Link>
@@ -175,47 +211,6 @@ export async function ProductRail({
   );
 }
 
-/* ------------------------------------------------------------- auctions */
-
-/**
- * Live auction rails.
- *
- * Now fed by real data: `saleMode=auction` and the `ending_soon` sort both
- * shipped in the backend's gaps drop. An empty rail means there genuinely are no
- * live auctions, which is why this renders an empty state rather than the
- * "unavailable" notice it used to.
- */
-export async function AuctionRail({
-  cards,
-  ending = false,
-}: {
-  cards: Card[];
-  ending?: boolean;
-}) {
-  const t = await getTranslations("Home");
-
-  return (
-    <Section className="bg-invert">
-      <SectionHeader
-        invert
-        title={ending ? t("endingSoon") : t("liveAuctions")}
-        subtitle={ending ? t("endingSoonSubtitle") : undefined}
-        actionLabel={t("viewAllAuctions")}
-        actionHref="/auctions"
-      />
-
-      {cards.length === 0 ? (
-        <SectionUnavailable invert message={t("noLiveAuctions")} />
-      ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {cards.map((card) => (
-            <ProductCard key={card.id} card={card} />
-          ))}
-        </div>
-      )}
-    </Section>
-  );
-}
 
 /* -------------------------------------------------------- top sellers */
 
@@ -229,7 +224,8 @@ export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
         title={t("topSellers")}
         subtitle={t("topSellersSubtitle")}
         actionLabel={t("viewAll")}
-        actionHref="/stores"
+        /* The Trend Hub's "Top Stores This Week" is this rail's full view; there is no separate /stores design. */
+        actionHref="/trends"
       />
 
       {stores.length === 0 ? (
@@ -238,34 +234,49 @@ export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
       ) : (
         <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-6">
           {stores.map((store) => {
-            const name = store.name ?? store.fullName ?? store.handle ?? "";
+            const seller = store.seller;
+            const name = seller.fullName ?? seller.username ?? "";
+            const avatar = resolveMediaUrl(seller.profilePic);
             return (
               <article
-                key={store.id ?? store.userId ?? name}
+                key={seller.id}
                 className="bg-base border-line flex flex-col items-center gap-2 rounded-16 border p-5"
               >
-                <span className="bg-action-tint text-action text-h3 flex size-14 items-center justify-center rounded-full">
-                  {name.slice(0, 2).toUpperCase()}
+                <span className="bg-action-tint text-action text-h3 flex size-14 items-center justify-center overflow-hidden rounded-full">
+                  {avatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+                    <img src={avatar} alt="" className="size-full object-cover" />
+                  ) : (
+                    name.slice(0, 2).toUpperCase()
+                  )}
                 </span>
-                {store.isVerified && (
+                {seller.isVerified && (
                   <span className="text-[10px] text-action flex items-center gap-1 font-semibold">
                     <ShieldCheck className="size-3" aria-hidden />
                     {t("verified")}
                   </span>
                 )}
-                <h3 className="text-label truncate">{name}</h3>
-                {store.handle && (
+                <h3 className="text-label truncate" dir="auto">
+                  {name}
+                </h3>
+                {seller.username && (
                   <p className="text-caption text-ink-tertiary truncate" dir="ltr">
-                    @{store.handle}
+                    @{seller.username}
                   </p>
                 )}
-                {store.unitsSold != null && (
+                {store.salesCount != null && (
                   <p className="text-caption text-ink-tertiary">
-                    {formatCount(store.unitsSold, locale)}
+                    {t("soldThisWeek", {
+                      count: formatCount(store.salesCount, locale),
+                    })}
                   </p>
                 )}
                 <Link
-                  href={`/stores/${store.userId ?? store.id}`}
+                  /*
+                    A store is a seller — same id the profile and
+                    `listing.sellerId` use. `/stores/` never had a route.
+                  */
+                  href={`/sellers/${seller.id}`}
                   className="border-action text-action text-label mt-2 flex h-9 w-full items-center justify-center rounded-[18px] border"
                 >
                   <Store className="me-1 size-4" aria-hidden />

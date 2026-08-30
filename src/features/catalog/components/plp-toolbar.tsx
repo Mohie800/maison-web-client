@@ -81,6 +81,16 @@ export async function PlpToolbar({
     });
   }
 
+  if (filters.minDiscountPercent) {
+    chips.push({
+      label: `${t("discount")}: ${t("discountOption", {
+        percent: filters.minDiscountPercent,
+      })}`,
+      href: buildHref(filters, { minDiscountPercent: undefined }),
+      isolate: true,
+    });
+  }
+
   return (
     <div className="mb-6 flex flex-col gap-4">
       <div className="flex flex-wrap items-center justify-between gap-4">

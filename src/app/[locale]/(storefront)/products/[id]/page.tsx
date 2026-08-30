@@ -10,9 +10,12 @@ import {
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getListing, getRelatedListings } from "@/lib/api/endpoints/listings";
-import { getCategoryTree } from "@/lib/api/endpoints/catalog";
 import { listingToCard } from "@/lib/api/adapters";
-import { coverPhotoUrl } from "@/lib/api/schemas/listing";
+import {
+  coverPhotoUrl,
+  type Listing,
+  type ListingSeller,
+} from "@/lib/api/schemas/listing";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice, discountPercent } from "@/lib/format/money";
 import { pickLocalized } from "@/lib/i18n/localized";
@@ -22,7 +25,8 @@ import { ProductGallery } from "@/features/catalog/components/product-gallery";
 import { ProductTabs } from "@/features/catalog/components/product-tabs";
 import { ProductAttributes } from "@/features/catalog/components/product-attributes";
 import { getShippingOptions } from "@/lib/api/endpoints/checkout";
-import type { Category } from "@/lib/api/schemas/catalog";
+import { amountOf } from "@/lib/api/schemas/auction";
+import { BidPanel } from "@/features/auctions/components/bid-panel";
 import type { Locale } from "@/i18n/routing";
 
 /**
@@ -54,6 +58,35 @@ export async function generateMetadata(props: {
   };
 }
 
+/**
+ * What the bid panel can know from the ISR'd listing alone. Live numbers
+ * arrive from the panel's own `auction-status` poll — that call needs a
+ * session (GAP-66) and would opt every PDP out of static generation.
+ */
+function bidSnapshot(listing: Listing) {
+  const currentBid =
+    amountOf(listing.currentBid) || amountOf(listing.startingBid);
+  return {
+    listingId: listing.id,
+    currency: listing.currency ?? "SAR",
+    currentBid,
+    startingBid: amountOf(listing.startingBid),
+    bidCount: listing.bidCount ?? 0,
+    endsAt: listing.auctionEndsAt ?? null,
+    // The API's own floor, mirrored: current bid plus the larger of the two
+    // increments. Re-derived server-side on every bid regardless.
+    minNextBid: Math.ceil(
+      currentBid +
+        Math.max(
+          (currentBid * (listing.minBidIncrementPercent ?? 0)) / 100,
+          amountOf(listing.minBidIncrementAbsolute),
+        ),
+    ),
+    antiSnipeWindowSeconds: listing.antiSnipeWindowSeconds ?? null,
+    antiSnipeExtensionSeconds: listing.antiSnipeExtensionSeconds ?? null,
+  };
+}
+
 export default async function ProductPage({
   params,
 }: {
@@ -70,14 +103,20 @@ export default async function ProductPage({
   const tListing = await getTranslations("Listing");
   const activeLocale = (await getLocale()) as Locale;
 
-  const [categories, related, shippingOptions] = await Promise.all([
-    getCategoryTree(),
+  const [related, shippingOptions] = await Promise.all([
     getRelatedListings(listing, 4),
     // Real delivery options rather than the design's hardcoded examples.
     getShippingOptions().catch(() => []),
   ]);
 
-  const category = findCategory(categories, listing.categoryId ?? undefined);
+  /*
+   * Category and brand ride along on the detail response, so the page no
+   * longer walks the category tree to resolve a name — one fewer request, and
+   * it resolves a category at any depth rather than only one in the tree we
+   * happened to fetch.
+   */
+  const category = listing.category ?? null;
+  const brand = listing.brand ?? null;
   const photos = (listing.photos ?? [])
     .slice()
     .sort((a, b) => Number(b.isCover) - Number(a.isCover) || a.sortOrder - b.sortOrder)
@@ -105,14 +144,18 @@ export default async function ProductPage({
 
   /**
    * Structured data so the listing is eligible for rich results. Only fields we
-   * actually have are emitted — an invented `availability` or `brand` would be
-   * a schema.org violation, not just untidy.
+   * actually have are emitted — an invented `availability` would be a schema.org
+   * violation, not just untidy. `brand` is a real one now that the detail
+   * response joins it.
    */
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: listing.title,
     ...(listing.description ? { description: listing.description } : {}),
+    ...(brand
+      ? { brand: { "@type": "Brand", name: pickLocalized(brand, "name", activeLocale) } }
+      : {}),
     ...(photos.length
       ? { image: photos.map((p) => resolveMediaUrl(p)).filter(Boolean) }
       : {}),
@@ -163,6 +206,14 @@ export default async function ProductPage({
                 {tListing(`conditions.${listing.condition}`)}
               </span>
             )}
+            {brand && (
+              <Link
+                href={`/products?brandId=${brand.id}`}
+                className="text-caption text-ink-secondary font-semibold hover:underline"
+              >
+                {pickLocalized(brand, "name", activeLocale)}
+              </Link>
+            )}
             {category && (
               <span className="text-caption text-ink-tertiary">
                 {pickLocalized(category, "name", activeLocale)}
@@ -176,14 +227,11 @@ export default async function ProductPage({
           </h1>
 
           <div className="flex flex-wrap items-baseline gap-3">
-            <span className="text-[28px] font-bold">
-              {isAuction
-                ? formatPrice(
-                    listing.currentBid ?? listing.startingBid,
-                    listing.currency ?? "SAR",
-                  )
-                : formatPrice(listing.price, listing.currency ?? "SAR")}
-            </span>
+            {!isAuction && (
+              <span className="text-[28px] font-bold">
+                {formatPrice(listing.price, listing.currency ?? "SAR")}
+              </span>
+            )}
             {saving !== null && (
               <>
                 <span className="text-body-lg text-ink-tertiary line-through">
@@ -197,12 +245,18 @@ export default async function ProductPage({
           </div>
 
           {isAuction && (
-            <p className="text-caption text-ink-secondary">
-              {t("bidCount", { count: listing.bidCount ?? 0 })}
-            </p>
+            <BidPanel
+              snapshot={bidSnapshot(listing)}
+              locale={locale}
+              termsHref={`/${locale}/auctions/${listing.id}/terms`}
+            />
           )}
 
-          <SellerCard sellerId={listing.sellerId} label={t("viewSeller")} />
+          <SellerCard
+            seller={listing.seller ?? null}
+            sellerId={listing.sellerId}
+            label={t("viewSeller")}
+          />
 
           <ProductAttributes attributes={listing.attributes} />
 
@@ -213,12 +267,14 @@ export default async function ProductPage({
             correct next step rather than being dead buttons.
           */}
           <div className="flex flex-col gap-3">
-            <Link
-              href={isAuction ? `/auctions/${listing.id}/terms` : "/cart"}
-              className="bg-aqua text-on-accent text-label flex h-12 items-center justify-center rounded-[24px] font-semibold"
-            >
-              {isAuction ? t("placeBid") : t("buyNow")}
-            </Link>
+            {!isAuction && (
+              <Link
+                href="/cart"
+                className="bg-aqua text-on-accent text-label flex h-12 items-center justify-center rounded-[24px] font-semibold"
+              >
+                {t("buyNow")}
+              </Link>
+            )}
             {!isAuction && (
               <Link
                 href="/cart"
@@ -358,38 +414,111 @@ export default async function ProductPage({
 }
 
 /**
- * Seller strip.
+ * Seller strip — Figma node `651:4457`.
  *
- * The design shows the seller's name, rating and items-sold here, but
- * `GET /sellers/{id}` requires authentication (verified — 401 anonymously) and
- * `GET /listings` doesn't join the seller. So on a public product page there is
- * no seller data to show, and a raw UUID is worse than none.
+ * `GET /listings/{id}` embeds the full seller and `GET /sellers/{id}` is
+ * publicly readable (API-25), so the design's card is buildable on a page with
+ * no session. It was a bare "View seller" chevron before: the listing carried
+ * only a `sellerId`, and the profile endpoint 401'd anonymously.
  *
- * Reported as API-25. When the seller profile becomes publicly readable, this
- * becomes the full card from the design.
+ * Two deliberate departures from the frame:
+ *
+ * - The design's right-hand action is a **Message** button. Messaging isn't
+ *   built (Phase 6) and `/conversations` has no UI yet, so that would be a dead
+ *   button. The whole strip links to the seller profile instead, which exists.
+ * - The design shows no verification mark here; verification is a "Verified
+ *   Seller" pill in the trust row below, which this page already renders.
+ *
+ * `seller` stays optional because the field is undocumented in the spec — if it
+ * ever stops being sent, the chevron is the fallback rather than a crash.
  */
-function SellerCard({ sellerId, label }: { sellerId: string; label: string }) {
+async function SellerCard({
+  seller,
+  sellerId,
+  label,
+}: {
+  seller: ListingSeller | null;
+  sellerId: string;
+  label: string;
+}) {
+  const t = await getTranslations("Pdp");
+  const href = `/sellers/${seller?.id ?? sellerId}`;
+
+  if (!seller) {
+    return (
+      <Link
+        href={href}
+        className="border-line hover:border-action flex items-center justify-between gap-4 rounded-12 border p-4"
+      >
+        <span className="text-label text-ink-secondary">{label}</span>
+        <ChevronRight className="text-ink-tertiary size-4 rtl:rotate-180" aria-hidden />
+      </Link>
+    );
+  }
+
+  const avatar = resolveMediaUrl(seller.profilePic);
+  const rating = seller.ratingAvg != null ? Number(seller.ratingAvg) : null;
+
+  /*
+   * The design's sub-line is "4.9 stars · 247 sold" — two separate facts, not a
+   * rating with a review count in brackets. Each appears only when the payload
+   * carries it: "0 sold" under a new seller's name reads as a warning.
+   */
+  const facts: string[] = [];
+  if (rating !== null && Number.isFinite(rating) && (seller.ratingCount ?? 0) > 0) {
+    facts.push(t("sellerRating", { rating: rating.toFixed(1) }));
+  }
+  if ((seller.itemsSoldCount ?? 0) > 0) {
+    facts.push(t("sellerSold", { count: seller.itemsSoldCount ?? 0 }));
+  }
+
+  /* Initials fallback, as in the frame ("LF" for luxury_finds). */
+  const initials = (seller.username ?? seller.fullName ?? "?")
+    .split(/[\s_.-]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join("");
+
   return (
     <Link
-      href={`/sellers/${sellerId}`}
-      className="border-line hover:border-action flex items-center justify-between gap-4 rounded-12 border p-4"
+      href={href}
+      className="border-line hover:border-action flex items-center gap-4 rounded-12 border p-4"
     >
-      <span className="text-label text-ink-secondary">{label}</span>
-      <ChevronRight className="text-ink-tertiary size-4 rtl:rotate-180" aria-hidden />
+      {avatar ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={avatar}
+          alt=""
+          className="size-11 shrink-0 rounded-full object-cover"
+        />
+      ) : (
+        <span
+          className="bg-tint text-ink-secondary text-label flex size-11 shrink-0 items-center justify-center rounded-full"
+          aria-hidden
+        >
+          {initials}
+        </span>
+      )}
+
+      <span className="flex min-w-0 flex-col gap-0.5">
+        {/*
+          The design leads with the handle, not the display name — that's the
+          identity a marketplace buyer recognises, and it's Latin-script even in
+          the Arabic locale, so it needs no bidi isolation.
+        */}
+        <span className="text-label truncate">
+          {seller.username ?? seller.fullName}
+        </span>
+        {facts.length > 0 && (
+          <span className="text-caption text-ink-tertiary">
+            {facts.join(" · ")}
+          </span>
+        )}
+      </span>
+
+      <span className="text-caption text-action ms-auto shrink-0">{label}</span>
+      <ChevronRight className="text-ink-tertiary size-4 shrink-0 rtl:rotate-180" aria-hidden />
     </Link>
   );
-}
-
-/** Categories nest, and a listing can sit on any level, so this recurses. */
-function findCategory(
-  categories: Category[],
-  id?: string,
-): Category | undefined {
-  if (!id) return undefined;
-  for (const category of categories) {
-    if (category.id === id) return category;
-    const match = findCategory(category.children ?? [], id);
-    if (match) return match;
-  }
-  return undefined;
 }

@@ -1,24 +1,31 @@
 import { getTranslations } from "next-intl/server";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { buildHref, PAGE_SIZE, type PlpFilters } from "../filters";
 
 /**
  * Offset pagination. The API returns `{ items, total, page, limit }` with no
  * `hasMore`, so the page count is derived.
+ *
+ * Takes an `href` builder rather than a filter object: the PLP pages by filter
+ * state, the seller profile pages two independent tabs under one route, and
+ * both want the same control. Whatever a surface's URL shape is, it owns it.
  */
 export async function Pagination({
-  filters,
+  page,
   total,
+  pageSize,
+  buildHref,
 }: {
-  filters: PlpFilters;
+  page: number;
   total: number;
+  pageSize: number;
+  buildHref: (page: number) => string;
 }) {
   const t = await getTranslations("Catalog");
-  const pageCount = Math.ceil(total / PAGE_SIZE);
+  const pageCount = Math.ceil(total / pageSize);
   if (pageCount <= 1) return null;
 
-  const current = Math.min(filters.page, pageCount);
+  const current = Math.min(page, pageCount);
   const pages = pageNumbers(current, pageCount);
 
   return (
@@ -27,7 +34,7 @@ export async function Pagination({
       className="mt-10 flex items-center justify-center gap-2"
     >
       <PageLink
-        href={buildHref(filters, { page: current - 1 })}
+        href={buildHref(current - 1)}
         disabled={current <= 1}
         label={t("previous")}
       >
@@ -35,29 +42,29 @@ export async function Pagination({
         <ChevronLeft className="size-4 rtl:rotate-180" aria-hidden />
       </PageLink>
 
-      {pages.map((page, i) =>
-        page === "…" ? (
+      {pages.map((n, i) =>
+        n === "…" ? (
           <span key={`gap-${i}`} className="text-caption text-ink-tertiary px-2">
             …
           </span>
         ) : (
           <Link
-            key={page}
-            href={buildHref(filters, { page })}
-            aria-current={page === current ? "page" : undefined}
+            key={n}
+            href={buildHref(n)}
+            aria-current={n === current ? "page" : undefined}
             className={`text-caption flex size-9 items-center justify-center rounded-[10px] ${
-              page === current
+              n === current
                 ? "bg-invert font-semibold text-white"
                 : "border-line text-ink-secondary border"
             }`}
           >
-            {page}
+            {n}
           </Link>
         ),
       )}
 
       <PageLink
-        href={buildHref(filters, { page: current + 1 })}
+        href={buildHref(current + 1)}
         disabled={current >= pageCount}
         label={t("next")}
       >

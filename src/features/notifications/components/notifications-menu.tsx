@@ -73,7 +73,9 @@ export function NotificationsMenu({
     const load = async () => {
       setLoading(true);
       try {
-        const query = tab ? `?category=${CATEGORY_PARAM[tab]}&limit=6` : "?limit=6";
+        const query = tab
+          ? `?category=${CATEGORY_PARAM[tab]}&limit=6`
+          : "?limit=6";
         const res = await fetch(`/api/proxy/notifications${query}`, {
           cache: "no-store",
         });
@@ -213,11 +215,16 @@ export function NotificationsMenu({
               items.map((item, index) => (
                 <div key={item.id}>
                   {index > 0 && (
-                    <span className="bg-fill-100 block h-px w-full" aria-hidden />
+                    <span
+                      className="bg-fill-100 block h-px w-full"
+                      aria-hidden
+                    />
                   )}
                   <NotificationRow
                     item={item}
-                    when={(iso) => format.relativeTime(new Date(iso), new Date())}
+                    when={(iso) =>
+                      format.relativeTime(new Date(iso), new Date())
+                    }
                     categoryLabel={(key) =>
                       t.has(`badges.${key}` as never)
                         ? t(`badges.${key}` as never)

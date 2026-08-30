@@ -586,7 +586,11 @@
       "cvv": "رمز التحقق",
       "walletPhone": "رقم جوال STC Pay"
     },
-    "shippingCoveredBySeller": "شحن مجاني — يتحمله البائع"
+    "shippingCoveredBySeller": "شحن مجاني — يتحمله البائع",
+    "tradeFee": "رسوم المقايضة",
+    "insuranceFee": "التأمين",
+    "auctionFee": "رسوم المزاد",
+    "vatAt": "ضريبة القيمة المضافة ({rate})"
   },
   "Account": {
     "nav": {
@@ -697,10 +701,12 @@
     "errors": {
       "nameRequired": "أدخل اسمك.",
       "emailInvalid": "تم رفض البريد الإلكتروني.",
-      "phoneInvalid": "تم رفض رقم الجوال.",
+      "phoneInvalid": "أدخل الرقم بالصيغة الدولية، مثل ‎+9665XXXXXXXX.",
       "invalid": "تم رفض بعض البيانات. تحقق منها وحاول مجددًا.",
       "unauthenticated": "سجّل الدخول لتغيير الإعدادات.",
-      "requestFailed": "تعذّر الحفظ. حاول مرة أخرى."
+      "requestFailed": "تعذّر الحفظ. حاول مرة أخرى.",
+      "phoneTaken": "رقم الجوال مستخدم في حساب آخر.",
+      "emailTaken": "البريد الإلكتروني مستخدم في حساب آخر."
     },
     "completeProfile": "أكمل ملفك الشخصي",
     "logout": "تسجيل الخروج",

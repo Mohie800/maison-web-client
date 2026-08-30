@@ -13,6 +13,13 @@ import type { CheckoutPreview } from "@/lib/api/schemas/checkout";
  * The design's Trade Fees / Insurance Fee / Auction Fee rows are not rendered —
  * the preview carries no such fields. See plans/09 C23.
  */
+/** 651:7932's three fee rows, in the order the frame draws them. */
+const FEE_ROWS = [
+  { key: "tradeFeeAmount", label: "tradeFee" },
+  { key: "insuranceFeeAmount", label: "insuranceFee" },
+  { key: "auctionFeeAmount", label: "auctionFee" },
+] as const;
+
 export async function OrderSummary({
   preview,
   itemCount,
@@ -50,7 +57,33 @@ export async function OrderSummary({
           label={shippingLabel || t("shipping")}
           value={formatPrice(preview.shippingAmount, currency)}
         />
-        <Row label={t("vat")} value={formatPrice(preview.vatAmount, currency)} />
+        <Row
+          label={
+            preview.vatRate != null
+              ? t("vatAt", {
+                  rate: `${Math.round(Number(preview.vatRate) * 100)}%`,
+                })
+              : t("vat")
+          }
+          value={formatPrice(preview.vatAmount, currency)}
+        />
+
+        {/*
+          The design's three fee rows — 651:7932. All three are `null` today and
+          print an em-dash from the server rather than a fabricated SAR 0
+          (GAP-62). They fill in by themselves if a fee is ever introduced.
+        */}
+        {FEE_ROWS.map(({ key, label }) => {
+          const amount = preview[key];
+          return (
+            <Row
+              key={key}
+              label={t(label)}
+              value={amount == null ? "—" : formatPrice(amount, currency)}
+              tone={amount == null ? "text-ink-tertiary" : undefined}
+            />
+          );
+        })}
 
         {discount > 0 && (
           <Row
@@ -67,7 +100,9 @@ export async function OrderSummary({
         {donation > 0 && (
           <Row
             label={
-              charityName ? t("donationTo", { charity: charityName }) : t("donation")
+              charityName
+                ? t("donationTo", { charity: charityName })
+                : t("donation")
             }
             value={`+${formatPrice(preview.donationAmount, currency)}`}
             tone="text-action"

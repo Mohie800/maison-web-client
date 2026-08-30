@@ -59,11 +59,17 @@ export default async function InvoicePage({
     ),
   ];
 
-  /** 0.15 → "15%". Formatting, not arithmetic on money. */
+  /*
+    `vatRatePercent` is the number the invoice prints; `vatRate` is the
+    fraction, kept as the fallback for a payload that predates it. Formatting,
+    not arithmetic on money.
+  */
   const vatRate =
-    totals?.vatRate != null
-      ? `${Math.round(Number(totals.vatRate) * 100)}%`
-      : null;
+    totals?.vatRatePercent != null
+      ? `${Number(totals.vatRatePercent)}%`
+      : totals?.vatRate != null
+        ? `${Math.round(Number(totals.vatRate) * 100)}%`
+        : null;
 
   const paid = invoice?.paymentStatus === "paid";
   const card = invoice?.payment;

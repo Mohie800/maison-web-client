@@ -53,17 +53,26 @@ export function NotificationRow({
   /** Lets the dropdown close itself when a row is followed. */
   onNavigate?: () => void;
 }) {
-  const unread = item.isRead === false;
+  const unread = !item.readAt;
   const category = item.category ?? "orders";
   const tone = CATEGORY_TONE[category] ?? "bg-fill-100 text-ink-700";
-  const text = item.title ?? item.body ?? item.message ?? "";
-  const href =
-    item.link ??
-    (item.orderId
-      ? `/account/orders/${item.orderId}`
-      : item.listingId
-        ? `/products/${item.listingId}`
-        : null);
+  const text = item.title ?? item.body ?? "";
+  /*
+    `payload` is type-specific and carries only an id — the API deliberately
+    keeps the routing ours. Ordered so the most specific destination wins.
+  */
+  const p = item.payload;
+  const href = p?.orderId
+    ? `/account/orders/${p.orderId}`
+    : p?.conversationId
+      ? `/inbox/${p.conversationId}`
+      : p?.tradeId
+        ? `/account/trades/${p.tradeId}`
+        : p?.listingId
+          ? `/products/${p.listingId}`
+          : p?.userId
+            ? `/sellers/${p.userId}`
+            : null;
 
   return (
     <div
@@ -80,7 +89,9 @@ export function NotificationRow({
           {text}
         </p>
         {item.createdAt && (
-          <p className="text-ink-tertiary text-[10px]">{when(item.createdAt)}</p>
+          <p className="text-ink-tertiary text-[10px]">
+            {when(item.createdAt)}
+          </p>
         )}
         {href && (
           <Link

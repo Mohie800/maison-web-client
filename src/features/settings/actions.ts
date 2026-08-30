@@ -16,6 +16,10 @@ import { NOTIFICATION_GROUPS } from "@/lib/api/endpoints/settings";
 function toErrorCode(error: unknown): string {
   if (error instanceof ApiError) {
     const message = error.messages.join(" ");
+    // "already in use" is a 409 and is not the same as a malformed value.
+    if (/already in use/i.test(message)) {
+      return /email/i.test(message) ? "emailTaken" : "phoneTaken";
+    }
     if (/email/i.test(message)) return "emailInvalid";
     if (/phone/i.test(message)) return "phoneInvalid";
     if (error.isUnauthorized) return "unauthenticated";
@@ -35,8 +39,13 @@ export async function saveProfileAction(formData: FormData): Promise<void> {
 
   const body = new FormData();
   body.set("fullName", fullName);
+  /*
+    `phoneNumber` in E.164, not `phone` — the DTO never had `phone` and the
+    API 400s on it, so a profile save that included one used to fail outright.
+    Confirmed against the live box with the Round 5 reply (GAP-77).
+  */
   const phone = String(formData.get("phone") ?? "").trim();
-  if (phone) body.set("phone", phone);
+  if (phone) body.set("phoneNumber", phone);
 
   /*
     The multipart field is `profilePic` — confirmed against the live API on

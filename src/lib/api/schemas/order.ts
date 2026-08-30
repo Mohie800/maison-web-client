@@ -296,8 +296,10 @@ export const invoiceSchema = z
         subtotal: money,
         shipping: money,
         vat: money,
-        /** A fraction: 0.15. The design prints it as "VAT 15%". */
+        /** A fraction: 0.15. `vatRatePercent` is the same number as 15. */
         vatRate: z.union([z.string(), z.number()]).nullish(),
+        /** Added with the Round 5 reply, so the label needn't do the maths. */
+        vatRatePercent: z.union([z.string(), z.number()]).nullish(),
         discount: money,
         couponCode: z.string().nullish(),
         donation: money,

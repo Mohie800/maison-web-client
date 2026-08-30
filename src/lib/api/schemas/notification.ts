@@ -34,20 +34,32 @@ export const CATEGORY_PARAM: Record<NotificationCategory, string> = {
   promotions: "PROMOTIONS",
 };
 
+/**
+ * `NotificationDto`, published with the Round 5 reply. Two things the earlier
+ * guess got wrong: there is no `link` and no `message`. The destination is
+ * `payload`, which carries the id of whatever the row is about, and unread is
+ * `readAt === null` rather than an `isRead` flag.
+ */
 export const notificationSchema = z.object({
   id: z.string(),
-  category: z.string().nullish(),
   type: z.string().nullish(),
+  category: z.string().nullish(),
   title: z.string().nullish(),
   body: z.string().nullish(),
-  message: z.string().nullish(),
-  isRead: z.boolean().nullish(),
+  imageUrl: z.string().nullish(),
+  /** `{ orderId }`, `{ listingId }`, `{ conversationId }`, `{ tradeId }`, `{ userId }`. */
+  payload: z
+    .object({
+      orderId: z.string().nullish(),
+      listingId: z.string().nullish(),
+      conversationId: z.string().nullish(),
+      tradeId: z.string().nullish(),
+      userId: z.string().nullish(),
+    })
+    .nullish(),
+  /** Null while unread. */
   readAt: z.string().nullish(),
   createdAt: z.string().nullish(),
-  /** Where the row's action button goes, when the API names one. */
-  link: z.string().nullish(),
-  listingId: z.string().nullish(),
-  orderId: z.string().nullish(),
 });
 
 export type Notification = z.infer<typeof notificationSchema>;

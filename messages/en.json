@@ -585,7 +585,11 @@
       "cvv": "CVV / CVC",
       "walletPhone": "STC Pay Mobile Number"
     },
-    "shippingCoveredBySeller": "Free shipping — the seller covers it"
+    "shippingCoveredBySeller": "Free shipping — the seller covers it",
+    "tradeFee": "Trade fee",
+    "insuranceFee": "Insurance",
+    "auctionFee": "Auction fee",
+    "vatAt": "VAT ({rate})"
   },
   "Account": {
     "nav": {
@@ -696,10 +700,12 @@
     "errors": {
       "nameRequired": "Enter your name.",
       "emailInvalid": "That email address was rejected.",
-      "phoneInvalid": "That phone number was rejected.",
+      "phoneInvalid": "Enter the number in international format, like +9665XXXXXXXX.",
       "invalid": "Some details were rejected. Check them and try again.",
       "unauthenticated": "Sign in to change your settings.",
-      "requestFailed": "We could not save that. Try again."
+      "requestFailed": "We could not save that. Try again.",
+      "phoneTaken": "That phone number is already on another account.",
+      "emailTaken": "That email address is already on another account."
     },
     "completeProfile": "Complete your profile",
     "logout": "Logout",

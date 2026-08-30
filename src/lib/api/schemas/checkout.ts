@@ -89,10 +89,7 @@ export const CARD_PAYMENT_TYPES: PaymentType[] = ["card", "mada"];
  * always null and the saved-card row could never show "Visa •••• 4242".
  * Verified against a real saved card on 2026-08-29.
  */
-export {
-  paymentMethodSchema,
-  type PaymentMethod,
-} from "./wallet";
+export { paymentMethodSchema, type PaymentMethod } from "./wallet";
 
 /* -------------------------------------------------------- shipping option */
 
@@ -143,16 +140,27 @@ export const sellerGroupSchema = z.object({
 export type SellerGroup = z.infer<typeof sellerGroupSchema>;
 
 /**
- * The authoritative totals. VAT is 15% of (subtotal + shipping), computed
- * server-side — never recomputed here.
+ * The authoritative totals — `CheckoutPreviewResponseDto`, published with the
+ * Round 5 reply. VAT is computed server-side and never recomputed here.
+ *
+ * The three fee fields are always present and, today, always `null`: no fee is
+ * charged on a trade, there is no insurance product, and the auction buyer's
+ * premium is settled through `auction-payment` rather than a bag checkout
+ * (GAP-62). They are read rather than hardcoded so the day one becomes a
+ * number, the row fills in on its own.
  */
 export const checkoutPreviewSchema = z.object({
   sellerGroups: z.array(sellerGroupSchema),
   subtotalAmount: money,
   shippingAmount: money,
   vatAmount: money,
+  /** A fraction: 0.15. Saves the VAT label hardcoding the rate. */
+  vatRate: z.union([z.string(), z.number()]).nullish(),
   discountAmount: money,
   donationAmount: money,
+  tradeFeeAmount: money.nullish(),
+  insuranceFeeAmount: money.nullish(),
+  auctionFeeAmount: money.nullish(),
   totalAmount: money,
   /** Round-up suggestion for the Ehsan charity donation. */
   suggestedDonationAmount: money,

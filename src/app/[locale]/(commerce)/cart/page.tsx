@@ -1,182 +1,181 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Trash2, ShoppingBag } from "lucide-react";
+import { Check, ShieldCheck, Undo2 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getBag } from "@/lib/api/endpoints/checkout";
-import { resolveMediaUrl } from "@/lib/api/media";
-import { coverPhotoUrl } from "@/lib/api/schemas/listing";
 import { formatPrice } from "@/lib/format/money";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  clearBag,
-  removeBagItem,
-  toggleBagItem,
-} from "@/features/checkout/actions";
+import { clearBag, validateCoupon } from "@/features/checkout/actions";
+import { CartList } from "@/features/checkout/components/cart-list";
+import { EmptyCart } from "@/features/checkout/components/empty-cart";
 
 /**
  * Cart — Figma nodes 651:7423 (Web_Cart) and 651:7507 (Web_Empty_Cart).
  *
  * Gated by proxy.ts. Mutations are Server Actions submitted as plain forms, so
  * the cart works without JavaScript.
+ *
+ * The design's summary also carries a "Platform fee (1%)" row. It is not
+ * rendered: the fee is 15% and it is charged to the seller, not added to what
+ * the buyer pays. See plans/09 C22.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
 export default async function CartPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
 
   const t = await getTranslations("Checkout");
+  const query = await searchParams;
   const bag = await getBag();
 
-  if (bag.items.length === 0) {
-    return (
-      <div className="mx-auto max-w-[1440px] px-4 py-14 lg:px-20">
-        <div className="border-line mx-auto flex max-w-[520px] flex-col items-center gap-4 rounded-16 border p-14 text-center">
-          <ShoppingBag className="text-ink-tertiary size-10" aria-hidden />
-          <h1 className="text-h2">{t("emptyTitle")}</h1>
-          <p className="text-body text-ink-secondary">{t("emptyBody")}</p>
-          <Link
-            href="/products"
-            className="bg-aqua text-on-accent text-label mt-2 flex h-12 items-center rounded-[24px] px-6 font-semibold"
-          >
-            {t("startShopping")}
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (bag.items.length === 0) return <EmptyCart />;
 
-  const selectedCount = bag.items.filter((item) => item.selected).length;
+  const selected = bag.items.filter((item) => item.selected);
+  const couponCode = firstParam(query.coupon);
+
+  /**
+   * The cart has no address yet, so there is no checkout preview to price a
+   * coupon against. `POST /coupons/validate` takes a subtotal instead, which the
+   * bag already reports — so the code can be checked here and carried into
+   * checkout, where the preview applies it for real.
+   */
+  const coupon =
+    couponCode && selected.length > 0
+      ? await validateCoupon(couponCode, Number(bag.selectedTotal ?? 0))
+      : null;
+
+  const checkoutHref = couponCode
+    ? `/checkout/shipping?coupon=${encodeURIComponent(couponCode)}`
+    : "/checkout/shipping";
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 lg:px-20">
-      <div className="mb-6 flex items-end justify-between gap-4">
-        <h1 className="text-h1">{t("cartTitle")}</h1>
-        <form action={clearBag}>
-          <button type="submit" className="text-caption text-error">
-            {t("clearBag")}
-          </button>
-        </form>
-      </div>
+    <div className="bg-surface min-h-full">
+      <div className="mx-auto max-w-[1440px] px-4 py-8 lg:px-20">
+        <div className="mb-6 flex items-center gap-3">
+          <h1 className="text-h1">{t("cartTitle")}</h1>
+          <span className="bg-tint text-caption text-ink-secondary rounded-full px-3 py-1">
+            {t("itemCount", { count: bag.items.length })}
+          </span>
+          <form action={clearBag} className="ms-auto">
+            <button type="submit" className="text-caption text-error">
+              {t("clearBag")}
+            </button>
+          </form>
+        </div>
 
-      <div className="flex flex-col gap-10 lg:flex-row">
-        <ul className="flex min-w-0 flex-1 flex-col gap-4">
-          {bag.items.map((item) => {
-            const listing = item.listing;
-            const image = listing ? resolveMediaUrl(coverPhotoUrl(listing)) : null;
-            /**
-             * `priceSnapshot` is what the buyer will pay — the price captured
-             * when the item was added. Showing the live listing price instead
-             * would misstate the total when a seller has since repriced.
-             */
-            const price = item.priceSnapshot ?? listing?.price;
+        <div className="flex flex-col gap-6 lg:flex-row">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <CartList items={bag.items} />
 
-            return (
-              <li
-                key={item.id}
-                className="bg-base border-line flex gap-4 rounded-12 border p-4"
-              >
-                {/*
-                  Selection is a form submit rather than a controlled input, so
-                  it works without JavaScript. The checkbox is decorative here;
-                  the label wraps a submit button.
-                */}
-                <form action={toggleBagItem} className="flex items-center">
-                  <input type="hidden" name="id" value={item.id} />
-                  <button
-                    type="submit"
-                    aria-label={item.selected ? t("deselect") : t("select")}
-                    className="cursor-pointer"
-                  >
-                    <Checkbox
-                      checked={item.selected}
-                      aria-hidden
-                      tabIndex={-1}
-                      className="pointer-events-none"
-                    />
-                  </button>
-                </form>
-
-                <Link
-                  href={listing ? `/products/${listing.id}` : "/products"}
-                  className="bg-surface size-24 shrink-0 overflow-hidden rounded-8"
+            <div className="bg-base border-line rounded-12 border p-4">
+              <form action={`/${locale}/cart`} className="flex gap-3">
+                <input
+                  name="coupon"
+                  defaultValue={couponCode}
+                  placeholder={t("couponPlaceholder")}
+                  dir="ltr"
+                  className="border-line bg-surface text-body placeholder:text-ink-tertiary focus:border-focus h-11 min-w-0 flex-1 rounded-8 border px-3 outline-none"
+                />
+                <button
+                  type="submit"
+                  className="bg-invert text-label h-11 shrink-0 rounded-8 px-6 font-semibold text-white"
                 >
-                  {image ? (
-                    // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                    <img
-                      src={image}
-                      alt=""
-                      className="size-full object-cover"
-                    />
-                  ) : null}
-                </Link>
+                  {t("apply")}
+                </button>
+              </form>
 
-                <div className="flex min-w-0 flex-1 flex-col gap-1">
-                  <Link
-                    href={listing ? `/products/${listing.id}` : "/products"}
-                    dir="auto"
-                    className="text-label line-clamp-2"
-                  >
-                    {listing?.title ?? t("itemUnavailable")}
-                  </Link>
-                  {item.itemType === "bundle" && (
-                    <span className="text-caption text-ink-tertiary">
-                      {t("bundle")}
-                    </span>
-                  )}
-                  <span className="text-h3 mt-auto">
-                    {formatPrice(price, listing?.currency ?? "SAR")}
-                  </span>
-                </div>
-
-                <form action={removeBagItem} className="shrink-0">
-                  <input type="hidden" name="id" value={item.id} />
-                  <button
-                    type="submit"
-                    aria-label={t("remove")}
-                    className="text-ink-tertiary hover:text-error"
-                  >
-                    <Trash2 className="size-5" aria-hidden />
-                  </button>
-                </form>
-              </li>
-            );
-          })}
-        </ul>
-
-        <aside className="bg-surface border-line h-fit rounded-16 border p-6 lg:w-[360px] lg:shrink-0">
-          <h2 className="text-h3 mb-4">{t("summary")}</h2>
-
-          <dl className="flex flex-col gap-3">
-            <div className="flex items-baseline justify-between gap-4">
-              <dt className="text-caption text-ink-secondary">
-                {t("selectedItems", { count: selectedCount })}
-              </dt>
-              <dd className="text-caption">
-                {formatPrice(bag.selectedTotal)}
-              </dd>
+              {coupon && (
+                <p
+                  className={`text-caption mt-2 ${
+                    coupon.valid ? "text-action" : "text-error"
+                  }`}
+                >
+                  {coupon.valid
+                    ? t("couponWillApply", {
+                        amount: formatPrice(coupon.discountAmount),
+                      })
+                    : (coupon.message ?? t("couponInvalid"))}
+                </p>
+              )}
             </div>
-            <p className="text-caption text-ink-tertiary">
-              {t("totalsAtCheckout")}
-            </p>
-          </dl>
+          </div>
 
-          {selectedCount === 0 ? (
-            <p className="text-caption text-error mt-5">{t("selectSomething")}</p>
-          ) : (
-            <Link
-              href="/checkout/shipping"
-              className="bg-aqua text-on-accent text-label mt-5 flex h-12 items-center justify-center rounded-[24px] font-semibold"
-            >
-              {t("checkout")}
-            </Link>
-          )}
-        </aside>
+          <aside className="bg-base h-fit rounded-16 p-5 lg:w-[360px] lg:shrink-0">
+            <h2 className="text-body-lg font-bold">{t("summary")}</h2>
+            <hr className="border-line my-4 border-0 border-t" />
+
+            <dl className="flex flex-col gap-3">
+              <div className="flex items-baseline justify-between gap-4">
+                <dt className="text-body text-ink-secondary">
+                  {t("selectedItems", { count: selected.length })}
+                </dt>
+                <dd className="text-body">{formatPrice(bag.selectedTotal)}</dd>
+              </div>
+              <p className="text-caption text-ink-tertiary">
+                {t("totalsAtCheckout")}
+              </p>
+            </dl>
+
+            <hr className="border-line my-4 border-0 border-t" />
+
+            <div className="flex items-baseline justify-between gap-4">
+              <span className="text-label">{t("total")}</span>
+              <span className="text-h3">{formatPrice(bag.selectedTotal)}</span>
+            </div>
+
+            {selected.length === 0 ? (
+              <p className="text-caption text-error mt-5">
+                {t("selectSomething")}
+              </p>
+            ) : (
+              <Link
+                href={checkoutHref}
+                className="bg-aqua text-on-accent text-label mt-5 flex h-12 items-center justify-center rounded-[24px] font-semibold"
+              >
+                {t("proceedToCheckout")}
+              </Link>
+            )}
+
+            <ul className="mt-5 flex flex-col gap-2">
+              <TrustRow icon={<ShieldCheck className="size-3.5" aria-hidden />}>
+                {t("trustSecure")}
+              </TrustRow>
+              <TrustRow icon={<Check className="size-3.5" aria-hidden />}>
+                {t("trustProtection")}
+              </TrustRow>
+              <TrustRow icon={<Undo2 className="size-3.5" aria-hidden />}>
+                {t("trustReturns")}
+              </TrustRow>
+            </ul>
+          </aside>
+        </div>
       </div>
     </div>
   );
+}
+
+function TrustRow({
+  icon,
+  children,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <li className="text-caption text-ink-secondary flex items-center gap-2">
+      <span className="text-action">{icon}</span>
+      {children}
+    </li>
+  );
+}
+
+function firstParam(value: string | string[] | undefined): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return raw && raw.trim() !== "" ? raw : undefined;
 }

@@ -94,23 +94,43 @@ export async function clearBag(): Promise<void> {
 
 /* ------------------------------------------------------------ addresses */
 
-export async function createAddress(formData: FormData): Promise<void> {
-  const body = {
+/**
+ * The design's form carries six fields; `country` is not one of them, so it is
+ * sent as `SA` — every address is Saudi and `CreateAddressDto` requires it.
+ */
+function addressBody(formData: FormData) {
+  return {
     label: str(formData, "label"),
     recipientName: str(formData, "recipientName"),
     phone: str(formData, "phone"),
-    country: str(formData, "country") || "SA",
+    country: "SA",
     city: str(formData, "city"),
     area: str(formData, "area"),
     street: str(formData, "street"),
-    building: str(formData, "building"),
-    apartment: str(formData, "apartment"),
     postalCode: str(formData, "postalCode"),
     isDefault: formData.get("isDefault") === "on",
   };
+}
 
-  await serverApiFetch("/addresses", { method: "POST", body });
+export async function createAddress(formData: FormData): Promise<void> {
+  await serverApiFetch("/addresses", {
+    method: "POST",
+    body: addressBody(formData),
+  });
   revalidatePath("/checkout/shipping");
+  redirect(str(formData, "next") || "/checkout/shipping");
+}
+
+export async function updateAddress(formData: FormData): Promise<void> {
+  const id = str(formData, "id");
+  if (!id) return;
+
+  await serverApiFetch(`/addresses/${id}`, {
+    method: "PATCH",
+    body: addressBody(formData),
+  });
+  revalidatePath("/checkout/shipping");
+  redirect(str(formData, "next") || "/checkout/shipping");
 }
 
 export async function setDefaultAddress(formData: FormData): Promise<void> {
@@ -122,34 +142,10 @@ export async function setDefaultAddress(formData: FormData): Promise<void> {
 
 /* ------------------------------------------------------- payment methods */
 
-export async function addPaymentMethod(formData: FormData): Promise<void> {
-  const type = str(formData, "type") || "card";
-
-  /**
-   * Card details are transient — the API tokenizes server-side and the docs
-   * state the number and CVV are never stored. They are passed straight through
-   * and never logged or persisted here either.
-   */
-  const body: Record<string, unknown> = { type, isDefault: true };
-
-  if (type === "card" || type === "mada") {
-    body.cardNumber = str(formData, "cardNumber").replace(/\s+/g, "");
-    body.cardholderName = str(formData, "cardholderName");
-    body.expiryMonth = Number(str(formData, "expiryMonth"));
-    body.expiryYear = Number(str(formData, "expiryYear"));
-    body.cvv = str(formData, "cvv");
-  } else if (type === "stc_pay") {
-    body.walletPhone = str(formData, "walletPhone");
-  }
-
-  await serverApiFetch("/payment-methods", { method: "POST", body });
-  revalidatePath("/checkout/payment");
-}
-
-export async function removePaymentMethod(formData: FormData): Promise<void> {
-  const id = String(formData.get("id") ?? "");
+export async function setDefaultPaymentMethod(formData: FormData): Promise<void> {
+  const id = str(formData, "id");
   if (!id) return;
-  await serverApiFetch(`/payment-methods/${id}`, { method: "DELETE" });
+  await serverApiFetch(`/payment-methods/${id}/default`, { method: "PATCH" });
   revalidatePath("/checkout/payment");
 }
 
@@ -204,6 +200,7 @@ export async function placeOrder(formData: FormData): Promise<void> {
       addressId,
       shipments,
       ...(paymentMethodId ? { paymentMethodId } : {}),
+      ...(newPaymentMethod(formData) ?? {}),
       ...(couponCode ? { couponCode } : {}),
       ...(donationAmount > 0 && charityId
         ? { donationAmount, charityId }
@@ -229,6 +226,56 @@ export async function placeOrder(formData: FormData): Promise<void> {
   revalidatePath("/account/orders");
 
   redirect(orderId ? `/checkout/confirmed/${orderId}` : "/account/orders");
+}
+
+/**
+ * A card or wallet entered on the Add New Card screen, paid with in the same
+ * submit — `CheckoutDto.newPaymentMethod`, which is what the design's
+ * "Pay SAR 162" button does (Figma `651:7841`).
+ *
+ * Details are transient: the API tokenizes server-side and states the number and
+ * CVV are never stored. They are passed straight through and never logged or
+ * persisted here either.
+ */
+function newPaymentMethod(
+  formData: FormData,
+): { newPaymentMethod: Record<string, unknown> } | null {
+  const type = str(formData, "newPaymentType");
+  if (!type) return null;
+
+  const saveForFuture = formData.get("saveForFuture") === "on";
+
+  if (type === "stc_pay") {
+    return {
+      newPaymentMethod: {
+        type,
+        walletPhone: str(formData, "walletPhone"),
+        saveForFuture,
+      },
+    };
+  }
+
+  const { month, year } = parseExpiry(str(formData, "expiry"));
+  return {
+    newPaymentMethod: {
+      type,
+      cardNumber: str(formData, "cardNumber").replace(/\s+/g, ""),
+      cardholderName: str(formData, "cardholderName"),
+      expiryMonth: month,
+      expiryYear: year,
+      cvv: str(formData, "cvv"),
+      saveForFuture,
+    },
+  };
+}
+
+/** "12 / 28", "12/28" and "12/2028" all mean December 2028. */
+function parseExpiry(value: string): { month: number; year: number } {
+  const digits = value.replace(/\D/g, "");
+  const month = Number(digits.slice(0, 2));
+  const rest = digits.slice(2);
+  const year = rest.length === 2 ? 2000 + Number(rest) : Number(rest);
+  return { month, year };
 }
 
 function str(formData: FormData, key: string): string {

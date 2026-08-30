@@ -1,21 +1,65 @@
 import { getTranslations } from "next-intl/server";
-import { createAddress } from "../actions";
+import { Link } from "@/i18n/navigation";
+import { getCurrentUser } from "@/lib/auth/current-user";
+import { createAddress, updateAddress } from "../actions";
+import { primaryCta } from "./checkout-shell";
+import { Toggle } from "./toggle";
+import type { Address } from "@/lib/api/schemas/checkout";
 
 /**
- * New address form — Figma node 651:7667.
+ * Add / edit a delivery address — Figma `651:7667`.
  *
- * A plain server-action form. Required fields mirror `CreateAddressDto`:
- * recipientName, phone, country, city, street. Validation is left to the API so
- * there is one rule rather than two that can disagree.
+ * Validation is left to the API so there is one rule rather than two that can
+ * disagree. `country` is not a field: the design has none and every address is
+ * Saudi today, so it is sent as `SA` by the action.
  */
-export async function AddressForm() {
+export async function AddressForm({
+  address,
+  cancelHref,
+}: {
+  /** Present when editing; absent when creating. */
+  address?: Address;
+  cancelHref: string;
+}) {
   const t = await getTranslations("Checkout");
+  const editing = Boolean(address);
+
+  /**
+   * On a new address the design pre-fills the buyer's own name and phone and
+   * says so — the profile already has both, and most first orders ship to the
+   * buyer.
+   */
+  const user = editing ? null : await getCurrentUser();
+  const prefilled = Boolean(user?.fullName || user?.phoneNumber);
 
   return (
-    <form action={createAddress} className="flex flex-col gap-4">
+    <form
+      action={editing ? updateAddress : createAddress}
+      className="flex flex-col gap-4"
+    >
+      {editing && <input type="hidden" name="id" value={address!.id} />}
+      <input type="hidden" name="next" value={cancelHref} />
+
+      {!editing && prefilled && (
+        <p className="bg-warn-tint text-amber-deep text-caption rounded-8 px-3 py-2">
+          {t("prefilledFromProfile")}
+        </p>
+      )}
+
+      <TextField
+        name="label"
+        label={t("fields.label")}
+        defaultValue={address?.label ?? ""}
+        placeholder={t("fields.labelPlaceholder")}
+      />
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <TextField name="label" label={t("fields.label")} />
-        <TextField name="recipientName" label={t("fields.recipientName")} required />
+        <TextField
+          name="recipientName"
+          label={t("fields.fullName")}
+          required
+          defaultValue={address?.recipientName ?? user?.fullName ?? ""}
+        />
         <TextField
           name="phone"
           label={t("fields.phone")}
@@ -23,37 +67,50 @@ export async function AddressForm() {
           type="tel"
           dir="ltr"
           placeholder="+9665…"
+          defaultValue={address?.phone ?? user?.phoneNumber ?? ""}
         />
-        <TextField name="city" label={t("fields.city")} required />
-        <TextField name="area" label={t("fields.area")} />
         <TextField
-          name="country"
-          label={t("fields.country")}
+          name="city"
+          label={t("fields.city")}
           required
-          defaultValue="SA"
-          dir="ltr"
+          defaultValue={address?.city ?? ""}
+        />
+        <TextField
+          name="area"
+          label={t("fields.district")}
+          defaultValue={address?.area ?? ""}
         />
       </div>
 
-      <TextField name="street" label={t("fields.street")} required />
+      <TextField
+        name="street"
+        label={t("fields.street")}
+        required
+        defaultValue={address?.street ?? ""}
+      />
+      <TextField
+        name="postalCode"
+        label={t("fields.postalCode")}
+        dir="ltr"
+        defaultValue={address?.postalCode ?? ""}
+      />
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <TextField name="building" label={t("fields.building")} />
-        <TextField name="apartment" label={t("fields.apartment")} />
-        <TextField name="postalCode" label={t("fields.postalCode")} dir="ltr" />
-      </div>
+      <Toggle
+        name="isDefault"
+        title={t("fields.setDefault")}
+        hint={t("fields.setDefaultHint")}
+        defaultChecked={address?.isDefault ?? true}
+      />
 
-      <label className="flex items-center gap-2">
-        <input type="checkbox" name="isDefault" defaultChecked className="size-4" />
-        <span className="text-caption">{t("fields.setDefault")}</span>
-      </label>
-
-      <button
-        type="submit"
-        className="bg-aqua text-on-accent text-label flex h-12 items-center justify-center rounded-[24px] font-semibold"
-      >
-        {t("saveAddress")}
+      <button type="submit" className={primaryCta("mt-2")}>
+        {t("saveAndContinue")}
       </button>
+      <Link
+        href={cancelHref}
+        className="border-line text-label flex h-12 items-center justify-center rounded-[24px] border"
+      >
+        {t("cancel")}
+      </Link>
     </form>
   );
 }
@@ -76,8 +133,8 @@ function TextField({
   defaultValue?: string;
 }) {
   return (
-    <label className="flex flex-col gap-2">
-      <span className="text-label">
+    <label className="flex flex-col gap-1.5">
+      <span className="text-caption text-ink-secondary">
         {label}
         {required && <span className="text-error ms-1">*</span>}
       </span>
@@ -88,7 +145,7 @@ function TextField({
         required={required}
         placeholder={placeholder}
         defaultValue={defaultValue}
-        className="border-line bg-base text-body placeholder:text-ink-tertiary h-12 rounded-12 border px-4 outline-none focus:border-focus"
+        className="border-line bg-surface text-body placeholder:text-ink-tertiary focus:border-focus h-11 rounded-8 border px-3 outline-none"
       />
     </label>
   );

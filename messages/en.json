@@ -867,7 +867,6 @@
     "commentPlaceholder": "How was the item, the packaging, the seller?",
     "commentLimit": "Up to {max} characters.",
     "addPhotos": "Add photos (optional)",
-    "photosUnavailable": "Photo uploads aren't available yet — the review API takes image paths but nothing produces one.",
     "submit": "Submit review",
     "thanksTitle": "Thanks for your review!",
     "thanksBody": "Your feedback helps buyers trust great sellers.",
@@ -881,7 +880,8 @@
       "itemNotFound": "We could not find that item on your order.",
       "unauthenticated": "Sign in to leave a review.",
       "requestFailed": "We could not save that review. Try again."
-    }
+    },
+    "photosHint": "Up to {max} photos. Optional."
   },
   "Returns": {
     "breadcrumbOrders": "My Orders",

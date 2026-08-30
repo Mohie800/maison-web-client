@@ -31,8 +31,8 @@ import { submitReviewAction } from "@/features/reviews/actions";
  *   Communication) have no fields. `CreateReviewDto` models the same ground as
  *   a closed set of six `tags`, two of which are those exact dimensions, so we
  *   render the tags. Sub-rating stars would post nowhere.
- * - The four photo tiles are disabled: `photos` takes paths, and no endpoint
- *   produces one for a review (GAP-69). Left visible and explained rather than
+ * - The four photo tiles upload through `POST /media`, which turns each file
+ *   into the path `photos` takes (GAP-72).
  *   removed, so the missing capability is obvious.
  */
 export const metadata: Metadata = { robots: { index: false } };
@@ -183,26 +183,32 @@ export default async function WriteReviewPage({
             </span>
           </label>
 
-          {/* photo tiles — 651:8740. Disabled: nothing uploads a review photo. */}
+          {/*
+            photo tiles — 651:8740. Plain file inputs under labels, so they
+            work with the script off and post with the rest of the form.
+          */}
           <fieldset className="flex flex-col gap-2.5">
             <legend className="mb-2 text-[13px] font-semibold">
               {t("addPhotos")}
             </legend>
             <div className="flex flex-wrap gap-3">
-              {Array.from({ length: 4 }, (_, index) => (
-                <button
+              {Array.from({ length: PHOTOS_MAX }, (_, index) => (
+                <label
                   key={index}
-                  type="button"
-                  disabled
-                  title={t("photosUnavailable")}
-                  className="bg-surface border-line text-ink-tertiary size-24 rounded-12 border-[1.5px] border-dashed text-[20px] font-bold opacity-60"
+                  className="bg-surface border-line text-ink-tertiary flex size-24 cursor-pointer items-center justify-center rounded-12 border-[1.5px] border-dashed text-[20px] font-bold"
                 >
                   +
-                </button>
+                  <input
+                    type="file"
+                    name="photos"
+                    accept="image/*"
+                    className="sr-only"
+                  />
+                </label>
               ))}
             </div>
             <p className="text-ink-tertiary text-[11px]">
-              {t("photosUnavailable", { max: PHOTOS_MAX })}
+              {t("photosHint", { max: PHOTOS_MAX })}
             </p>
           </fieldset>
 

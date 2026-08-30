@@ -3,7 +3,10 @@ import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
-import { addToBagAction, buyNowAction } from "@/features/checkout/quick-actions";
+import {
+  addToBagAction,
+  buyNowAction,
+} from "@/features/checkout/quick-actions";
 import {
   cardAmount,
   isAuctionCard,
@@ -14,11 +17,19 @@ import {
  * The listing card used across the storefront — home rails, PLP, search,
  * seller profiles. Built once here because Phase 3 onwards reuses it
  * everywhere; changing the card should change every surface at once.
+ *
+ * Two frames draw it and they disagree: `651:692` (Featured) is the full card
+ * with a handle, a wishlist tile and the two actions; `651:1151` (Just Listed)
+ * is a compact 240px card with none of them. This follows Featured's sizes,
+ * since every grid that renders it is nearer 300px than 240, and Just Listed's
+ * ordering — category then condition — which is the order the compact frame
+ * uses and the one this card kept from the start. The NEW badge is Just
+ * Listed's, because that is the only rail that supplies one.
  */
 
 /**
- * Condition pill tones. The design splits these three ways: green for anything
- * new-or-near-new, amber for "good", neutral for "fair".
+ * Condition pill tones — `651:698`. The design splits these three ways: green
+ * for anything new-or-near-new, amber for "good", neutral for "fair".
  *
  * The amber pair is literal because the token set has no amber tint — only
  * `accent-gold` (#F6C90E), which is a fill colour and far too light to read as
@@ -53,10 +64,10 @@ export async function ProductCard({
   const isAuction = isAuctionCard(card);
 
   return (
-    <article className="bg-base border-line group flex flex-col overflow-hidden rounded-12 border">
+    <article className="bg-base border-line-200 group flex flex-col overflow-hidden rounded-16 border">
       <Link
         href={`/products/${card.id}`}
-        className="bg-surface relative block aspect-square overflow-hidden"
+        className="bg-fill-100 relative block aspect-square overflow-hidden"
       >
         {image ? (
           // eslint-disable-next-line @next/next/no-img-element -- listing photos come from the API origin and seeded external hosts; see plans/06 G12
@@ -67,7 +78,7 @@ export async function ProductCard({
             className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
         ) : (
-          <div className="bg-tint size-full" />
+          <div className="bg-fill-100 size-full" />
         )}
 
         {/*
@@ -78,17 +89,12 @@ export async function ProductCard({
         */}
         {badge ? (
           /*
-            A corner tag, not an inset pill: it sits flush in the card's
-            top-start corner and only its bottom-end corner is rounded — the
-            curve on the other side is the card's own radius clipping it, which
-            is why this relies on the article's `overflow-hidden`.
-
-            `#111827` is `t/ink-900`'s light value, written literally because
-            the token inverts to near-white in dark mode and this tag has to
-            stay dark on top of a photo either way. `text-aqua` is safe as a
-            token — `accent-aqua` holds #56F1A3 in both themes.
+            NewBdg — `651:1154`. A corner tag, not an inset pill: it sits flush
+            in the card's top-start corner and only its bottom-end corner is
+            rounded, the other curve being the card's own radius clipping it —
+            which is why this relies on the article's `overflow-hidden`.
           */
-          <span className="rounded-ee-12 text-aqua absolute top-0 start-0 flex h-7 items-center bg-ink-900 px-3 text-[11px] font-bold tracking-wide uppercase">
+          <span className="rounded-ee-8 text-aqua bg-ink-900 absolute top-0 start-0 flex h-6 items-center px-2.5 text-[9px] font-bold tracking-wide uppercase">
             {badge}
           </span>
         ) : card.discountPercent ? (
@@ -98,17 +104,19 @@ export async function ProductCard({
         ) : null}
       </Link>
 
-      <div className="flex flex-1 flex-col gap-2 p-3">
+      {/* Ctn — 651:695 */}
+      <div className="flex flex-1 flex-col gap-2 p-3.5">
         {/* Category first, then the condition pill — the order in the design. */}
         <div className="flex items-center gap-2">
           {card.category?.name && (
-            <span className="text-caption text-ink-tertiary truncate">
+            <span className="text-ink-500 truncate text-[11px]">
               {card.category.name}
             </span>
           )}
           {conditionKey && (
+            /* CB — 651:698 */
             <span
-              className={`shrink-0 rounded-[6px] px-1.5 py-0.5 text-[10px] font-bold ${tone}`}
+              className={`flex h-[22px] shrink-0 items-center rounded-[11px] px-2 text-[10px] font-medium ${tone}`}
             >
               {t(`conditions.${conditionKey}`)}
             </span>
@@ -123,13 +131,13 @@ export async function ProductCard({
         <Link
           href={`/products/${card.id}`}
           dir="auto"
-          className="text-label line-clamp-2 hover:underline"
+          className="text-ink-900 line-clamp-2 text-[15px] font-semibold hover:underline"
         >
           {card.title}
         </Link>
 
         {card.seller?.handle && (
-          <span className="text-caption text-ink-tertiary truncate" dir="ltr">
+          <span className="text-ink-400 truncate text-[11px]" dir="ltr">
             @{card.seller.handle}
           </span>
         )}
@@ -143,21 +151,21 @@ export async function ProductCard({
             */}
             {isAuction ? (
               <>
-                <span className="text-caption text-ink-tertiary">
+                <span className="text-ink-500 text-[11px]">
                   {t("currentBid")}
                 </span>
-                <span className="text-h3">
+                <span className="text-ink-900 text-[18px] font-bold">
                   {formatPrice(cardAmount(card), card.currency ?? "SAR")}
                 </span>
               </>
             ) : (
               <>
                 {card.originalPrice && card.discountPercent ? (
-                  <span className="text-caption text-ink-tertiary line-through">
+                  <span className="text-ink-400 text-[11px] line-through">
                     {formatPrice(card.originalPrice, card.currency ?? "SAR")}
                   </span>
                 ) : null}
-                <span className="text-h3">
+                <span className="text-ink-900 text-[18px] font-bold">
                   {formatPrice(card.price, card.currency ?? "SAR")}
                 </span>
               </>
@@ -172,9 +180,9 @@ export async function ProductCard({
           <Link
             href={`/products/${card.id}`}
             aria-label={tCommon("seeAll")}
-            className="text-ink-tertiary hover:text-error shrink-0"
+            className="bg-fill-100 text-ink-500 hover:text-error flex size-[30px] shrink-0 items-center justify-center rounded-[15px]"
           >
-            <Heart className="size-5" aria-hidden />
+            <Heart className="size-4" aria-hidden />
           </Link>
         </div>
 
@@ -187,7 +195,7 @@ export async function ProductCard({
           {isAuction ? (
             <Link
               href={`/auctions/${card.id}/terms`}
-              className="bg-gold text-caption flex h-9 flex-1 items-center justify-center rounded-[18px] font-bold text-black"
+              className="bg-gold flex h-10 flex-1 items-center justify-center rounded-10 text-[12px] font-bold text-black"
             >
               {t("bidNow")}
             </Link>
@@ -198,7 +206,7 @@ export async function ProductCard({
                 <input type="hidden" name="locale" value={locale} />
                 <button
                   type="submit"
-                  className="border-action text-action text-caption flex h-9 w-full items-center justify-center rounded-[18px] border font-semibold"
+                  className="border-aqua text-action flex h-10 w-full items-center justify-center rounded-10 border-[1.5px] text-[12px] font-bold"
                 >
                   {t("addToCart")}
                 </button>
@@ -208,7 +216,7 @@ export async function ProductCard({
                 <input type="hidden" name="locale" value={locale} />
                 <button
                   type="submit"
-                  className="bg-aqua text-caption flex h-9 w-full items-center justify-center rounded-[18px] font-bold text-black"
+                  className="bg-aqua flex h-10 w-full items-center justify-center rounded-10 text-[12px] font-bold text-black"
                 >
                   {t("buyNow")}
                 </button>

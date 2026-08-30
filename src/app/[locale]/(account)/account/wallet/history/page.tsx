@@ -74,7 +74,8 @@ export default async function WalletHistoryPage({
   const rawPage = Number(
     (Array.isArray(query.page) ? query.page[0] : query.page) ?? 1,
   );
-  const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
+  const page =
+    Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
 
   const [wallet, transactions] = await Promise.all([
     getWallet(),
@@ -96,13 +97,15 @@ export default async function WalletHistoryPage({
   };
 
   return (
-    <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-4 py-8 lg:flex-row lg:px-20">
-      <AccountSidebar active="wallet" />
+    <div className="mx-auto flex max-w-[1440px] flex-col px-4 pt-8 pb-14 lg:px-20">
+      <h1 className="text-ink-900 pb-6 text-[28px] font-bold">
+        {t("accountTitle")}
+      </h1>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <h1 className="text-h1">{t("historyTitle")}</h1>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <AccountSidebar active="wallet" />
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-row lg:items-start">
           <WalletNav active="history" />
 
           <div className="flex min-w-0 flex-1 flex-col gap-4">
@@ -111,17 +114,23 @@ export default async function WalletHistoryPage({
                 const active = chip.key === selected;
                 const target =
                   chip.param === "type"
-                    ? { type: chip.key as TransactionType, group: "all" as const }
-                    : { group: chip.key as TransactionGroup, type: "all" as const };
+                    ? {
+                        type: chip.key as TransactionType,
+                        group: "all" as const,
+                      }
+                    : {
+                        group: chip.key as TransactionGroup,
+                        type: "all" as const,
+                      };
                 return (
                   <li key={chip.key}>
                     <Link
                       href={href({ ...target, page: 1 })}
                       aria-pressed={active}
-                      className={`text-caption rounded-[16px] border px-3.5 py-1.5 ${
+                      className={`flex h-[34px] items-center rounded-[17px] px-3.5 text-[13px] font-semibold ${
                         active
-                          ? "border-action bg-action-tint text-action font-semibold"
-                          : "border-line text-ink-secondary hover:border-ink-tertiary"
+                          ? "bg-aqua text-on-accent"
+                          : "bg-base border-line hover:border-ink-tertiary border"
                       }`}
                     >
                       {t(`filters.${chip.key}`)}
@@ -137,12 +146,13 @@ export default async function WalletHistoryPage({
                   {t("noTransactions")}
                 </p>
               ) : (
-                <ul className="divide-line divide-y">
+                <ul className="divide-line-subtle divide-y">
                   {transactions.items.map((transaction) => (
                     <li key={transaction.id}>
                       <TransactionRow
                         transaction={transaction}
                         currency={wallet.currency ?? "SAR"}
+                        variant="history"
                       />
                     </li>
                   ))}

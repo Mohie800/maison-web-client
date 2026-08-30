@@ -29,9 +29,9 @@ export function StepCondition({
   conditionLabel: (value: string) => { title: string; body: string };
   defectLabel: (code: string) => string;
 }) {
-  const allowed = (schema?.allowedConditions?.length
-    ? schema.allowedConditions
-    : CONDITIONS) as readonly string[];
+  const allowed = (
+    schema?.allowedConditions?.length ? schema.allowedConditions : CONDITIONS
+  ) as readonly string[];
 
   const defectOptions = schema?.checklist?.defectChecklist?.options ?? [];
   const chosen = new Set(draft.defects.map((defect) => defect.code));
@@ -94,7 +94,9 @@ export function StepCondition({
                 <label
                   key={code}
                   className={`flex h-[38px] cursor-pointer items-center rounded-[19px] px-3.5 text-[13px] font-semibold ${
-                    on ? "bg-aqua text-on-accent" : "bg-surface border-line border"
+                    on
+                      ? "bg-aqua text-on-accent"
+                      : "bg-surface border-line border"
                   }`}
                 >
                   <input

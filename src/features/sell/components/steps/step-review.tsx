@@ -27,7 +27,6 @@ export function StepReview({
   labels,
   conditionLabel,
   cityLabel,
-  errors,
 }: {
   draft: SellDraft;
   feePercent: number;
@@ -45,7 +44,6 @@ export function StepReview({
   };
   conditionLabel: (value: string) => string;
   cityLabel: (city: string) => string;
-  errors: string[];
 }) {
   void onChange;
   const buyerPays = Number(draft.price) || 0;
@@ -122,14 +120,6 @@ export function StepReview({
 
         <p className="text-ink-tertiary text-[12px]">{labels.note}</p>
       </section>
-
-      {errors.length > 0 && (
-        <ul className="text-error flex flex-col gap-1 text-[13px]" role="alert">
-          {errors.map((message) => (
-            <li key={message}>{message}</li>
-          ))}
-        </ul>
-      )}
     </>
   );
 }

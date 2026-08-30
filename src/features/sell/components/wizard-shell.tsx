@@ -25,6 +25,7 @@ export function WizardShell({
   continueLabel,
   busy,
   children,
+  errors,
 }: {
   step: SellStep;
   title: string;
@@ -39,6 +40,8 @@ export function WizardShell({
   continueLabel?: string;
   busy?: boolean;
   children: React.ReactNode;
+  /** Whatever the last save or submit reported. */
+  errors: string[];
 }) {
   const index = SELL_STEPS.indexOf(step);
 
@@ -109,6 +112,22 @@ export function WizardShell({
           <p className="text-ink-secondary mt-1 text-[14px]">{subtitle}</p>
 
           <div className="mt-8 flex flex-col gap-6">{children}</div>
+
+          {/*
+            Saving happens on every advance now, so an error can come from any
+            step — not just the submit. It is shown here so the seller sees it
+            wherever they are, rather than only on the last screen.
+          */}
+          {errors.length > 0 && (
+            <ul
+              className="text-error mt-6 flex flex-col gap-1 text-[13px]"
+              role="alert"
+            >
+              {errors.map((message) => (
+                <li key={message}>{message}</li>
+              ))}
+            </ul>
+          )}
 
           {/* 651:5175 — the rule, then the primary on the trailing edge. */}
           <div className="bg-line-subtle mt-10 h-px w-full" />

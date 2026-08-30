@@ -1,15 +1,14 @@
 /**
  * The sell wizard's working state.
  *
- * ⚠️ This is held in the browser, not on the server, because the API cannot
- * store a partial listing. `POST /listings` **requires** `categoryId`, `title`,
- * `condition`, `attributes` and `price` — data the wizard does not have until
- * step 7 — so there is no draft to create at step 1 and nothing to PATCH
- * through steps 2–8. plans/04 describes a server-persisted draft; that plan
- * predates the contract and is not buildable (GAP-73). Recorded as plans/09 C36.
+ * The draft lives on the server. `POST /listings` takes `categoryId` alone and
+ * returns a draft (GAP-73, answered in Round 5), so the wizard creates one when
+ * the seller leaves step 1 and `PATCH`es each later step's fields as it goes.
+ * `POST /listings/{id}/submit` enforces the complete set at the end. plans/04
+ * describes exactly this and is buildable as written.
  *
- * The listing is created once, on the final step, and submitted immediately
- * after. `sessionStorage` keeps the work across a refresh.
+ * This state is the in-flight copy the steps edit; the id in `?draft=` is what
+ * survives a refresh, and the wizard rehydrates from `GET /listings/{id}`.
  */
 
 export const SELL_STEPS = [
@@ -78,7 +77,7 @@ export const DESCRIPTION_MAX = 500;
  * Five is therefore the real ceiling, not ten (GAP-74).
  */
 export const PHOTOS_MIN = 3;
-export const PHOTOS_MAX = 5;
+export const PHOTOS_MAX = 10;
 
 export interface SellDraft {
   categoryId: string | null;
@@ -93,7 +92,7 @@ export interface SellDraft {
   condition: (typeof CONDITIONS)[number] | null;
   /** `DefectItemDto` — `code` is required, `description` optional. */
   defects: { code: string; description?: string }[];
-  /** Data URIs — what `imagesBase64` takes. First is the cover. */
+  /** `/uploads/media/…` paths from `POST /media`. First is the cover. */
   photos: string[];
   verifiedItems: string[];
   price: string;
@@ -173,9 +172,13 @@ export function toCreateBody(draft: SellDraft): Record<string, unknown> {
     condition: draft.condition,
     attributes: draft.attributes,
     price: num(draft.price) ?? 0,
-    ...(draft.description.trim() ? { description: draft.description.trim() } : {}),
+    ...(draft.description.trim()
+      ? { description: draft.description.trim() }
+      : {}),
     ...(draft.brandId ? { brandId: draft.brandId } : {}),
-    ...(num(draft.originalPrice) ? { originalPrice: num(draft.originalPrice) } : {}),
+    ...(num(draft.originalPrice)
+      ? { originalPrice: num(draft.originalPrice) }
+      : {}),
     ...(num(draft.quantity) ? { quantity: num(draft.quantity) } : {}),
     isNegotiable: draft.saleMode === "negotiable",
     auctionEnabled: auction,
@@ -183,7 +186,9 @@ export function toCreateBody(draft: SellDraft): Record<string, unknown> {
     ...(auction
       ? {
           startingBid: num(draft.startingBid),
-          ...(num(draft.reservePrice) ? { reservePrice: num(draft.reservePrice) } : {}),
+          ...(num(draft.reservePrice)
+            ? { reservePrice: num(draft.reservePrice) }
+            : {}),
           auctionDurationHours: draft.auctionDurationHours,
         }
       : {}),
@@ -192,6 +197,132 @@ export function toCreateBody(draft: SellDraft): Record<string, unknown> {
     shippingPayer: draft.shippingPayer,
     city: draft.city,
     ...(draft.photos.length ? { imagesBase64: draft.photos } : {}),
+  };
+}
+
+/**
+ * What each step writes, so a `PATCH` only ever carries fields the seller has
+ * actually been asked for.
+ *
+ * `attributes` are re-validated against the category's track schema on every
+ * write, so sending a half-filled set from an earlier step would 400 on data
+ * the wizard has not collected yet. Hence per-step bodies rather than one
+ * accumulated one.
+ *
+ * `category` is absent: `categoryId` goes on the create. `photos`,
+ * `authenticity` and `review` write through their own endpoints.
+ */
+export function stepPatchBody(
+  step: SellStep,
+  draft: SellDraft,
+): Record<string, unknown> {
+  const auction = draft.saleMode === "auction";
+  switch (step) {
+    case "type":
+      /*
+        `tradeEnabled` is left out: `PATCH /listings/{id}` 500s on it, with
+        either value, while every other field on this body patches cleanly
+        (GAP-92). Sending it would fail the whole step, so the flag is dropped
+        until that is fixed — a listing made here cannot be marked tradeable.
+      */
+      return {
+        isNegotiable: draft.saleMode === "negotiable",
+        auctionEnabled: auction,
+      };
+    case "details":
+      return {
+        title: draft.title.trim(),
+        attributes: draft.attributes,
+        ...(draft.description.trim()
+          ? { description: draft.description.trim() }
+          : {}),
+        ...(draft.brandId ? { brandId: draft.brandId } : {}),
+      };
+    case "condition":
+      return { condition: draft.condition };
+    case "pricing":
+      return {
+        price: num(draft.price) ?? 0,
+        ...(num(draft.originalPrice)
+          ? { originalPrice: num(draft.originalPrice) }
+          : {}),
+        ...(num(draft.quantity) ? { quantity: num(draft.quantity) } : {}),
+        ...(auction
+          ? {
+              startingBid: num(draft.startingBid),
+              ...(num(draft.reservePrice)
+                ? { reservePrice: num(draft.reservePrice) }
+                : {}),
+              auctionDurationHours: draft.auctionDurationHours,
+            }
+          : {}),
+        ...(draft.specialTags.length ? { specialTags: draft.specialTags } : {}),
+      };
+    case "shipping":
+      return {
+        fulfillmentMethod: draft.fulfillmentMethod,
+        shippingPayer: draft.shippingPayer,
+        city: draft.city,
+      };
+    default:
+      return {};
+  }
+}
+
+/**
+ * A draft read back from `GET /listings/{id}` into the shape the steps edit.
+ * Every field is optional on a draft, so each falls back to the empty value.
+ */
+export function fromListing(
+  listing: Record<string, unknown>,
+  topCategoryId: string,
+): SellDraft {
+  const str = (v: unknown) => (typeof v === "string" ? v : "");
+  const money = (v: unknown) =>
+    v == null ? "" : typeof v === "number" ? String(v) : str(v);
+  const photos = Array.isArray(listing.photos)
+    ? (listing.photos as { url?: string }[])
+        .map((photo) => photo?.url)
+        .filter((url): url is string => Boolean(url))
+    : [];
+
+  return {
+    ...EMPTY_DRAFT,
+    categoryId: str(listing.categoryId) || null,
+    topCategoryId,
+    title: str(listing.title),
+    description: str(listing.description),
+    brandId: str(listing.brandId) || null,
+    attributes:
+      listing.attributes && typeof listing.attributes === "object"
+        ? (listing.attributes as SellDraft["attributes"])
+        : {},
+    condition: (str(listing.condition) || null) as SellDraft["condition"],
+    photos,
+    saleMode: listing.auctionEnabled
+      ? "auction"
+      : listing.isNegotiable
+        ? "negotiable"
+        : "fixed",
+    tradeEnabled: listing.tradeEnabled === true,
+    price: money(listing.price),
+    originalPrice: money(listing.originalPrice),
+    quantity: money(listing.quantity),
+    startingBid: money(listing.startingBid),
+    reservePrice: money(listing.reservePrice),
+    auctionDurationHours:
+      (listing.auctionDurationHours as SellDraft["auctionDurationHours"]) ??
+      EMPTY_DRAFT.auctionDurationHours,
+    specialTags: Array.isArray(listing.specialTags)
+      ? (listing.specialTags as SellDraft["specialTags"])
+      : [],
+    fulfillmentMethod: (str(listing.fulfillmentMethod) ||
+      EMPTY_DRAFT.fulfillmentMethod) as SellDraft["fulfillmentMethod"],
+    shippingPayer: (str(listing.shippingPayer) ||
+      EMPTY_DRAFT.shippingPayer) as SellDraft["shippingPayer"],
+    city: (CITIES as readonly string[]).includes(str(listing.city))
+      ? (str(listing.city) as SellDraft["city"])
+      : EMPTY_DRAFT.city,
   };
 }
 

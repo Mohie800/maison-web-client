@@ -96,7 +96,10 @@ export function StepDetails({
                 setAttribute(key, {
                   ...(typeof draft.attributes[key] === "object" &&
                   !Array.isArray(draft.attributes[key])
-                    ? (draft.attributes[key] as unknown as Record<string, string>)
+                    ? (draft.attributes[key] as unknown as Record<
+                        string,
+                        string
+                      >)
                     : {}),
                   [subKey]: value,
                 } as unknown as string[])

@@ -1,20 +1,22 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useTransition } from "react";
 import { X } from "lucide-react";
 import { PHOTOS_MAX, PHOTOS_MIN, type SellDraft } from "../../draft";
+import { uploadPhotoAction } from "../../actions";
+import { resolveMediaUrl } from "@/lib/api/media";
 
 /**
  * Step 5 — Figma `651:5687` (Web_Sell_5_Photos): one 300×220 cover tile and a
  * 2×2 grid of 150×100 tiles.
  *
- * The frame draws exactly five slots, which happens to be the API's real
- * ceiling — `CreateListingDto.imagesBase64` takes at most 5. The frame's own
- * copy says "up to 8" and `POST /listings/{id}/photos` says 10; five is what
- * can actually be sent (GAP-74), so the copy reads five.
+ * The frame draws five slots and its copy says "up to 8". Both routes cap at
+ * **10** since GAP-74 was answered, so the grid grows to ten and the copy says
+ * so — the frame's five was a ceiling that no longer exists.
  *
- * Files are read to data URIs in the browser because that is what the API
- * accepts; there is no upload endpoint to post a file to.
+ * Each file goes straight to `POST /media` through a Server Action and the step
+ * holds the returned `/uploads/media/…` path. Nothing is base64-encoded and
+ * nothing is carried in the browser between steps.
  */
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -31,37 +33,39 @@ export function StepPhotos({
     remove: string;
     needMore: (min: number) => string;
     tooLarge: string;
+    uploadFailed: string;
+    uploading: string;
   };
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [busy, startUpload] = useTransition();
 
-  const add = async (files: FileList | null) => {
+  const add = (files: FileList | null) => {
     if (!files?.length) return;
     setError(null);
     const room = PHOTOS_MAX - draft.photos.length;
     const chosen = Array.from(files).slice(0, room);
 
-    const read = await Promise.all(
-      chosen.map(
-        (file) =>
-          new Promise<string | null>((resolve) => {
-            if (file.size > MAX_BYTES) return resolve(null);
-            const reader = new FileReader();
-            reader.onload = () =>
-              resolve(
-                typeof reader.result === "string" ? reader.result : null,
-              );
-            reader.onerror = () => resolve(null);
-            reader.readAsDataURL(file);
-          }),
-      ),
-    );
-
-    if (read.some((each) => each === null)) setError(labels.tooLarge);
-    const kept = read.filter((each): each is string => Boolean(each));
-    if (kept.length) onChange({ photos: [...draft.photos, ...kept] });
+    const tooBig = chosen.filter((file) => file.size > MAX_BYTES);
+    const sending = chosen.filter((file) => file.size <= MAX_BYTES);
+    if (tooBig.length) setError(labels.tooLarge);
     if (input.current) input.current.value = "";
+    if (!sending.length) return;
+
+    startUpload(async () => {
+      const uploaded = await Promise.all(
+        sending.map(async (file) => {
+          const body = new FormData();
+          body.set("file", file);
+          const result = await uploadPhotoAction(body);
+          return result.ok ? result.url : null;
+        }),
+      );
+      const kept = uploaded.filter((url): url is string => Boolean(url));
+      if (kept.length < sending.length) setError(labels.uploadFailed);
+      if (kept.length) onChange({ photos: [...draft.photos, ...kept] });
+    });
   };
 
   const removeAt = (index: number) =>
@@ -130,6 +134,12 @@ export function StepPhotos({
         </p>
       )}
 
+      {busy && (
+        <p className="text-ink-tertiary text-[12px]" role="status">
+          {labels.uploading}
+        </p>
+      )}
+
       {/* 651:5699 */}
       <p className="text-ink-tertiary text-[12px]">{labels.tip}</p>
     </>
@@ -160,7 +170,11 @@ function Tile({
     return (
       <div className={`relative overflow-hidden ${box}`}>
         {/* eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12 */}
-        <img src={photo} alt="" className="size-full object-cover" />
+        <img
+          src={resolveMediaUrl(photo) ?? photo}
+          alt=""
+          className="size-full object-cover"
+        />
         <button
           type="button"
           onClick={onRemove}

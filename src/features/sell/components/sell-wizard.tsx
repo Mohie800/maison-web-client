@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -10,12 +10,17 @@ import {
   SELL_STEPS,
   categoryTypeForSlug,
   stepComplete,
-  toCreateBody,
+  stepPatchBody,
   type CategoryType,
   type SellDraft,
   type SellStep,
 } from "../draft";
-import { publishListingAction } from "../actions";
+import {
+  attachPhotosAction,
+  createDraftAction,
+  saveDraftAction,
+  submitDraftAction,
+} from "../actions";
 import type { SellBrand, SellCategory, TrackSchema } from "../types";
 import { WizardShell } from "./wizard-shell";
 import { StepCategory } from "./steps/step-category";
@@ -31,62 +36,72 @@ import { StepReview } from "./steps/step-review";
 /**
  * The nine-step sell flow — Figma `651:5102`.
  *
- * One route rather than nine: the API cannot hold a partial listing, so there
- * is no draft id to put in a URL. See ../draft.ts. Work is kept in
- * `sessionStorage` so a refresh doesn't lose it, and the listing is created
- * and submitted in one go from the review step.
+ * One route rather than nine, but the draft is now server-side: leaving step 1
+ * creates it with `POST /listings { categoryId }` and each later step `PATCH`es
+ * the fields it owns (GAP-73). The id goes in `?draft=`, so a refresh resumes
+ * from the server rather than from the browser — there is no `sessionStorage`
+ * path any more, and photos are no longer carried as data URIs.
+ *
+ * Each advance saves before moving. A save that fails keeps the seller on the
+ * step with the API's own field errors, rather than letting them walk to the
+ * end and discover it at submit.
  */
-const STORAGE_KEY = "maison.sell.draft.v1";
+/**
+ * Put the draft id in the URL without navigating.
+ *
+ * The id is there so a refresh can resume; a router push or replace would
+ * remount the wizard and lose the step the seller is on.
+ */
+function rememberDraft(id: string | null) {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  if (id) url.searchParams.set("draft", id);
+  else url.searchParams.delete("draft");
+  window.history.replaceState(window.history.state, "", url);
+}
+
+/** Resuming drops the seller on the first step they had not finished. */
+function firstUnfinished(draft: SellDraft): SellStep {
+  return SELL_STEPS.find((each) => !stepComplete(each, draft)) ?? "review";
+}
 
 export function SellWizard({
   tree,
   brands,
   schemas,
   feePercent,
+  initialDraft,
+  initialDraftId,
 }: {
   tree: SellCategory[];
   brands: SellBrand[];
   schemas: Record<CategoryType, TrackSchema | null>;
   /** From `GET /settings/fees` — the earnings cards are worked from it. */
   feePercent: number;
+  /** Rehydrated from `?draft=` when one is being resumed. */
+  initialDraft?: SellDraft | null;
+  initialDraftId?: string | null;
 }) {
   const t = useTranslations("Sell");
-  const [draft, setDraft] = useState<SellDraft>(EMPTY_DRAFT);
-  const [step, setStep] = useState<SellStep>("category");
-  const [submitted, setSubmitted] = useState<{ id: string; status: string } | null>(
-    null,
+  const [draft, setDraft] = useState<SellDraft>(initialDraft ?? EMPTY_DRAFT);
+  const [draftId, setDraftId] = useState<string | null>(initialDraftId ?? null);
+  const [step, setStep] = useState<SellStep>(
+    initialDraft ? firstUnfinished(initialDraft) : "category",
   );
+  const [submitted, setSubmitted] = useState<{
+    id: string;
+    status: string;
+  } | null>(null);
   const [errors, setErrors] = useState<string[]>([]);
   const [pending, startTransition] = useTransition();
-  const [restored, setRestored] = useState(false);
-
-  // Restoring has to happen after mount: the server has no sessionStorage, so
-  // reading it during render would hydrate a different tree than it sent.
-  useEffect(() => {
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- see above
-      if (saved) setDraft({ ...EMPTY_DRAFT, ...JSON.parse(saved) });
-    } catch {
-      // A corrupt or blocked store just means starting fresh.
-    }
-    setRestored(true);
-  }, []);
-
-  useEffect(() => {
-    if (!restored) return;
-    try {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
-    } catch {
-      // Private mode, or the photos pushed it over quota — the wizard still
-      // works, it just won't survive a refresh.
-    }
-  }, [draft, restored]);
 
   const patch = (next: Partial<SellDraft>) =>
     setDraft((current) => ({ ...current, ...next }));
 
-  const branch = useMemo(() => findNames(tree, draft.categoryId), [tree, draft.categoryId]);
+  const branch = useMemo(
+    () => findNames(tree, draft.categoryId),
+    [tree, draft.categoryId],
+  );
   const schema = branch ? schemas[categoryTypeForSlug(branch.rootSlug)] : null;
 
   const index = SELL_STEPS.indexOf(step);
@@ -100,28 +115,70 @@ export function SellWizard({
     );
   };
 
-  const publish = () => {
+  const report = (result: { error: string; messages: string[] }) =>
+    setErrors(
+      result.messages.length
+        ? result.messages
+        : [t(`errors.${result.error}` as "errors.requestFailed")],
+    );
+
+  /**
+   * Save this step, then move. Step 1 creates the draft; the rest patch it.
+   *
+   * The photo step is the exception: its files are already uploaded by the time
+   * Continue is pressed, so all that is left is attaching the paths.
+   */
+  const advance = (next: SellStep) => {
     setErrors([]);
     startTransition(async () => {
-      const result = await publishListingAction(
-        toCreateBody(draft),
+      if (step === "category") {
+        if (!draftId) {
+          const created = await createDraftAction(draft.categoryId ?? "");
+          if (!created.ok) return report(created);
+          setDraftId(created.id);
+          /*
+            `history.replaceState`, not `router.replace`: the id is in the URL
+            so a *refresh* can resume, and a router navigation would remount
+            this component and throw away the step the seller is on.
+          */
+          rememberDraft(created.id);
+        }
+        setStep(next);
+        return;
+      }
+
+      if (!draftId) {
+        setStep(next);
+        return;
+      }
+
+      if (step === "photos") {
+        const attached = await attachPhotosAction(draftId, draft.photos);
+        if (!attached.ok) return report(attached);
+        setStep(next);
+        return;
+      }
+
+      const saved = await saveDraftAction(draftId, stepPatchBody(step, draft));
+      if (!saved.ok) return report(saved);
+      setStep(next);
+    });
+  };
+
+  const publish = () => {
+    if (!draftId) return;
+    setErrors([]);
+    startTransition(async () => {
+      const result = await submitDraftAction(
+        draftId,
         draft.verifiedItems,
         draft.defects,
       );
       if (result.ok) {
         setSubmitted({ id: result.id, status: result.status });
-        try {
-          sessionStorage.removeItem(STORAGE_KEY);
-        } catch {
-          // Nothing to clean up.
-        }
         return;
       }
-      setErrors(
-        result.messages.length
-          ? result.messages
-          : [t(`errors.${result.error}` as "errors.requestFailed")],
-      );
+      report(result);
     });
   };
 
@@ -132,8 +189,10 @@ export function SellWizard({
         status={submitted.status}
         onAnother={() => {
           setDraft(EMPTY_DRAFT);
+          setDraftId(null);
           setStep("category");
           setSubmitted(null);
+          rememberDraft(null);
         }}
       />
     );
@@ -159,9 +218,10 @@ export function SellWizard({
       onStep={setStep}
       onBack={index > 0 ? () => setStep(SELL_STEPS[index - 1]) : null}
       onContinue={
-        step === "review" ? publish : () => setStep(SELL_STEPS[index + 1])
+        step === "review" ? publish : () => advance(SELL_STEPS[index + 1])
       }
       canContinue={canContinue}
+      errors={errors}
       continueLabel={step === "review" ? t("submitForReview") : undefined}
       busy={pending}
     >
@@ -203,8 +263,14 @@ export function SellWizard({
           onChange={patch}
           labels={{
             options: {
-              sell: { title: t("listing.sell.title"), body: t("listing.sell.body") },
-              trade: { title: t("listing.trade.title"), body: t("listing.trade.body") },
+              sell: {
+                title: t("listing.sell.title"),
+                body: t("listing.sell.body"),
+              },
+              trade: {
+                title: t("listing.trade.title"),
+                body: t("listing.trade.body"),
+              },
               auction: {
                 title: t("listing.auction.title"),
                 body: t("listing.auction.body"),
@@ -264,6 +330,8 @@ export function SellWizard({
             remove: t("photos.remove"),
             needMore: (min) => t("photos.needMore", { min }),
             tooLarge: t("photos.tooLarge"),
+            uploadFailed: t("photos.uploadFailed"),
+            uploading: t("photos.uploading"),
           }}
         />
       )}
@@ -276,9 +344,7 @@ export function SellWizard({
             legend: t("authenticity.legend"),
             scoreLater: t("authenticity.scoreLater"),
           }}
-          itemLabel={(item) =>
-            label(t, `verification.${item}`, humanise(item))
-          }
+          itemLabel={(item) => label(t, `verification.${item}`, humanise(item))}
         />
       )}
 
@@ -316,7 +382,9 @@ export function SellWizard({
             note: t("shipping.note"),
           }}
           cityLabel={(city) => label(t, `cities.${city}`, city)}
-          methodLabel={(method) => label(t, `fulfillment.${method}`, humanise(method))}
+          methodLabel={(method) =>
+            label(t, `fulfillment.${method}`, humanise(method))
+          }
           payerLabel={(payer) => label(t, `payers.${payer}`, humanise(payer))}
         />
       )}
@@ -343,7 +411,6 @@ export function SellWizard({
             label(t, `conditions.${value}.title`, humanise(value))
           }
           cityLabel={(city) => label(t, `cities.${city}`, city)}
-          errors={errors}
         />
       )}
     </WizardShell>
@@ -398,7 +465,10 @@ function Submitted({
                 draft.saleMode === "auction"
                   ? t("review.auction")
                   : t("review.sale"),
-                formatPrice(Number(draft.originalPrice) || Number(draft.price) || 0, "SAR"),
+                formatPrice(
+                  Number(draft.originalPrice) || Number(draft.price) || 0,
+                  "SAR",
+                ),
                 live ? t("submitted.live") : t("submitted.pending"),
               ].join(" · ")}
             </span>

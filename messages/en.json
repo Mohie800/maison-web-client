@@ -1393,7 +1393,9 @@
       "tip": "Tip: include brand tags, serial/date codes and receipts to raise your score.",
       "remove": "Remove photo",
       "needMore": "Add at least {min} photos.",
-      "tooLarge": "Some photos were over 5 MB and were skipped."
+      "tooLarge": "Some photos were over 5 MB and were skipped.",
+      "uploadFailed": "Some photos couldn't be uploaded. Try those again.",
+      "uploading": "Uploading…"
     },
     "authenticity": {
       "legend": "What can you show?",

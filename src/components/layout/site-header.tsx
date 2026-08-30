@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getBag } from "@/lib/api/endpoints/checkout";
+import { getUnreadCount } from "@/lib/api/endpoints/conversations";
 import { resolveMediaUrl } from "@/lib/api/media";
 import {
   BellFilled,
@@ -10,6 +11,7 @@ import {
   HeartFilled,
   VisualSearchIcon,
 } from "@/components/icons/header-icons";
+import { MessagesSquare } from "lucide-react";
 
 /**
  * Site header — Figma node 651:544.
@@ -35,6 +37,14 @@ export async function SiteHeader() {
         .then((bag) => bag.items.length)
         .catch(() => 0)
     : 0;
+
+  /*
+    The inbox badge. No frame draws a way into the inbox — not the header, not
+    the account rail — but `GET /conversations/unread-count` describes itself as
+    being "for the inbox badge", so one is intended somewhere. It goes here,
+    beside the other three, and is recorded in plans/09 C41.
+  */
+  const unreadMessages = user ? await getUnreadCount() : 0;
 
   return (
     <header className="bg-base border-line-200 sticky top-0 z-40 h-[72px] border-b">
@@ -119,6 +129,16 @@ export async function SiteHeader() {
           <IconButton href="/account/notifications" label={t("notifications")}>
             <BellFilled className="size-6" />
           </IconButton>
+
+          {user && (
+            <IconButton
+              href="/inbox"
+              label={t("messages")}
+              badge={unreadMessages}
+            >
+              <MessagesSquare className="size-6" strokeWidth={2.5} />
+            </IconButton>
+          )}
 
           <IconButton href="/cart" label={tNav("bag")} badge={bagCount}>
             <CartFilled className="size-6" />

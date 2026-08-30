@@ -222,7 +222,8 @@
     "all": "All",
     "live": "Live",
     "trendHub": "Trend Hub",
-    "sell": "+ Sell"
+    "sell": "+ Sell",
+    "messages": "Messages"
   },
   "Footer": {
     "tagline": "Saudi Arabia's premier second-hand marketplace.",
@@ -2142,5 +2143,42 @@
       "unauthenticated": "Sign in to continue.",
       "requestFailed": "Something went wrong. Please try again."
     }
+  },
+  "Inbox": {
+    "title": "Inbox",
+    "unread": "{count} unread",
+    "filters": {
+      "all": "All",
+      "buying": "Buying",
+      "selling": "Selling",
+      "trade": "Trade"
+    },
+    "search": "Search",
+    "searchPlaceholder": "Search messages...",
+    "noMatches": "No conversations match that search.",
+    "noneInFilter": "Nothing here yet.",
+    "emptyTitle": "No messages yet",
+    "emptyBody": "When you buy, sell or trade, your conversations show up here.",
+    "emptyCta": "Browse items",
+    "online": "Online now",
+    "offline": "Offline",
+    "composerPlaceholder": "Type a message...",
+    "send": "Send",
+    "pickThread": "Pick a conversation to read it.",
+    "age": {
+      "now": "now",
+      "min": "{n} min",
+      "hr": "{n} hr",
+      "yesterday": "Yesterday",
+      "days": "{n} days"
+    },
+    "errors": {
+      "tooLong": "That message is too long.",
+      "empty": "Write something first.",
+      "notFound": "That conversation could not be found.",
+      "unauthenticated": "Sign in to continue.",
+      "sendFailed": "The message didn’t send. Please try again."
+    },
+    "attachmentBlocked": "Attachment not shown"
   }
 }

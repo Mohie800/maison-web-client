@@ -89,27 +89,28 @@ export default async function OrdersPage({
           </nav>
 
           {result.items.length === 0 ? (
-            <div className="flex flex-col items-center gap-4 py-14 text-center">
-              <span className="bg-info-tint2 flex size-16 items-center justify-center rounded-full">
-                <Package className="text-info size-7" aria-hidden />
+            /* Web_Empty_Orders — 651:8328 */
+            <div className="flex flex-col items-center gap-5 py-20 text-center">
+              <span className="bg-info-tint2 flex size-20 items-center justify-center rounded-full">
+                <Package className="text-info size-8" aria-hidden />
               </span>
-              <h2 className="text-h2">
+              <h2 className="text-ink-900 text-[28px] font-bold">
                 {tab === "all" ? t("emptyTitle") : t("emptyTabTitle")}
               </h2>
-              <p className="text-body text-ink-secondary max-w-[360px] whitespace-pre-line">
+              <p className="text-ink-500 max-w-[480px] text-[15px] whitespace-pre-line">
                 {tab === "all" ? t("emptyBody") : t("emptyTabBody")}
               </p>
               {tab === "all" && (
                 <div className="mt-2 flex flex-wrap justify-center gap-3">
                   <Link
                     href="/products"
-                    className="bg-action text-label flex h-12 items-center rounded-[24px] px-7 font-semibold text-white"
+                    className="bg-action text-base flex h-12 items-center rounded-[24px] px-7 text-[14px] font-bold"
                   >
                     {t("startShopping")}
                   </Link>
                   <Link
                     href="/categories"
-                    className="border-line bg-base text-label flex h-12 items-center rounded-[24px] border px-7 font-semibold"
+                    className="border-line-200 bg-base text-ink-900 flex h-12 items-center rounded-[24px] border px-7 text-[14px] font-medium"
                   >
                     {t("browseCategories")}
                   </Link>

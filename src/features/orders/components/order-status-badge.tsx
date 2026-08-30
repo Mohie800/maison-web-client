@@ -8,14 +8,14 @@ import { getTranslations } from "next-intl/server";
  * `delivered` on the neutral grey `bg-tint`, which the design does not — its
  * Shipped chip is blue-on-blue and Processing amber-on-amber (`651:8213`).
  *
- * Two shapes. `sm` is the compact chip the order list uses; `pill` is the
- * 28px-tall badge on the tracking header (Figma `651:8348`).
+ * Two shapes. `sm` is the OCard chip — 24px, 11px medium, `rounded-12`
+ * (`651:8284`); `pill` is the 28px badge on the tracking header (`651:8348`).
  */
 const TONE: Record<string, string> = {
-  placed: "bg-tint text-ink-secondary",
-  pending: "bg-warn-tint3 text-amber-text",
-  packed: "bg-warn-tint3 text-amber-text",
-  processing: "bg-warn-tint3 text-amber-text",
+  placed: "bg-fill-100 text-ink-500",
+  pending: "bg-warn-tint text-amber-deep",
+  packed: "bg-warn-tint text-amber-deep",
+  processing: "bg-warn-tint text-amber-deep",
   shipped: "bg-info-tint text-info",
   delivered: "bg-action-tint text-action",
   cancelled: "bg-error-tint text-error",
@@ -23,7 +23,7 @@ const TONE: Record<string, string> = {
 };
 
 const SHAPE = {
-  sm: "rounded-[6px] px-2 py-1 text-[10px] font-bold uppercase",
+  sm: "flex h-6 items-center rounded-12 px-2.5 text-[11px] font-medium",
   pill: "flex h-[28px] items-center justify-center rounded-[14px] px-3 text-[12px] font-bold",
 } as const;
 
@@ -35,7 +35,7 @@ export async function OrderStatusBadge({
   size?: keyof typeof SHAPE;
 }) {
   const t = await getTranslations("Orders");
-  const tone = TONE[status] ?? "bg-tint text-ink-secondary";
+  const tone = TONE[status] ?? "bg-fill-100 text-ink-500";
 
   return (
     <span className={`shrink-0 ${SHAPE[size]} ${tone}`}>

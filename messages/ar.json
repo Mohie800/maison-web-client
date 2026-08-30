@@ -94,7 +94,18 @@
     "newBadge": "جديد",
     "likeCount": "{count} إعجاب",
     "vsNew": "مقابل {price} جديد",
-    "savePercent": "وفّر {percent}%"
+    "savePercent": "وفّر {percent}%",
+    "itemsCount": "{count} قطعة",
+    "soldThisWeek": "{count} مبيعات هذا الأسبوع",
+    "live": "مباشر",
+    "liveAuctionsBadge": "مزادات مباشرة",
+    "auctionBadge": "مزاد",
+    "bid": "زايد",
+    "placeBid": "زايد الآن",
+    "currentBid": "المزايدة الحالية",
+    "active": "نشط",
+    "ended": "انتهى",
+    "bids": "{count, plural, one {# مزايدة} other {# مزايدات}}"
   },
   "Listing": {
     "condition": "الحالة",
@@ -145,6 +156,7 @@
     "otpSubtitle": "أرسلنا رمزاً من 6 أرقام إلى {destination}.",
     "otpVerify": "تأكيد الرمز",
     "otpResend": "إعادة إرسال الرمز",
+    "otpResendIn": "إعادة الإرسال خلال {time}",
     "otpResent": "تم إرسال رمز جديد.",
     "forgotTitle": "إعادة تعيين كلمة المرور",
     "forgotSubtitle": "سنرسل لك رابط إعادة التعيين على بريدك.",
@@ -299,12 +311,25 @@
     "filters": "الفلاتر",
     "priceBetween": "SAR {min} – SAR {max}",
     "priceFrom": "من SAR {min}",
-    "priceUpTo": "حتى SAR {max}"
+    "priceUpTo": "حتى SAR {max}",
+    "discount": "الخصم",
+    "discountOption": "{percent}% أو أكثر",
+    "material": "الخامة",
+    "searchTitle": "البحث",
+    "searchLabel": "ابحث",
+    "searchPlaceholder": "ابحث عن أشخاص أو منتجات أو ماركات…",
+    "clearSearch": "مسح البحث",
+    "resultsFound": "{count, plural, one {# نتيجة} other {# نتيجة}}",
+    "chipCondition": "الحالة: {value}",
+    "chipBrand": "الماركة: {value}",
+    "chipCategory": "الفئة: {value}"
   },
   "Pdp": {
     "save": "وفّر {percent}%",
     "bidCount": "{count, plural, =0 {لا مزايدات بعد} one {مزايدة واحدة} two {مزايدتان} few {# مزايدات} many {# مزايدة} other {# مزايدة}}",
     "viewSeller": "عرض البائع",
+    "sellerRating": "{rating} نجوم",
+    "sellerSold": "{count} عملية بيع",
     "buyNow": "اشتري الآن",
     "addToBag": "أضف للسلة",
     "placeBid": "قدّم مزايدة",
@@ -346,46 +371,135 @@
     "buyerProtection": "حماية المشتري",
     "buyerProtectionBody": "يُحتفظ بمبلغ الدفع بشكل آمن حتى يوثّق مركز ميزون القطعة ويتم التوصيل."
   },
+  "Seller": {
+    "tabs": {
+      "listings": "المعروضات",
+      "reviews": "التقييمات",
+      "about": "نبذة"
+    },
+    "stats": {
+      "sales": "المبيعات",
+      "rating": "التقييم",
+      "followers": "المتابعون",
+      "memberSince": "عضو منذ"
+    },
+    "verified": "موثّق",
+    "pro": "محترف",
+    "fastShipper": "شحن سريع",
+    "follow": "متابعة",
+    "followSoon": "متابعة البائعين تتطلب حسابًا — قريبًا مع تسجيل الدخول.",
+    "listingCount": "{count, plural, =0 {لا توجد معروضات} one {معروض واحد} two {معروضان} few {# معروضات} many {# معروضًا} other {# معروض}}",
+    "sorts": {
+      "newest": "الأحدث",
+      "price_asc": "السعر: من الأقل",
+      "price_desc": "السعر: من الأعلى"
+    },
+    "listingsEmptyTitle": "لا توجد معروضات حاليًا",
+    "listingsEmptyBody": "ليس لدى هذا البائع أي قطع معروضة للبيع الآن.",
+    "reviewsEmptyTitle": "لا توجد تقييمات بعد",
+    "reviewsEmptyBody": "تظهر التقييمات هنا بعد أن يقيّم المشتري طلبًا مكتملًا.",
+    "reviewCount": "{count, plural, =0 {لا توجد تقييمات} one {تقييم واحد} two {تقييمان} few {# تقييمات} many {# تقييمًا} other {# تقييم}}",
+    "verifiedBuyer": "مشترٍ موثّق",
+    "purchased": "اشترى: {title}",
+    "reviewTags": {
+      "as_described": "مطابق للوصف",
+      "fast_shipping": "شحن سريع",
+      "great_communication": "تواصل ممتاز"
+    },
+    "sellerReplied": "رد البائع",
+    "helpfulCount": "{count} وجدوا هذا مفيدًا",
+    "aboutEmpty": "لم يضف هذا البائع أي تفاصيل بعد.",
+    "about": {
+      "location": "الموقع",
+      "shipsFrom": "يشحن من",
+      "freeShipping": "شحن مجاني",
+      "freeShippingOver": "للطلبات فوق {amount}",
+      "returns": "الإرجاع",
+      "returnsWindow": "مقبول خلال {days} أيام",
+      "returnsAccepted": "مقبول",
+      "returnsNone": "غير مقبول",
+      "authenticity": "الأصالة",
+      "authenticityGuaranteed": "مضمونة من البائع",
+      "responseRate": "معدل الرد",
+      "shipTime": "متوسط التجهيز",
+      "shipTimeHours": "{hours, plural, one {ساعة واحدة} two {ساعتان} few {# ساعات} many {# ساعة} other {# ساعة}}"
+    },
+    "allItems": "كل القطع",
+    "categories": "الفئات"
+  },
   "Checkout": {
-    "cartTitle": "سلتك",
+    "cartTitle": "سلتي",
+    "itemCount": "{count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}",
     "clearBag": "إفراغ السلة",
     "summary": "ملخص الطلب",
     "emptyTitle": "سلتك فارغة",
-    "emptyBody": "ستظهر القطع التي تضيفها هنا.",
+    "emptyBody": "لم تضف أي شيء بعد.\nتصفّح لتجد ما يعجبك.",
     "startShopping": "ابدأ التسوق",
-    "checkout": "إتمام الشراء",
+    "browseCategories": "تصفح الفئات",
+    "youMightLike": "قد يعجبك",
+    "viewAll": "عرض الكل",
+    "proceedToCheckout": "متابعة الشراء",
+    "verifiedSeller": "بائع موثّق",
+    "trustSecure": "دفع آمن",
+    "trustProtection": "حماية المشتري",
+    "trustReturns": "إرجاع خلال 14 يوماً",
     "select": "تضمين في الطلب",
     "deselect": "استبعاد من الطلب",
     "remove": "إزالة",
+    "edit": "تعديل",
+    "cancel": "إلغاء",
     "bundle": "حزمة",
     "itemUnavailable": "القطعة غير متوفرة",
     "selectedItems": "{count, plural, =0 {لم يتم تحديد قطع} one {تم تحديد قطعة واحدة} two {تم تحديد قطعتين} few {تم تحديد # قطع} many {تم تحديد # قطعة} other {تم تحديد # قطعة}}",
     "totalsAtCheckout": "يُحسب الشحن والضريبة والخصومات عند إتمام الشراء.",
     "selectSomething": "حدّد قطعة واحدة على الأقل للمتابعة.",
     "steps": {
-      "cart": "السلة",
       "shipping": "الشحن",
       "payment": "الدفع",
-      "confirmed": "تم"
+      "confirmed": "تم التأكيد"
     },
-    "deliverTo": "التوصيل إلى",
+    "orderSteps": {
+      "placed": "تم الطلب",
+      "packed": "تم التغليف",
+      "shipped": "تم الشحن",
+      "delivered": "تم التوصيل"
+    },
+    "shippingTitle": "الشحن",
+    "deliveryAddress": "عنوان التوصيل",
+    "shippingMethod": "طريقة الشحن",
+    "priceBreakdown": "تفاصيل السعر",
+    "defaultAddress": "الافتراضي",
     "noAddresses": "لم تحفظ أي عنوان بعد.",
     "addAddress": "إضافة عنوان جديد",
-    "saveAddress": "حفظ العنوان",
+    "newAddress": "إضافة عنوان جديد",
+    "editAddress": "تعديل العنوان",
+    "saveAndContinue": "حفظ ومتابعة",
+    "prefilledFromProfile": "مُعبأ من ملفك الشخصي — عدّله عند الحاجة.",
     "addAddressFirst": "أضف عنوان التوصيل لعرض الإجمالي.",
-    "delivery": "التوصيل",
+    "estimated": "متوقع {range}",
+    "tracked": "قابل للتتبع",
+    "fastest": "الأسرع",
+    "coordinateWithSeller": "بالتنسيق مع البائع",
     "free": "مجاني",
     "multiSellerNote": "{count, plural, one {سيُشحن طلبك في شحنة واحدة.} other {سيُشحن طلبك في # شحنات منفصلة، واحدة لكل بائع.}}",
     "package": "الشحنة {index}",
     "itemsInPackage": "{count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}",
-    "eta": "{min}–{max} أيام عمل",
     "continueToPayment": "المتابعة إلى الدفع",
-    "paymentMethod": "طريقة الدفع",
+    "securedShipping": "مؤمّن · TLS 1.3 · PCI DSS",
+    "securedPayment": "متوافق مع PCI DSS · مشفّر بـ TLS 1.3",
+    "paymentTitle": "الدفع",
+    "savedPaymentMethod": "طريقة الدفع المحفوظة",
+    "otherPaymentMethods": "طرق دفع أخرى",
+    "orderBreakdown": "تفاصيل الطلب",
     "noPaymentMethods": "لم تحفظ أي طريقة دفع بعد.",
-    "addPaymentMethod": "إضافة طريقة دفع",
-    "savePaymentMethod": "حفظ طريقة الدفع",
+    "addNewCard": "إضافة بطاقة جديدة",
+    "payWithStc": "الدفع عبر STC Pay",
+    "change": "تغيير",
+    "selected": "محدد",
+    "saveForFuture": "حفظ البطاقة للطلبات القادمة",
+    "saveForFutureHint": "مخزّنة بأمان · يمكنك حذفها في أي وقت",
     "addPaymentFirst": "أضف طريقة دفع لإتمام الطلب.",
-    "cardSecurityNote": "تُرسل بيانات البطاقة مباشرة إلى مزوّد الدفع ولا تُخزَّن في ميزون سيل.",
+    "payAmount": "ادفع {amount}",
     "paymentTypes": {
       "card": "بطاقة",
       "mada": "مدى",
@@ -395,48 +509,67 @@
       "tamara": "تمارا",
       "paytabs": "PayTabs"
     },
-    "coupon": "كوبون",
-    "couponPlaceholder": "أدخل الرمز",
+    "paymentBlurbs": {
+      "mada": "شبكة الخصم السعودية",
+      "stc_pay": "الدفع من محفظة STC"
+    },
+    "coupon": "الكوبونات والخصومات",
+    "couponPlaceholder": "أدخل رمز الكوبون",
     "apply": "تطبيق",
-    "couponApplied": "تم تطبيق الكوبون — وفّرت {amount}.",
+    "couponAvailable": "متاح",
+    "couponAppliedTitle": "تم تطبيق {code}",
+    "couponSaving": "وفّرت {amount}",
+    "couponWillApply": "ستوفّر {amount} عند إتمام الشراء.",
     "couponInvalid": "هذا الرمز غير صالح لهذا الطلب.",
     "donateTitle": "تبرّع لـ{charity}",
-    "donateBody": "أضف تبرعاً صغيراً لطلبك. يذهب 100% للجهة الخيرية.",
-    "donateAmount": "تبرّع بـ{amount}",
-    "removeDonation": "لا، شكراً",
+    "donateBody": "ادعم الأعمال الخيرية في المملكة",
+    "donateOn": "تفعيل التبرع",
+    "donateOff": "إيقاف التبرع",
+    "roundUp": "تقريب الإجمالي",
+    "totalGoesFromTo": "إجماليك {from} ← {to}",
+    "donateFootnote": "تبرعك يساهم في دعم التعليم في المملكة.",
     "subtotal": "المجموع الفرعي",
+    "subtotalWithCount": "المجموع الفرعي ({count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}})",
     "shipping": "الشحن",
     "discount": "الخصم",
+    "discountWithCode": "الخصم ({code})",
     "vat": "ضريبة القيمة المضافة (15%)",
     "donation": "التبرع",
+    "donationTo": "تبرع {charity}",
     "total": "الإجمالي",
-    "status": "الحالة",
-    "placeOrder": "تأكيد الطلب — {amount}",
-    "confirmedTitle": "تم تأكيد الطلب",
-    "confirmedBody": "شكراً لك. أرسلنا تأكيداً إلى بريدك الإلكتروني.",
+    "totalPaid": "الإجمالي المدفوع",
+    "confirmedTitle": "تم تأكيد الطلب!",
+    "confirmedGreeting": "كل شيء جاهز يا {name}!",
+    "confirmedBody": "تم تسجيل طلبك وإشعار البائع.",
     "orderNumber": "رقم الطلب",
+    "item": "القطعة",
+    "andMoreItems": "{count, plural, one {وقطعة أخرى} two {وقطعتان أخريان} few {و# قطع أخرى} other {و# قطعة أخرى}}",
+    "estDelivery": "التوصيل المتوقع",
+    "sellerRating": "{rating} نجوم · {count} عملية بيع",
+    "donationThanksTitle": "شكراً لتبرعك",
+    "donationThanksBody": "تبرعت بـ{amount} · 100% من تبرعك يذهب للجهة الخيرية.",
     "escrowNote": "يُحتفظ بمبلغ الدفع بشكل آمن حتى يوثّق مركز ميزون القطعة ويتم التوصيل.",
-    "trackOrder": "تتبع الطلب",
+    "trackOrder": "تتبع طلبي",
     "continueShopping": "متابعة التسوق",
     "fields": {
       "label": "التسمية",
-      "recipientName": "اسم المستلم",
+      "labelPlaceholder": "المنزل، العمل…",
+      "fullName": "الاسم الكامل",
       "phone": "الجوال",
-      "country": "الدولة",
       "city": "المدينة",
-      "area": "الحي",
+      "district": "الحي",
       "street": "الشارع",
-      "building": "المبنى",
-      "apartment": "الشقة",
       "postalCode": "الرمز البريدي",
-      "setDefault": "تعيين كعنوان افتراضي",
+      "setDefault": "حفظ كعنوان افتراضي",
+      "setDefaultHint": "يُستخدم تلقائياً في طلبك القادم",
       "cardNumber": "رقم البطاقة",
-      "cardholderName": "الاسم على البطاقة",
-      "expiryMonth": "الشهر",
-      "expiryYear": "السنة",
+      "cardholderName": "اسم حامل البطاقة",
+      "cardholderPlaceholder": "أدخل الاسم على البطاقة",
+      "expiry": "الشهر / السنة",
       "cvv": "رمز التحقق",
       "walletPhone": "رقم جوال STC Pay"
-    }
+    },
+    "shippingCoveredBySeller": "شحن مجاني — يتحمله البائع"
   },
   "Account": {
     "nav": {
@@ -446,8 +579,132 @@
       "wallet": "المحفظة",
       "listings": "إعلاناتي",
       "trades": "سجل المقايضات",
+      "bids": "مزايداتي",
+      "notifications": "الإشعارات",
       "settings": "الإعدادات"
     }
+  },
+  "Dashboard": {
+    "title": "حسابي",
+    "welcome": "أهلًا بعودتك",
+    "welcomeNamed": "أهلًا بعودتك، {name}",
+    "summary": "لديك {orders, plural, =0 {لا طلبات نشطة} one {طلب نشط واحد} two {طلبان نشطان} few {# طلبات نشطة} other {# طلبًا نشطًا}} و{offers, plural, =0 {لا عروض مقايضة} one {عرض مقايضة واحد} two {عرضا مقايضة} few {# عروض مقايضة} other {# عرض مقايضة}}",
+    "listItem": "+ أضف قطعة",
+    "stats": {
+      "activeOrders": "طلبات نشطة",
+      "wishlistItems": "قائمة الرغبات",
+      "walletBalance": "رصيد المحفظة",
+      "tradeOffers": "عروض المقايضة"
+    },
+    "recentOrders": "أحدث الطلبات",
+    "viewAll": "عرض الكل",
+    "orderLine": "{count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}} · {amount}",
+    "track": "تتبّع",
+    "noOrdersTitle": "لا توجد طلبات بعد",
+    "noOrdersBody": "عند شرائك لأي قطعة ستظهر هنا مع تتبّعها.",
+    "startShopping": "ابدأ التسوق"
+  },
+  "Settings": {
+    "accountTitle": "حسابي",
+    "editProfile": "تعديل الملف",
+    "groups": {
+      "account": "الحساب",
+      "shopping": "التسوق",
+      "general": "عام",
+      "appearance": "المظهر"
+    },
+    "rows": {
+      "personal": "المعلومات الشخصية",
+      "addresses": "عناوين الشحن",
+      "payment": "طرق الدفع",
+      "payout": "إعدادات التحويل",
+      "orders": "الطلبات والإرجاع",
+      "wishlist": "قائمة الرغبات",
+      "wallet": "المحفظة",
+      "notifications": "الإشعارات",
+      "contact": "تواصل معنا",
+      "faqs": "الأسئلة الشائعة",
+      "about": "عن ميزون سيل",
+      "lightMode": "الوضع الفاتح",
+      "edit": "تعديل",
+      "card": "بطاقة",
+      "none": "لا يوجد",
+      "bankAccount": "حساب بنكي",
+      "saved": "{count, plural, =0 {لا يوجد} one {عنوان واحد} two {عنوانان} few {# عناوين} other {# عنوانًا}}",
+      "items": "{count, plural, =0 {فارغة} one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}"
+    },
+    "channels": {
+      "push": "تنبيهات",
+      "email": "بريد",
+      "sms": "رسائل"
+    },
+    "profileTitle": "معلومات الملف",
+    "changePhoto": "تغيير الصورة",
+    "photoUnavailable": "رفع الصور غير متاح بعد.",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "phone": "رقم الجوال",
+    "saveChanges": "حفظ التغييرات",
+    "savedProfile": "تم حفظ ملفك.",
+    "savedNotifications": "تم حفظ تفضيلات الإشعارات.",
+    "notificationsTitle": "الإشعارات",
+    "notifications": {
+      "orders": {
+        "title": "تحديثات الطلب",
+        "body": "إشعارات بحالة طلبك"
+      },
+      "messages": {
+        "title": "رسائل جديدة",
+        "body": "تنبيهات رسائل البائع والمشتري"
+      },
+      "priceDrops": {
+        "title": "انخفاض الأسعار",
+        "body": "عند انخفاض سعر قطعة في قائمتك"
+      },
+      "promotions": {
+        "title": "العروض والخصومات",
+        "body": "عروض أسبوعية ومميزة"
+      },
+      "auctions": {
+        "title": "تنبيهات المزاد",
+        "body": "تنبيهات المزايدة واقتراب الانتهاء"
+      },
+      "social": {
+        "title": "المتابعون والتقييمات",
+        "body": "متابعون جدد وإعجابات وتقييمات"
+      }
+    },
+    "errors": {
+      "nameRequired": "أدخل اسمك.",
+      "emailInvalid": "تم رفض البريد الإلكتروني.",
+      "phoneInvalid": "تم رفض رقم الجوال.",
+      "invalid": "تم رفض بعض البيانات. تحقق منها وحاول مجددًا.",
+      "unauthenticated": "سجّل الدخول لتغيير الإعدادات.",
+      "requestFailed": "تعذّر الحفظ. حاول مرة أخرى."
+    }
+  },
+  "Notifications": {
+    "accountTitle": "حسابي",
+    "title": "الإشعارات",
+    "new": "{count} جديد",
+    "markAllRead": "تعليم الكل كمقروء",
+    "tabs": {
+      "all": "الكل",
+      "orders": "الطلبات",
+      "priceDrops": "انخفاض الأسعار",
+      "social": "اجتماعي",
+      "promotions": "العروض"
+    },
+    "badges": {
+      "orders": "طلب",
+      "priceDrops": "سعر",
+      "social": "متابعة",
+      "promotions": "عرض"
+    },
+    "view": "عرض",
+    "emptyTitle": "لا شيء بعد",
+    "emptyBody": "ستظهر هنا تحديثات الطلبات وانخفاض الأسعار والعروض."
   },
   "Orders": {
     "accountTitle": "حسابي",
@@ -468,12 +725,13 @@
       "processing": "قيد المعالجة",
       "shipped": "تم الشحن",
       "delivered": "تم التوصيل",
-      "cancelled": "ملغى"
+      "cancelled": "ملغى",
+      "paid": "مدفوعة"
     },
     "itemCount": "{count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}",
     "andMore": "{count, plural, one {وقطعة أخرى} two {وقطعتان أخريان} few {و# قطع أخرى} other {و# قطعة أخرى}}",
     "emptyTitle": "لا توجد طلبات بعد",
-    "emptyBody": "ستظهر طلباتك هنا بعد الشراء.",
+    "emptyBody": "عندما تنشئ طلبك الأول،\nسيظهر هنا.",
     "emptyTabTitle": "لا شيء في هذا التصنيف",
     "emptyTabBody": "جرّب تصنيفاً آخر لعرض بقية طلباتك.",
     "startShopping": "ابدأ التسوق",
@@ -511,13 +769,1134 @@
     "total": "الإجمالي",
     "deliveryAddress": "عنوان التوصيل",
     "contactSeller": "مراسلة البائع",
-    "reportIssue": "الإبلاغ عن مشكلة أو إرجاع",
+    "reportIssue": "الإبلاغ عن مشكلة / إرجاع",
     "invoice": "الفاتورة الضريبية",
     "billedTo": "الفاتورة إلى",
     "item": "القطعة",
-    "amount": "المبلغ",
-    "invoicePrintHint": "استخدم خاصية الطباعة في المتصفح لحفظ الفاتورة أو طباعتها.",
     "invoiceUnavailableTitle": "الفاتورة غير متاحة بعد",
-    "invoiceUnavailableBody": "لم نتمكن من تحميل الفاتورة الضريبية لهذا الطلب. حاول لاحقاً أو تواصل مع الدعم."
+    "invoiceUnavailableBody": "لم نتمكن من تحميل الفاتورة الضريبية لهذا الطلب. حاول لاحقاً أو تواصل مع الدعم.",
+    "estimatedDelivery": "التسليم المتوقّع",
+    "awaitingDelivery": "في انتظار التسليم",
+    "estimated": "متوقّع {date}",
+    "service": "الخدمة",
+    "weight": "الوزن",
+    "weightKg": "{kg} كجم",
+    "trackOn": "التتبّع عبر {carrier}",
+    "trackParcel": "تتبّع الشحنة",
+    "sellerRole": "البائع",
+    "sellerWithRating": "البائع · {rating} نجوم",
+    "browseCategories": "تصفح الفئات",
+    "taxInvoice": "فاتورة ضريبية",
+    "seller": "البائع",
+    "vatNo": "الرقم الضريبي {number}",
+    "issuedOn": "صدرت في {date}",
+    "shippedToSameAsBilling": "الشحن إلى عنوان الفوترة نفسه.",
+    "qty": "الكمية",
+    "lineTotal": "الإجمالي",
+    "vatAt": "ضريبة القيمة المضافة {rate}",
+    "discountWithCode": "الخصم ({code})",
+    "donation": "التبرع",
+    "donationTo": "تبرع {charity}",
+    "totalPaid": "الإجمالي المدفوع",
+    "paidWith": "تم الدفع بواسطة {method}",
+    "printInvoice": "طباعة / حفظ PDF",
+    "invoiceFootnote": "هذه فاتورة ضريبية صادرة آلياً. الأسعار بالريال السعودي وتشمل ضريبة القيمة المضافة حيثما تنطبق.",
+    "writeReview": "اكتب تقييمًا"
+  },
+  "Review": {
+    "title": "اكتب تقييمًا",
+    "subtitle": "شارك كيف كانت تجربة شرائك من {seller}.",
+    "theSeller": "البائع",
+    "orderRef": "الطلب رقم {number}",
+    "overall": "التقييم العام",
+    "scale": {
+      "1": "ضعيف",
+      "2": "مقبول",
+      "3": "جيد",
+      "4": "جيد جدًا",
+      "5": "ممتاز"
+    },
+    "tagsLegend": "ما الذي كان جيدًا؟",
+    "tags": {
+      "as_described": "مطابق للوصف",
+      "fast_shipping": "شحن سريع",
+      "great_packaging": "تغليف ممتاز",
+      "authentic": "أصلي",
+      "good_condition": "حالة جيدة",
+      "friendly_seller": "بائع لطيف"
+    },
+    "yourReview": "تقييمك",
+    "commentPlaceholder": "كيف كانت القطعة والتغليف والبائع؟",
+    "commentLimit": "بحد أقصى {max} حرفًا.",
+    "addPhotos": "أضف صورًا (اختياري)",
+    "photosUnavailable": "رفع الصور غير متاح بعد — واجهة التقييم تستقبل مسارات صور ولا توجد وسيلة لإنشائها.",
+    "submit": "إرسال التقييم",
+    "thanksTitle": "شكرًا على تقييمك!",
+    "thanksBody": "ملاحظاتك تساعد المشترين على الثقة بالبائعين المميزين.",
+    "ratingOf": "قيّمت {rating} من {max}.",
+    "backToOrders": "العودة إلى الطلبات",
+    "errors": {
+      "ratingRequired": "اختر تقييمًا بالنجوم قبل الإرسال.",
+      "commentTooLong": "التقييم طويل جدًا.",
+      "alreadyReviewed": "سبق أن قيّمت هذه القطعة.",
+      "notDelivered": "يمكنك تقييم القطعة بعد تسليمها.",
+      "itemNotFound": "لم نعثر على هذه القطعة في طلبك.",
+      "unauthenticated": "سجّل الدخول لكتابة تقييم.",
+      "requestFailed": "تعذّر حفظ التقييم. حاول مرة أخرى."
+    }
+  },
+  "Returns": {
+    "breadcrumbOrders": "طلباتي",
+    "breadcrumbOrder": "الطلب رقم {number}",
+    "breadcrumbReturn": "طلب إرجاع",
+    "title": "طلب إرجاع",
+    "subtitle": "سنراجع طلبك خلال 24 ساعة",
+    "daysLeft": "{count, plural, one {بقي يوم واحد للإرجاع} two {بقي يومان للإرجاع} few {بقيت # أيام للإرجاع} other {بقي # يومًا للإرجاع}}",
+    "someIneligible": "{count, plural, one {قطعة واحدة في هذا الطلب لم يعد بالإمكان إرجاعها} two {قطعتان في هذا الطلب لم يعد بالإمكان إرجاعهما} few {# قطع في هذا الطلب لم يعد بالإمكان إرجاعها} other {# قطعة في هذا الطلب لم يعد بالإمكان إرجاعها}}.",
+    "noneEligibleTitle": "لا يمكن إرجاع أي قطعة من هذا الطلب",
+    "noneEligibleBody": "انتهت مهلة الإرجاع، أو لم تُسلَّم القطع.",
+    "reasonLegend": "سبب الإرجاع",
+    "reasons": {
+      "doesnt_match_description": "القطعة غير مطابقة للوصف",
+      "not_authentic": "قطعة مقلّدة",
+      "damaged_defective": "وصلت القطعة تالفة",
+      "wrong_size": "المقاس خاطئ",
+      "changed_mind": "غيّرت رأيي",
+      "other": "سبب آخر"
+    },
+    "describeLegend": "صف المشكلة",
+    "describePlaceholder": "أخبرنا بما حدث — كلما زادت التفاصيل أسرعت المراجعة.",
+    "noteLimit": "بحد أقصى {max} حرفًا.",
+    "photosLegend": "ارفع صورًا (مطلوب)",
+    "photosBlocked": "هذا السبب يتطلب صورًا كدليل، ورفع الصور غير متاح بعد. ابدأ الإرجاع معنا مباشرة —",
+    "contactSupport": "تواصل مع الدعم",
+    "submit": "إرسال طلب الإرجاع",
+    "footnote": "سيراجع فريقنا خلال 24 ساعة · مهلة الإرجاع {days} أيام",
+    "statusTitle": "حالة الإرجاع",
+    "cancelReturn": "إلغاء هذا الإرجاع",
+    "cancelled": "تم إلغاء هذا الإرجاع.",
+    "created": "تم استلام طلب الإرجاع. سنراسلك عند رد البائع.",
+    "refundAmount": "مبلغ الاسترداد",
+    "trackingLabel": "تتبّع الإرجاع",
+    "rejectedLabel": "سبب الرفض",
+    "statuses": {
+      "requested": "تم الطلب",
+      "approved": "تمت الموافقة",
+      "rejected": "مرفوض",
+      "pickup_scheduled": "تم جدولة الاستلام",
+      "in_transit": "في طريق العودة",
+      "delivered_to_seller": "استلمه البائع",
+      "refunded": "تم الاسترداد",
+      "cancelled": "ملغى"
+    },
+    "errors": {
+      "itemsRequired": "اختر قطعة واحدة على الأقل للإرجاع.",
+      "reasonRequired": "اختر سبب الإرجاع.",
+      "photosRequired": "هذا السبب يتطلب صورًا كدليل ولا يمكننا رفعها بعد. تواصل مع الدعم لبدء الإرجاع.",
+      "noteTooLong": "الوصف طويل جدًا.",
+      "notEligible": "انتهت مهلة إرجاع هذه القطعة.",
+      "mixedSellers": "القطع من بائعين مختلفين تحتاج طلبات إرجاع منفصلة.",
+      "alreadyRequested": "سبق أن طُلب إرجاع هذه القطعة.",
+      "unauthenticated": "سجّل الدخول لطلب الإرجاع.",
+      "requestFailed": "تعذّر إرسال طلب الإرجاع. حاول مرة أخرى."
+    },
+    "returnRef": "الإرجاع رقم {id}",
+    "requestedOn": "طُلب في {at}",
+    "reasonLine": "السبب: {reason}",
+    "progress": "مسار الإرجاع",
+    "inProgress": "قيد التنفيذ",
+    "pending": "بالانتظار",
+    "refundTitle": "ملخص الاسترداد",
+    "refundNote": "يُعاد المبلغ إلى وسيلة الدفع الأصلية خلال 3–5 أيام عمل.",
+    "helpTitle": "تحتاج مساعدة؟",
+    "helpBody": "يمكن لفريق الدعم التدخل عند وجود تأخير أو نزاع.",
+    "contactSupportCta": "تواصل مع الدعم",
+    "ineligible": {
+      "already_returned": "سبق أن طُلب إرجاع هذه القطعة.",
+      "window_closed": "انتهت مهلة الإرجاع.",
+      "not_delivered": "لم تُسلَّم هذه القطعة بعد.",
+      "unknown": "لم يعد بالإمكان إرجاع هذه القطعة."
+    }
+  },
+  "Wallet": {
+    "title": "المحفظة",
+    "nav": {
+      "overview": "نظرة عامة",
+      "addFunds": "إضافة رصيد",
+      "withdraw": "سحب",
+      "history": "السجل",
+      "earnings": "الأرباح",
+      "paymentMethods": "طرق الدفع",
+      "banks": "البنوك",
+      "send": "إرسال"
+    },
+    "availableBalance": "الرصيد المتاح",
+    "pendingAmount": "قيد المعالجة: {amount}",
+    "addFunds": "إضافة رصيد",
+    "withdraw": "سحب",
+    "recentActivity": "أحدث العمليات",
+    "viewAll": "عرض الكل",
+    "noTransactions": "لا توجد عمليات بعد.",
+    "transaction": "عملية",
+    "addedConfirm": "تمت إضافة {amount} إلى محفظتك.",
+    "withdrewConfirm": "{amount} في طريقها إلى حسابك البنكي.",
+    "addFundsTitle": "إضافة رصيد",
+    "addFundsSubtitle": "أضف أموالًا إلى محفظتك في ميزون سيل.",
+    "amount": "المبلغ",
+    "amountRange": "بين {min} و {max}",
+    "paymentMethod": "طريقة الدفع",
+    "addPaymentMethod": "إضافة طريقة دفع",
+    "summary": "الملخص",
+    "processingFee": "رسوم المعالجة",
+    "addToWallet": "إضافة إلى المحفظة",
+    "secured": "محمي بتشفير 256-bit",
+    "noMethodsTitle": "لا توجد طريقة دفع محفوظة",
+    "noMethodsBody": "أضف بطاقة أو محفظة قبل إضافة الرصيد.",
+    "expires": "تنتهي في {date}",
+    "withdrawTitle": "سحب الأموال",
+    "withdrawSubtitle": "حوّل رصيد محفظتك إلى حسابك البنكي.",
+    "withdrawRange": "بين {min} و {max}",
+    "withdrawTo": "السحب إلى",
+    "withdrawSubmit": "سحب",
+    "arrivalNote": "تصل خلال 1–3 أيام عمل",
+    "noBanksTitle": "لا يوجد حساب بنكي محفوظ",
+    "noBanksBody": "أضف حسابًا بنكيًا لسحب رصيدك.",
+    "addBank": "إضافة حساب بنكي",
+    "belowMinimumTitle": "الرصيد أقل من الحد الأدنى",
+    "belowMinimumBody": "يبدأ السحب من {min}.",
+    "historyTitle": "سجل العمليات",
+    "filters": {
+      "all": "الكل",
+      "credit": "وارد",
+      "debit": "صادر",
+      "sales": "المبيعات",
+      "trades": "المبادلات",
+      "auctions": "المزادات",
+      "transfers": "التحويلات"
+    },
+    "reasons": {
+      "topup": "إضافة رصيد",
+      "withdrawal": "سحب",
+      "sale_earnings": "أرباح بيع",
+      "refund_received": "مبلغ مسترد",
+      "referral_bonus_referrer": "مكافأة إحالة",
+      "referral_bonus_referee": "مكافأة ترحيب",
+      "auction_entry_fee_refund": "استرداد رسوم مزاد",
+      "auction_non_payment_penalty": "غرامة مزاد",
+      "admin_adjustment": "تسوية",
+      "transfer_sent": "أموال مُرسلة",
+      "transfer_received": "أموال مُستلمة",
+      "trade_settlement": "تسوية مبادلة"
+    },
+    "earningsTitle": "الأرباح",
+    "earnings": {
+      "available": "متاح للسحب",
+      "pending": "قيد التصفية",
+      "thisMonth": "هذا الشهر",
+      "lifetime": "إجمالي الأرباح",
+      "withdrawn": "إجمالي المسحوب"
+    },
+    "itemsSold": "{count, plural, =0 {لم تبع أي قطعة بعد} one {قطعة واحدة مباعة} two {قطعتان مباعتان} few {# قطع مباعة} many {# قطعة مباعة} other {# قطعة مباعة}}",
+    "recentSales": "أحدث المبيعات",
+    "noSales": "لا توجد مبيعات بعد.",
+    "withdrawEarnings": "سحب الأرباح",
+    "methodsTitle": "طرق الدفع",
+    "methodsSubtitle": "تُستخدم لإضافة الرصيد وعند الدفع.",
+    "methodType": "النوع",
+    "types": {
+      "card": "بطاقة",
+      "mada": "مدى",
+      "stc_pay": "STC Pay"
+    },
+    "cardNumber": "رقم البطاقة",
+    "cardholderName": "الاسم على البطاقة",
+    "expiry": "تاريخ الانتهاء (شهر/سنة)",
+    "cvv": "رمز التحقق",
+    "walletPhone": "رقم المحفظة",
+    "walletPhoneHint": "لـ STC Pay فقط — اتركه فارغًا للبطاقات.",
+    "save": "حفظ",
+    "remove": "إزالة",
+    "makeDefault": "تعيين كافتراضي",
+    "default": "افتراضي",
+    "banksTitle": "بنوك السحب",
+    "banksSubtitle": "تُحوَّل عمليات السحب إلى حسابك الافتراضي.",
+    "iban": "الآيبان",
+    "accountHolder": "اسم صاحب الحساب",
+    "bankName": "اسم البنك",
+    "withdrawalNote": "يستغرق السحب من 1 إلى 3 أيام عمل.",
+    "detail": {
+      "title": "تفاصيل العملية",
+      "reference": "الرقم المرجعي",
+      "type": "النوع",
+      "date": "التاريخ",
+      "description": "الوصف",
+      "viewItem": "عرض القطعة",
+      "item": "العنصر",
+      "counterparty": "المشتري",
+      "counterpartySent": "المستلم",
+      "counterpartyReceived": "المُرسِل",
+      "itemPrice": "سعر العنصر",
+      "platformFee": "رسوم المنصّة",
+      "netEarnings": "صافي الأرباح",
+      "order": "الطلب",
+      "invoice": "الفاتورة",
+      "downloadReceipt": "تنزيل الإيصال",
+      "lineItems": "عناصر هذا الطلب",
+      "shippingDeducted": "الشحن المخصوم",
+      "shippingBuyerPaid": "الشحن يدفعه المشتري"
+    },
+    "errors": {
+      "amountRequired": "أدخل المبلغ.",
+      "amountTooSmall": "المبلغ أقل من الحد الأدنى.",
+      "amountTooLarge": "المبلغ أعلى من الحد الأقصى.",
+      "paymentMethodRequired": "اختر طريقة دفع.",
+      "bankRequired": "اختر حسابًا بنكيًا.",
+      "insufficientBalance": "رصيدك غير كافٍ لهذه العملية.",
+      "ibanInvalid": "رقم الآيبان غير صحيح.",
+      "holderRequired": "أدخل اسم صاحب الحساب.",
+      "bankNameRequired": "أدخل اسم البنك.",
+      "cardInvalid": "رقم البطاقة غير صحيح.",
+      "expiryInvalid": "أدخل تاريخ الانتهاء بصيغة شهر/سنة.",
+      "phoneRequired": "أدخل رقم المحفظة.",
+      "unauthenticated": "يرجى تسجيل الدخول مرة أخرى.",
+      "requestFailed": "لم تتم العملية. حاول مرة أخرى.",
+      "recipientRequired": "أدخل الشخص الذي تريد الإرسال إليه.",
+      "recipientNotFound": "لم نعثر على هذا المعرّف أو الرقم.",
+      "recipientSelf": "لا يمكنك إرسال الأموال إلى نفسك.",
+      "recipientCannotReceive": "هذا الحساب لا يستطيع استلام التحويلات."
+    },
+    "sendTitle": "إرسال الأموال",
+    "sendSubtitle": "حوّل من محفظتك إلى عضو آخر في ميزون سيل.",
+    "recipient": "المستلم",
+    "recipientHint": "معرّفه @ أو رقم الجوال المسجّل في حسابه.",
+    "sendRange": "بين {min} و {max}",
+    "noteOptional": "ملاحظة (اختياري)",
+    "sendingTo": "الإرسال إلى",
+    "editRecipient": "تغيير",
+    "transferFee": "رسوم التحويل",
+    "theyReceive": "سيستلم",
+    "continue": "متابعة",
+    "confirmSend": "إرسال الأموال",
+    "sendReview": "ستؤكّد قبل تحويل أي مبلغ.",
+    "sendFinal": "سيتم تحويل المبلغ فوراً.",
+    "sentConfirm": "تم إرسال {amount} إلى {recipient}."
+  },
+  "Wishlist": {
+    "title": "قائمة رغباتي",
+    "itemCount": "{count, plural, =0 {لا توجد قطع} one {قطعة واحدة} two {قطعتان} few {# قطع} many {# قطعة} other {# قطعة}}",
+    "tabs": {
+      "all": "الكل",
+      "on_sale": "مخفّضة",
+      "available": "متاحة",
+      "sold": "مباعة"
+    },
+    "emptyTitle": "قائمة رغباتك فارغة",
+    "emptyBody": "احفظ القطع التي تعجبك بالضغط على رمز القلب في أي منتج.",
+    "emptyTab": "لا يوجد شيء محفوظ في هذا التبويب.",
+    "startBrowsing": "ابدأ التصفح",
+    "addToCart": "أضف إلى السلة",
+    "unavailable": "لم تعد متاحة",
+    "sold": "مباعة",
+    "remove": "إزالة من قائمة الرغبات",
+    "notifyOn": "نبّهني عند انخفاض السعر",
+    "notifyOff": "إيقاف تنبيهات السعر",
+    "priceDropped": "انخفض السعر بمقدار {amount}",
+    "share": "مشاركة قائمة الرغبات",
+    "shareStop": "إيقاف المشاركة",
+    "shareLive": "يمكن لأي شخص لديه هذا الرابط رؤية القائمة.",
+    "shareOff": "تم إيقاف المشاركة. الرابط السابق لم يعد يعمل.",
+    "shareCopyHint": "انسخ الرابط لإرساله.",
+    "sharedTitle": "قائمة رغبات {name}",
+    "sharedIntro": "{count, plural, =0 {لا توجد عناصر محفوظة} one {عنصر محفوظ واحد} two {عنصران محفوظان} few {# عناصر محفوظة} many {# عنصرًا محفوظًا} other {# عنصر محفوظ}}",
+    "sharedEmpty": "لا توجد عناصر في هذه القائمة بعد.",
+    "sharedGone": "لم تعد هذه القائمة مشاركة.",
+    "sharedGoneBody": "أوقف المالك المشاركة، أو أن الرابط غير صحيح.",
+    "browse": "تصفّح ميزون"
+  },
+  "MyListings": {
+    "title": "معروضاتي",
+    "stats": {
+      "active": "معروضات نشطة",
+      "sold": "مباعة",
+      "earned": "إجمالي الأرباح",
+      "soldThisMonth": "المُباع هذا الشهر",
+      "expiringSoon": "تنتهي قريبًا",
+      "expiringSoonNote": "خلال {days, plural, one {يوم واحد} two {يومين} few {# أيام} many {# يومًا} other {# يوم}}",
+      "monthNote": "منذ {date}"
+    },
+    "filters": {
+      "all": "الكل",
+      "live": "نشطة",
+      "pending": "قيد المراجعة",
+      "sold_out": "مباعة",
+      "draft": "مسودات",
+      "expired": "منتهية",
+      "withdrawn": "مسحوبة",
+      "rejected": "مرفوضة"
+    },
+    "statuses": {
+      "live": "نشطة",
+      "pending": "قيد المراجعة",
+      "draft": "مسودة",
+      "sold_out": "مباعة",
+      "rejected": "مرفوضة",
+      "withdrawn": "مسحوبة",
+      "expired": "منتهية",
+      "pending_review": "قيد المراجعة",
+      "pending_payment": "بانتظار الدفع",
+      "sold": "مُباع",
+      "traded": "مُبادل"
+    },
+    "columns": {
+      "item": "القطعة",
+      "price": "السعر",
+      "status": "الحالة",
+      "views": "المشاهدات",
+      "likes": "الإعجابات",
+      "listed": "تاريخ النشر",
+      "actions": "إجراءات",
+      "expires": "تنتهي"
+    },
+    "draftStep": "الخطوة {step} من {total}",
+    "delete": "حذف",
+    "emptyTitle": "لم تعرض أي قطعة بعد",
+    "emptyBody": "ستظهر هنا القطع التي تعرضها للبيع مع مشاهداتها وإعجاباتها وحالتها.",
+    "emptyFilter": "لا يوجد شيء في هذا التبويب."
+  },
+  "Sell": {
+    "heading": "بيع قطعة",
+    "stepOf": "الخطوة {step} من {total}",
+    "back": "رجوع",
+    "continue": "متابعة",
+    "submitForReview": "إرسال للمراجعة",
+    "steps": {
+      "category": "الفئة",
+      "type": "نوع الإعلان",
+      "details": "تفاصيل القطعة",
+      "condition": "الحالة",
+      "photos": "الصور",
+      "authenticity": "الأصالة",
+      "pricing": "السعر",
+      "shipping": "الشحن",
+      "review": "المراجعة"
+    },
+    "titles": {
+      "category": "ما الذي تريد عرضه؟",
+      "type": "كيف تريد بيعها؟",
+      "details": "تفاصيل القطعة",
+      "condition": "الحالة",
+      "photos": "أضف صورًا",
+      "authenticity": "الأصالة",
+      "pricing": "حدّد سعرك",
+      "shipping": "الشحن والموقع",
+      "review": "راجع إعلانك"
+    },
+    "subtitles": {
+      "category": "اختر فئة ثم فئة فرعية.",
+      "type": "البيع والمقايضة نوعان منفصلان دائمًا.",
+      "details": "الحقول أدناه تأتي من الفئة التي اخترتها.",
+      "condition": "كن صادقًا — يمكن للمشتري إرجاع قطعة غير مطابقة للوصف.",
+      "photos": "أضف حتى 5 صور. الإضاءة الجيدة ترفع درجة الأصالة.",
+      "authenticity": "أخبرنا بما لديك. تُحتسب الدرجة بعد إنشاء الإعلان.",
+      "pricing": "",
+      "shipping": "",
+      "review": ""
+    },
+    "types": {
+      "fashion": {
+        "name": "أزياء",
+        "blurb": "ملابس وأحذية وحقائب"
+      },
+      "electronics": {
+        "name": "إلكترونيات",
+        "blurb": "جوالات ولابتوبات وألعاب"
+      },
+      "furniture": {
+        "name": "أثاث",
+        "blurb": "المنزل والمكتب"
+      },
+      "toys_art": {
+        "name": "ألعاب وفنون",
+        "blurb": "ألعاب وفنون"
+      }
+    },
+    "subCategory": "الفئة الفرعية",
+    "pickOne": "اختر مجموعة لعرض فئاتها الفرعية.",
+    "listing": {
+      "sell": {
+        "title": "بيع · اشترِ الآن",
+        "body": "سعر ثابت لقطعة واحدة. يدفع المشتري ويكمل الطلب."
+      },
+      "trade": {
+        "title": "مقايضة · طلب مقايضة",
+        "body": "مبادلة قطعة بقطعة مع فرق نقدي اختياري."
+      },
+      "auction": {
+        "title": "مزاد · زايد الآن",
+        "body": "مزايدة مباشرة بشروط قانونية ورسوم دخول ومنع قنص."
+      },
+      "footnote": "يمكنك إعادة العرض بنوع مختلف لاحقًا. تنتهي الإعلانات بعد 60 يومًا."
+    },
+    "fields": {
+      "title": "العنوان",
+      "titlePlaceholder": "جاكيت جينز فينتاج",
+      "brand": "الماركة",
+      "brandNone": "بدون ماركة",
+      "description": "الوصف",
+      "descriptionPlaceholder": "مستعمل قليلًا، بدون عيوب.",
+      "charLimit": "بحد أقصى {max} حرفًا.",
+      "required": "مطلوب",
+      "yes": "نعم",
+      "no": "لا"
+    },
+    "attributes": {
+      "size": "المقاس",
+      "color": "اللون",
+      "material": "الخامة",
+      "gender": "الفئة",
+      "model": "الموديل",
+      "storageRam": "التخزين / الذاكرة",
+      "warrantyStatus": "الضمان",
+      "accessories": "الملحقات",
+      "dimensions": "الأبعاد",
+      "numberOfPieces": "عدد القطع",
+      "assemblyRequired": "يحتاج تركيبًا",
+      "weightKg": "الوزن (كجم)",
+      "ageRange": "الفئة العمرية",
+      "completeSet": "الطقم كامل",
+      "fineArt": "عمل فني",
+      "batteryPowerRequired": "يحتاج بطاريات"
+    },
+    "options": {
+      "men": "رجال",
+      "women": "نساء",
+      "kids": "أطفال",
+      "under_warranty": "تحت الضمان",
+      "expired": "منتهٍ",
+      "none": "لا يوجد",
+      "original_box": "العلبة الأصلية",
+      "charger": "شاحن",
+      "cable": "كيبل",
+      "manual": "دليل",
+      "case": "جراب",
+      "length": "الطول",
+      "width": "العرض",
+      "height": "الارتفاع",
+      "medium": "الوسيط",
+      "yes": "نعم",
+      "no": "لا",
+      "na": "لا ينطبق"
+    },
+    "conditions": {
+      "new": {
+        "title": "جديد",
+        "body": "لم يُستخدم، مغلّف أو غير ملبوس."
+      },
+      "new_with_tags": {
+        "title": "جديد مع البطاقة",
+        "body": "لم يُلبس، مع البطاقة."
+      },
+      "new_without_tags": {
+        "title": "جديد بدون بطاقة",
+        "body": "لم يُلبس، أُزيلت البطاقة."
+      },
+      "like_new": {
+        "title": "شبه جديد",
+        "body": "لُبس مرة أو مرتين، بلا أثر استخدام."
+      },
+      "good": {
+        "title": "جيد",
+        "body": "استُخدم بعناية، أثر بسيط."
+      },
+      "fair": {
+        "title": "مقبول",
+        "body": "أثر استخدام واضح، لا يزال صالحًا."
+      }
+    },
+    "flaws": "هل توجد عيوب؟ اختر كل ما ينطبق",
+    "defects": {
+      "no_scratches": "بدون خدوش",
+      "minor_scratches": "خدوش بسيطة",
+      "visible_scratches": "خدوش واضحة",
+      "cracked": "مكسور",
+      "dented": "منبعج",
+      "stained": "به بقع",
+      "faded": "باهت",
+      "other": "شيء آخر"
+    },
+    "photos": {
+      "addCover": "+  أضف صورة الغلاف",
+      "tip": "نصيحة: أضف بطاقات الماركة وأرقام التسلسل والفواتير لرفع درجتك.",
+      "remove": "إزالة الصورة",
+      "needMore": "أضف {min} صور على الأقل.",
+      "tooLarge": "بعض الصور تجاوزت 5 ميجابايت وتم تخطيها."
+    },
+    "authenticity": {
+      "legend": "ما الذي يمكنك إثباته؟",
+      "scoreLater": "تُحتسب درجة الأصالة من هذه العناصر وصورك بعد إنشاء الإعلان."
+    },
+    "verification": {
+      "receipt_invoice": "الفاتورة الأصلية",
+      "authentication_tag": "بطاقة التوثيق",
+      "original_box": "العلبة الأصلية",
+      "brand_label": "شعار الماركة ظاهر",
+      "serial_code": "الرقم التسلسلي",
+      "dust_bag_accessories": "كيس الحفظ أو الملحقات"
+    },
+    "pricing": {
+      "price": "السعر (ريال)",
+      "discount": "الخصم (ريال)",
+      "earnings": "أرباحك",
+      "buyerPays": "يدفع المشتري",
+      "buyerPaysAfter": "يدفع المشتري (بعد خصم {amount})",
+      "vat": "ضريبة القيمة المضافة 15%",
+      "platformFee": "عمولة المنصة ({percent}%)",
+      "youReceive": "تستلم",
+      "vatNote": "تُحتسب الضريبة على سعر الصفقة بعد الخصم ({amount}).",
+      "startingBid": "سعر البداية (ريال)",
+      "reservePrice": "السعر الاحتياطي (ريال)",
+      "duration": "مدة المزاد",
+      "hours": "{hours} ساعة"
+    },
+    "shipping": {
+      "city": "المدينة",
+      "fulfillment": "كيف يستلم المشتري",
+      "payer": "من يدفع الشحن",
+      "note": "يختار المشتري شركة الشحن عند الدفع، وتُحتسب الأسعار من قِبلها."
+    },
+    "cities": {
+      "Riyadh": "الرياض",
+      "Jeddah": "جدة",
+      "Dammam": "الدمام",
+      "Mecca": "مكة",
+      "Medina": "المدينة",
+      "Khobar": "الخبر",
+      "Tabuk": "تبوك",
+      "Other": "أخرى"
+    },
+    "fulfillment": {
+      "shipping_only": "شحن فقط",
+      "pickup_in_person": "استلام شخصي",
+      "both": "شحن أو استلام"
+    },
+    "payers": {
+      "buyer_pays": "المشتري يدفع",
+      "included_in_price": "مشمول بالسعر",
+      "to_be_agreed": "يُتفق عليه"
+    },
+    "review": {
+      "listPrice": "سعر العرض",
+      "youReceive": "تستلم (بعد الضريبة وعمولة {percent}%)",
+      "shipsFrom": "يُشحن من",
+      "note": "تنتهي الإعلانات بعد 60 يومًا.",
+      "sale": "بيع",
+      "auction": "مزاد",
+      "trade": "مقايضة"
+    },
+    "submitted": {
+      "title": "تم إرسال الإعلان للمراجعة",
+      "body": "سنخبرك فور الموافقة — عادةً خلال 24 ساعة.",
+      "pending": "قيد المراجعة",
+      "viewListings": "عرض إعلاناتي",
+      "listAnother": "أضف قطعة أخرى",
+      "liveTitle": "إعلانك منشور",
+      "liveBody": "أصبح ظاهرًا للمشترين. يمكنك تعديله أو سحبه من إعلاناتي.",
+      "live": "منشور"
+    },
+    "errors": {
+      "invalid": "بعض التفاصيل تحتاج تصحيحًا قبل الإرسال.",
+      "createdButNotSubmitted": "حُفظ إعلانك كمسودة ولم يُرسل. يمكنك إرساله من إعلاناتي.",
+      "unauthenticated": "سجّل الدخول لعرض قطعة.",
+      "requestFailed": "تعذّر إنشاء الإعلان. حاول مرة أخرى."
+    }
+  },
+  "Stories": {
+    "someone": "شخص ما",
+    "close": "إغلاق",
+    "previous": "القصة السابقة",
+    "next": "القصة التالية",
+    "previousAuthor": "الشخص السابق",
+    "nextAuthor": "الشخص التالي",
+    "addToBag": "أضف إلى الحقيبة",
+    "title": "القصص",
+    "empty": "لا توجد قصص الآن.",
+    "yourStory": "قصتك",
+    "viewStory": "عرض القصة",
+    "viewerLabel": "قصة {name}"
+  },
+  "Categories": {
+    "title": "كل الفئات",
+    "subtitle": "تصفّح كل ما هو متاح في ميزون سيل",
+    "browseAll": "تصفّح الكل",
+    "itemsCount": "{count} قطعة",
+    "noSubcategories": "لا توجد فئات فرعية بعد."
+  },
+  "Brands": {
+    "title": "تصفّح الماركات",
+    "subtitle": "متاجر رسمية وعلامات رائجة وماركات سعودية محلية",
+    "allBrands": "كل الماركات",
+    "brandCount": "{count} ماركة",
+    "mostPopular": "الأكثر رواجاً",
+    "itemsCount": "{count} قطعة",
+    "browse": "تصفّح",
+    "filters": {
+      "all": "كل العلامات",
+      "official": "رسمية",
+      "trending": "رائجة",
+      "saudi": "سعودية",
+      "fashion": "أزياء",
+      "electronics": "إلكترونيات",
+      "furniture": "أثاث",
+      "toys_art": "ألعاب وفنون"
+    },
+    "sorts": {
+      "popular": "الأكثر شهرة",
+      "followers": "الأكثر متابعة",
+      "name": "أ–ي",
+      "newest": "الأحدث"
+    },
+    "sortLabel": "الترتيب:",
+    "official": "رسمية",
+    "trending": "رائجة",
+    "saudi": "سعودية",
+    "verified": "موثّقة",
+    "followers": "{count} متابع",
+    "follow": "متابعة",
+    "following": "تتابعها",
+    "emptyFilter": "لا توجد علامات في هذا التبويب بعد."
+  },
+  "Trends": {
+    "title": "مركز الرائج",
+    "subtitle": "اكتشف الأكثر رواجاً هذا الأسبوع في كل الفئات",
+    "updatedWeekly": "يُحدَّث أسبوعياً",
+    "week": "الأسبوع · {year}",
+    "viewAll": "عرض الكل",
+    "topStores": "أفضل المتاجر هذا الأسبوع",
+    "topStoresSubtitle": "الأكثر مبيعاً خلال 7 أيام",
+    "topStoresEmpty": "لا توجد مبيعات مصنّفة هذا الأسبوع. تُعاد التصنيفات كل اثنين.",
+    "salesThisWeek": "{count} مبيعات هذا الأسبوع",
+    "thisWeek": "هذا الأسبوع",
+    "stars": "{rating} نجوم",
+    "noRating": "لا يوجد تقييم",
+    "rating": "التقييم",
+    "followers": "{count} متابع",
+    "followersLabel": "المتابعون",
+    "visitStore": "زيارة المتجر",
+    "trendingCategories": "الفئات الرائجة",
+    "trendingCategoriesSubtitle": "الأكثر بحثاً هذا الأسبوع",
+    "trendingCategoriesEmpty": "لا توجد عمليات بحث رائجة بعد.",
+    "hotDeals": "أفضل العروض هذا الأسبوع",
+    "hotDealsSubtitle": "أقوى الخصومات الآن",
+    "hotDealsEmpty": "لا توجد قطع مخفّضة الآن.",
+    "buyNow": "اشترِ الآن",
+    "searches": "{count} عملية بحث"
+  },
+  "Auctions": {
+    "title": "المزادات المباشرة",
+    "subtitle": "زايد على قطع فاخرة موثّقة من بائعين موثوقين",
+    "live": "مباشر",
+    "liveAuctions": "مزاد مباشر",
+    "sort": "الترتيب:",
+    "endingSoonest": "الأقرب انتهاءً",
+    "activeCount": "{count} مزاد نشط",
+    "currentBid": "المزايدة الحالية",
+    "bids": "{count, plural, one {# مزايدة} other {# مزايدات}}",
+    "placeBid": "زايد الآن",
+    "ended": "انتهى",
+    "emptyTitle": "لا توجد مزادات مباشرة الآن",
+    "emptyBody": "تستمر المزادات أياماً قليلة — عد قريباً.",
+    "tabs": {
+      "all": "كل المزادات",
+      "endingSoon": "قاربت على الانتهاء",
+      "justStarted": "بدأت للتو"
+    },
+    "conditions": {
+      "new": "جديد",
+      "new_with_tags": "جديد مع البطاقة",
+      "new_without_tags": "جديد بدون بطاقة",
+      "like_new": "شبه جديد",
+      "good": "جيد",
+      "fair": "مقبول"
+    },
+    "activeBidders": "المزايدون النشطون",
+    "bidsToday": "مزايدات اليوم",
+    "bidVolumeToday": "قيمة المزايدات اليوم",
+    "endingSoonCount": "تنتهي قريبًا",
+    "endingSoonNote": "خلال {hours, plural, one {ساعة واحدة} two {ساعتين} few {# ساعات} many {# ساعة} other {# ساعة}}"
+  },
+  "AuctionTerms": {
+    "title": "شروط وأحكام المزاد",
+    "subtitle": "يرجى مراجعة جميع البنود. يجب الموافقة قبل تقديم أول مزايدة.",
+    "auctionBadge": "مزاد",
+    "ageBadge": "+18 فقط",
+    "ends": "ينتهي",
+    "agreeLabel": "لقد قرأت شروط المزاد وأوافق عليها، وأؤكد أن عمري 18 عامًا أو أكثر.",
+    "agreeCta": "أوافق وأتابع",
+    "cancel": "إلغاء",
+    "clauses": {
+      "eligibility": {
+        "title": "الأهلية",
+        "body": "يجب أن يكون عمرك 18 عامًا أو أكثر وأن يكون لديك حساب موثّق في ميزون سيل للمزايدة."
+      },
+      "binding": {
+        "title": "المزايدات ملزمة",
+        "body": "كل مزايدة التزام قانوني بشراء القطعة بذلك السعر في حال فوزك."
+      },
+      "entryFee": {
+        "title": "رسوم الدخول",
+        "body": "يُحجز مبلغ دخول قابل للاسترداد لتفعيل المزايدة، ويُعاد إليك إذا لم تفز."
+      },
+      "antiSnipe": {
+        "title": "منع القنص",
+        "body": "أي مزايدة في آخر 60 ثانية تمدّد المزاد 60 ثانية إضافية."
+      },
+      "reserve": {
+        "title": "السعر الاحتياطي",
+        "body": "بعض القطع لها سعر احتياطي مخفي، ولا تُباع إلا إذا تم بلوغه."
+      },
+      "winning": {
+        "title": "الفوز والدفع",
+        "body": "تفوز أعلى مزايدة عند الإغلاق. الدفع مستحق خلال 24 ساعة من الإغلاق."
+      },
+      "nonPayment": {
+        "title": "عدم الدفع",
+        "body": "عدم الدفع يؤدي إلى خسارة رسوم الدخول وقد يؤدي إلى تعليق الحساب."
+      },
+      "authenticity": {
+        "title": "الأصالة",
+        "body": "تُفحص كل قطعة من قبل ميزون سيل قبل الشحن عبر المركز."
+      },
+      "cancellation": {
+        "title": "الإلغاء",
+        "body": "يحق لميزون سيل إلغاء أو إعادة عرض أي قطعة في حال وجود خطأ أو نزاع."
+      },
+      "law": {
+        "title": "القانون الحاكم",
+        "body": "تخضع المزادات لأنظمة المملكة العربية السعودية واختصاص محاكمها."
+      }
+    },
+    "errors": {
+      "mustAgree": "حدّد المربع لتأكيد قراءتك للشروط.",
+      "termsRequired": "عليك قبول شروط المزاد أولًا.",
+      "auctionEnded": "انتهى هذا المزاد بالفعل.",
+      "ownListing": "لا يمكنك المزايدة على إعلانك.",
+      "unauthenticated": "سجّل الدخول للدخول في هذا المزاد.",
+      "requestFailed": "تعذّر إدخالك في هذا المزاد. حاول مرة أخرى."
+    }
+  },
+  "AuctionBid": {
+    "endsIn": "ينتهي المزاد خلال",
+    "endsAt": "ينتهي {at}",
+    "totalBids": "{count, plural, one {مزايدة} two {مزايدتان} few {مزايدات} other {مزايدة}}",
+    "currentBid": "المزايدة الحالية",
+    "youAreLeading": "أنت في الصدارة",
+    "youAreOutbid": "تمت المزايدة عليك",
+    "startedAt": "بدأت المزايدة من {amount} · {count, plural, zero {لا مزايدات} one {مزايدة واحدة} two {مزايدتان} few {# مزايدات} many {# مزايدة} other {# مزايدة}}",
+    "quickBid": "مزايدة سريعة",
+    "minNextBid": "أقل مزايدة تالية: {amount}",
+    "customAmount": "أو أدخل مبلغًا مخصصًا",
+    "antiSnipe": "منع القنص: المزايدات في {window, plural, one {آخر دقيقة} two {آخر دقيقتين} few {آخر # دقائق} other {آخر # دقيقة}} تمدّد المزاد {extension, plural, one {دقيقة} two {دقيقتين} few {# دقائق} other {# دقيقة}}",
+    "placeBidFor": "زايد بمبلغ {amount}",
+    "binding": "المزايدة ملزمة قانونيًا · لا يمكن إلغاؤها بعد التأكيد",
+    "readTerms": "اقرأ شروط وأحكام المزاد كاملة >",
+    "bidPlaced": "تم تسجيل مزايدتك. سنخبرك فور أن يزايد عليك أحد.",
+    "errors": {
+      "bidTooLow": "المبلغ أقل من الحد الأدنى للمزايدة التالية.",
+      "invalid": "أدخل مبلغ المزايدة.",
+      "auctionEnded": "انتهى هذا المزاد بالفعل.",
+      "ownListing": "لا يمكنك المزايدة على إعلانك.",
+      "termsRequired": "وافق على شروط المزاد قبل المزايدة.",
+      "unauthenticated": "سجّل الدخول للمزايدة.",
+      "requestFailed": "تعذّر تسجيل المزايدة. حاول مرة أخرى."
+    }
+  },
+  "MyBids": {
+    "accountTitle": "حسابي",
+    "title": "مزايداتي",
+    "stats": {
+      "activeBids": "مزايدات نشطة",
+      "auctionsWon": "مزادات فزت بها",
+      "totalBidValue": "إجمالي قيمة المزايدات",
+      "beingOutbid": "تمت المزايدة عليك"
+    },
+    "tabs": {
+      "active": "نشطة ({count})",
+      "won": "فزت بها ({count})",
+      "lost": "خسرتها ({count})",
+      "watchlist": "قائمة المتابعة"
+    },
+    "yourBid": "مزايدتك",
+    "currentBid": "المزايدة الحالية",
+    "leading": "في الصدارة",
+    "outbid": "تمت المزايدة عليك",
+    "viewAuction": "عرض المزاد",
+    "bidAgain": "زايد مجددًا",
+    "emptyTitle": "لا توجد مزايدات بعد",
+    "emptyBody": "عند مزايدتك في أي مزاد يظهر هنا، مع الوقت المتبقي وما إذا كنت لا تزال في الصدارة.",
+    "emptyCta": "تصفّح المزادات"
+  },
+  "AuctionPayment": {
+    "title": "مبروك! فزت بالمزاد",
+    "subtitle": "أكمل الدفع خلال {hours} ساعة لتأمين قطعتك.",
+    "remaining": "متبقية",
+    "overdue": "انتهت المهلة",
+    "wonBadge": "فزت بالمزاد",
+    "winningBid": "المزايدة الفائزة",
+    "address": "عنوان التوصيل",
+    "payment": "طريقة الدفع",
+    "change": "تغيير",
+    "default": "الافتراضي",
+    "card": "بطاقة",
+    "cardLine": "{brand}  ····{last4}",
+    "noAddress": "أضف عنوان توصيل قبل الدفع.",
+    "noCard": "أضف طريقة دفع قبل الدفع.",
+    "summary": "ملخص الطلب",
+    "rows": {
+      "winningBid": "المزايدة الفائزة",
+      "shipping": "الشحن",
+      "vat": "ضريبة القيمة المضافة",
+      "buyerPremium": "عمولة المشتري",
+      "protection": "حماية المشتري"
+    },
+    "included": "مشمولة",
+    "total": "الإجمالي",
+    "confirmFor": "تأكيد الدفع  —  {amount}",
+    "binding": "الدفع ملزم. تُشحن القطعة بعد التأكيد.",
+    "protectionTitle": "حماية المشتري مشمولة",
+    "protection": {
+      "authenticated": "تُفحص القطعة في مركز ميزون قبل الشحن",
+      "refund": "استرداد كامل إذا لم تطابق القطعة الوصف",
+      "held": "يُحتجز المبلغ بأمان حتى تؤكد الاستلام"
+    },
+    "errors": {
+      "auctionEnded": "انتهت مهلة الدفع لهذا المزاد.",
+      "unauthenticated": "سجّل الدخول لإتمام الدفع.",
+      "requestFailed": "تعذّر إتمام الدفع. حاول مرة أخرى."
+    }
+  },
+  "About": {
+    "title": "عن ميزون سيل",
+    "subtitle": "المنصّة الأولى للمنتجات المستعملة في السعودية",
+    "missionEyebrow": "مهمّتنا",
+    "missionLead": "تأسّست ميزون سيل على قناعة بسيطة: القطع المستعملة تستحقّ حياة ثانية، والبائعون يستحقّون سوقاً عادلة وشفّافة.",
+    "missionBody": "بنينا أكثر أسواق المستعمل موثوقية في السعودية — حيث الأصالة والبساطة والمجتمع أولاً.",
+    "startSelling": "ابدأ البيع",
+    "stats": {
+      "listed": "قطعة معروضة",
+      "categories": "فئة",
+      "fee": "رسوم المنصّة"
+    },
+    "valuesTitle": "قيمنا",
+    "values": {
+      "trust": {
+        "title": "الثقة أولاً",
+        "body": "كل بائع موثّق، وكل قطعة تُراجع قبل النشر."
+      },
+      "fair": {
+        "title": "عدالة للجميع",
+        "body": "تدفع رسوم المنصّة عند البيع فقط. العرض مجاني."
+      },
+      "authenticity": {
+        "title": "الأصالة",
+        "body": "نتعاون مع مركز الرياض لتوثيق القطع في المبادلات عالية القيمة."
+      },
+      "community": {
+        "title": "المجتمع",
+        "body": "القصص والمبادلة والمزادات — مصمّمة للمشتري والبائع السعودي."
+      }
+    }
+  },
+  "Pricing": {
+    "title": "تسعير بسيط وشفّاف",
+    "subtitle": "العرض مجاني. {percent}% فقط عند البيع.",
+    "feeCaption": "رسوم المنصّة على كل عملية بيع",
+    "points": {
+      "free": "العرض مجاني — بدون تكلفة مسبقة",
+      "onSale": "تُحتسب عند بيع القطعة فقط",
+      "payout": "تحويل فوري بعد تأكيد المشتري",
+      "noSubscription": "بدون اشتراك شهري أو رسوم خفية",
+      "included": "المزادات والمبادلة — مشمولة مجاناً"
+    },
+    "startFree": "ابدأ البيع مجاناً",
+    "exampleTitle": "مثال على الحساب",
+    "exampleListed": "سعر العرض",
+    "exampleFee": "رسوم المنصّة ({percent}%)",
+    "exampleEarnings": "أرباحك"
+  },
+  "SellerGuide": {
+    "title": "دليل البائع",
+    "subtitle": "كل ما تحتاج معرفته للبيع بنجاح في ميزون سيل",
+    "contents": "محتويات الدليل",
+    "topics": {
+      "gettingStarted": {
+        "title": "البداية",
+        "body": "أنشئ حساباً مجانياً وأكمل ملفك الشخصي. أضف صورة ونبذة لبناء ثقة المشترين. ستحتاج إلى توثيق رقم جوالك وبريدك قبل عرض أول قطعة."
+      },
+      "listing": {
+        "title": "عرض قطعتك",
+        "body": "اذهب إلى + بيع في القائمة. اختر الفئة والفئة الفرعية ثم أدخل تفاصيل القطعة. كلما زادت المعلومات، بيعت القطعة أسرع."
+      },
+      "photos": {
+        "title": "الصور والحالة",
+        "body": "استخدم إضاءة طبيعية وخلفية نظيفة. التقط 5 صور على الأقل تشمل الأمام والخلف ولقطات قريبة لأي عيوب والبطاقات. الوصف الصادق للحالة يبني الثقة ويقلّل الإرجاع."
+      },
+      "pricingTips": {
+        "title": "نصائح التسعير",
+        "body": "ابحث عن قطع مشابهة تم بيعها لتسعير تنافسي. فعّل \"قابل للتفاوض\" إن كنت مرناً. المزاد مناسب للقطع النادرة أو عالية الطلب."
+      },
+      "gettingPaid": {
+        "title": "استلام الأرباح",
+        "body": "تحتسب ميزون سيل رسوم منصّة بنسبة {percent}% عند بيع قطعتك. تُضاف أرباحك إلى محفظتك فور تأكيد التسليم، ويمكنك السحب إلى حسابك البنكي في أي وقت — يستغرق التحويل 1–3 أيام عمل."
+      }
+    }
+  },
+  "Help": {
+    "title": "مركز المساعدة",
+    "subtitle": "كيف يمكننا مساعدتك اليوم؟",
+    "nav": {
+      "faq": "الأسئلة الشائعة",
+      "contact": "تواصل معنا",
+      "returns": "سياسة الإرجاع",
+      "sellerGuide": "دليل البائع"
+    },
+    "faqTitle": "الأسئلة الشائعة",
+    "faq": {
+      "authentic": {
+        "q": "كيف أعرف أن القطعة أصلية؟",
+        "a": "جميع البائعين موثّقون من فريقنا. القطع التي تتجاوز 5,000 ريال تمرّ عبر مركز الرياض للتوثيق قبل التسليم."
+      },
+      "wrongItem": {
+        "q": "ماذا لو استلمت قطعة خاطئة أو مقلّدة؟",
+        "a": "أنت محميّ بالكامل. أبلغ خلال 48 ساعة واسترد المبلغ كاملاً. تُحفظ أموالك في الضمان حتى تؤكّد الاستلام."
+      },
+      "trade": {
+        "q": "كيف تعمل خاصية المبادلة؟",
+        "a": "اختر القطعة التي تريدها، ثم \"اعرض مبادلة\"، ثم اختر قطعتك. تُشحن القطعتان إلى مركز الرياض للفحص ثم تُتبادلان."
+      },
+      "cancel": {
+        "q": "هل يمكنني إلغاء الطلب بعد إتمامه؟",
+        "a": "يمكن إلغاء الطلبات العادية خلال ساعة واحدة. لا يمكن إلغاء المزادات الرابحة أو اتفاقيات المبادلة بعد التأكيد."
+      },
+      "shipping": {
+        "q": "كم يستغرق الشحن؟",
+        "a": "العادي: 3–5 أيام عمل. السريع: 1–2 يوم عمل. قطع مركز الرياض تضيف 2–4 أيام للتوثيق."
+      },
+      "payment": {
+        "q": "ما وسائل الدفع المقبولة؟",
+        "a": "مدى وSTC Pay وتابي وتمارا وPayTabs وApple Pay والبطاقات (فيزا وماستركارد). جميع المعاملات مؤمّنة ومشفّرة، ويدفع البائع رسوم منصّة {percent}% على كل عملية بيع."
+      }
+    },
+    "contactTitle": "تواصل معنا",
+    "emailSupport": "الدعم عبر البريد",
+    "emailSupportBody": "الردّ خلال 24 ساعة",
+    "sendEmail": "أرسل بريداً",
+    "formTitle": "أرسل لنا رسالة",
+    "sendMessage": "إرسال الرسالة",
+    "sent": "شكراً — وصلت رسالتك إلى فريق الدعم.",
+    "sentWithTicket": "شكراً — وصلت رسالتك إلى فريق الدعم. الرقم المرجعي: {ticket}",
+    "fields": {
+      "name": "اسمك",
+      "email": "البريد الإلكتروني",
+      "category": "التصنيف",
+      "subject": "الموضوع",
+      "subjectPlaceholder": "كيف يمكننا المساعدة؟",
+      "message": "الرسالة",
+      "messagePlaceholder": "اشرح مشكلتك…"
+    },
+    "categories": {
+      "general": "عام",
+      "order_issue": "مشكلة في الطلب",
+      "technical": "تقني",
+      "account": "الحساب",
+      "payment": "الدفع",
+      "seller_support": "دعم البائعين",
+      "other": "أخرى"
+    },
+    "errors": {
+      "missingFields": "يرجى تعبئة جميع الحقول.",
+      "requestFailed": "تعذّر الإرسال. حاول مرة أخرى.",
+      "tooShort": "يجب ألا يقل الموضوع عن ٥ أحرف والرسالة عن ١٠ أحرف."
+    },
+    "returnsTitle": "سياسة الإرجاع",
+    "returns": {
+      "window": {
+        "title": "نافذة إرجاع 14 يوماً",
+        "body": "لديك 14 يوماً من تاريخ التسليم لطلب الإرجاع. يجب أن تكون القطعة بالحالة نفسها التي استلمتها بها. أبلغ عن أي مشكلة خلال 48 ساعة من التسليم."
+      },
+      "eligible": {
+        "title": "مؤهّل للإرجاع",
+        "body": "القطعة غير مطابقة للوصف · قطعة مقلّدة · استلام قطعة خاطئة · وصول القطعة تالفة · وصف خاطئ للحالة من البائع"
+      },
+      "notEligible": {
+        "title": "غير مؤهّل للإرجاع",
+        "body": "تغيير الرأي · مشكلات المقاس (راجع دليل المقاسات قبل الشراء) · القطع المعلّمة \"بيع نهائي\" · قطع المزاد (إلا إن كانت غير مطابقة للوصف)"
+      },
+      "refund": {
+        "title": "مدة الاسترداد",
+        "body": "تُعالج المبالغ المستردة المعتمدة خلال 3–5 أيام عمل إلى وسيلة الدفع الأصلية أو إلى محفظتك في ميزون سيل."
+      },
+      "howTo": {
+        "title": "كيف تطلب الإرجاع",
+        "body": "اذهب إلى طلباتي ← اختر الطلب ← طلب إرجاع ← اختر السبب ← أرفق صوراً إن لزم ← أرسل. يراجع فريقنا خلال 24 ساعة."
+      }
+    }
+  },
+  "Blog": {
+    "title": "مدوّنة ميزون سيل",
+    "subtitle": "نصائح واتجاهات وقصص من المجتمع",
+    "latest": "أحدث المقالات",
+    "emptyTitle": "لا توجد مقالات بعد",
+    "emptyBody": "تحتاج المدوّنة إلى مصدر للنشر. وإلى أن يتوفّر، تجد نصائح البيع في دليل البائع.",
+    "readGuide": "اقرأ دليل البائع"
+  },
+  "VisualSearch": {
+    "title": "البحث بالصورة",
+    "subtitle": "ارفع صورة للعثور على قطع مطابقة في ميزون سيل",
+    "scopeBadge": "ميزون سيل فقط",
+    "close": "إغلاق",
+    "dropHere": "اسحب وأفلت الصورة هنا",
+    "or": "أو",
+    "browse": "اختر من جهازك",
+    "formats": "JPG أو PNG حتى 10 ميجابايت",
+    "tipsTitle": "نصائح لأفضل نتيجة",
+    "tips": {
+      "lighting": "استخدم إضاءة جيدة وتجنّب الظلال",
+      "framing": "اجعل القطعة كاملة داخل الإطار",
+      "background": "الخلفية البسيطة أفضل"
+    },
+    "searchingBadge": "جارٍ البحث في قاعدة ميزون سيل",
+    "steps": {
+      "captured": "تم التقاط الصورة",
+      "detected": "تم التعرّف على القطعة",
+      "searching": "جارٍ البحث في ميزون سيل…",
+      "matching": "جارٍ إيجاد أفضل تطابق…"
+    },
+    "detected": {
+      "brand": "الماركة:",
+      "color": "اللون:",
+      "type": "النوع:",
+      "size": "المقاس:"
+    },
+    "foundTitle": "{count, plural, one {تطابق واحد في ميزون سيل} other {# نتائج مطابقة في ميزون سيل}}",
+    "foundBody": "نعرض القطع المطابقة لصورتك",
+    "notFoundTitle": "غير معروضة في ميزون سيل بعد",
+    "notFoundBody": "لم نعثر على هذه القطعة تحديداً في الكتالوج.",
+    "newSearch": "بحث جديد",
+    "exactMatch": "تطابق تام",
+    "viewItem": "عرض القطعة",
+    "similarItems": "قطع مشابهة",
+    "youMightLike": "قد تعجبك هذه القطع المشابهة:",
+    "matchScore": "تطابق {score}%",
+    "nothingAtAll": "لا توجد قطع مطابقة لهذه الصورة.",
+    "tooLarge": "حجم الصورة يتجاوز 10 ميجابايت. جرّب صورة أصغر.",
+    "failed": "تعذّر البحث بهذه الصورة. حاول مرة أخرى.",
+    "conditions": {
+      "new": "جديد",
+      "new_with_tags": "جديد مع البطاقة",
+      "new_without_tags": "جديد بدون بطاقة",
+      "like_new": "شبه جديد",
+      "good": "جيد",
+      "fair": "مقبول"
+    }
   }
 }

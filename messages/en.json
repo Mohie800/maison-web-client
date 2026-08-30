@@ -93,7 +93,18 @@
     "newBadge": "New",
     "likeCount": "{count} likes",
     "vsNew": "vs {price} new",
-    "savePercent": "Save {percent}%"
+    "savePercent": "Save {percent}%",
+    "itemsCount": "{count} items",
+    "soldThisWeek": "{count} sold this week",
+    "live": "LIVE",
+    "liveAuctionsBadge": "LIVE AUCTIONS",
+    "auctionBadge": "AUCTION",
+    "bid": "Bid",
+    "placeBid": "Place Bid",
+    "currentBid": "Current bid",
+    "active": "Active",
+    "ended": "Ended",
+    "bids": "{count, plural, one {# bid} other {# bids}}"
   },
   "Listing": {
     "condition": "Condition",
@@ -144,6 +155,7 @@
     "otpSubtitle": "We sent a 6-digit code to {destination}.",
     "otpVerify": "Verify Code",
     "otpResend": "Resend code",
+    "otpResendIn": "Resend in {time}",
     "otpResent": "A new code is on its way.",
     "forgotTitle": "Reset your password",
     "forgotSubtitle": "We'll email you a reset link.",
@@ -298,12 +310,25 @@
     "filters": "Filters",
     "priceBetween": "SAR {min} – SAR {max}",
     "priceFrom": "SAR {min} and up",
-    "priceUpTo": "Up to SAR {max}"
+    "priceUpTo": "Up to SAR {max}",
+    "discount": "Discount",
+    "discountOption": "{percent}% or more",
+    "material": "Material",
+    "searchTitle": "Search",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Search people, product, brands…",
+    "clearSearch": "Clear search",
+    "resultsFound": "{count, plural, one {# result found} other {# results found}}",
+    "chipCondition": "Condition: {value}",
+    "chipBrand": "Brand: {value}",
+    "chipCategory": "Category: {value}"
   },
   "Pdp": {
     "save": "Save {percent}%",
     "bidCount": "{count, plural, =0 {No bids yet} one {# bid} other {# bids}}",
     "viewSeller": "View seller",
+    "sellerRating": "{rating} stars",
+    "sellerSold": "{count} sold",
     "buyNow": "Buy now",
     "addToBag": "Add to bag",
     "placeBid": "Place a bid",
@@ -345,46 +370,135 @@
     "buyerProtection": "Buyer protection",
     "buyerProtectionBody": "Your payment is held securely until the Maison Hub authenticates the item and it's delivered."
   },
+  "Seller": {
+    "tabs": {
+      "listings": "Listings",
+      "reviews": "Reviews",
+      "about": "About"
+    },
+    "stats": {
+      "sales": "Sales",
+      "rating": "Rating",
+      "followers": "Followers",
+      "memberSince": "Member since"
+    },
+    "verified": "Verified",
+    "pro": "Pro",
+    "fastShipper": "Fast shipper",
+    "follow": "Follow",
+    "followSoon": "Following sellers needs an account — coming with sign-in.",
+    "listingCount": "{count, plural, =0 {No listings} one {# listing} other {# listings}}",
+    "sorts": {
+      "newest": "Newest",
+      "price_asc": "Price: low to high",
+      "price_desc": "Price: high to low"
+    },
+    "listingsEmptyTitle": "Nothing listed right now",
+    "listingsEmptyBody": "This seller has no items for sale at the moment.",
+    "reviewsEmptyTitle": "No reviews yet",
+    "reviewsEmptyBody": "Reviews appear here once a buyer has rated a completed order.",
+    "reviewCount": "{count, plural, =0 {No reviews} one {# review} other {# reviews}}",
+    "verifiedBuyer": "Verified buyer",
+    "purchased": "Bought: {title}",
+    "reviewTags": {
+      "as_described": "As described",
+      "fast_shipping": "Fast shipping",
+      "great_communication": "Great communication"
+    },
+    "sellerReplied": "Seller replied",
+    "helpfulCount": "{count} found this helpful",
+    "aboutEmpty": "This seller hasn't added any details yet.",
+    "about": {
+      "location": "Location",
+      "shipsFrom": "Ships from",
+      "freeShipping": "Free shipping",
+      "freeShippingOver": "On orders over {amount}",
+      "returns": "Returns",
+      "returnsWindow": "Accepted within {days} days",
+      "returnsAccepted": "Accepted",
+      "returnsNone": "Not accepted",
+      "authenticity": "Authenticity",
+      "authenticityGuaranteed": "Guaranteed by the seller",
+      "responseRate": "Response rate",
+      "shipTime": "Average dispatch",
+      "shipTimeHours": "{hours, plural, one {# hour} other {# hours}}"
+    },
+    "allItems": "All items",
+    "categories": "Categories"
+  },
   "Checkout": {
-    "cartTitle": "Your bag",
+    "cartTitle": "My Cart",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
     "clearBag": "Clear bag",
-    "summary": "Order summary",
-    "emptyTitle": "Your bag is empty",
-    "emptyBody": "Items you add will appear here.",
-    "startShopping": "Start shopping",
-    "checkout": "Checkout",
+    "summary": "Order Summary",
+    "emptyTitle": "Your cart is empty",
+    "emptyBody": "You haven't added anything yet.\nStart browsing to find something you'll love.",
+    "startShopping": "Start Shopping",
+    "browseCategories": "Browse Categories",
+    "youMightLike": "You might like",
+    "viewAll": "View All",
+    "proceedToCheckout": "Proceed to Checkout",
+    "verifiedSeller": "Verified Seller",
+    "trustSecure": "Secure checkout",
+    "trustProtection": "Buyer protection",
+    "trustReturns": "Returns within 14 days",
     "select": "Include in checkout",
     "deselect": "Exclude from checkout",
     "remove": "Remove",
+    "edit": "Edit",
+    "cancel": "Cancel",
     "bundle": "Bundle",
     "itemUnavailable": "Item no longer available",
     "selectedItems": "{count, plural, =0 {No items selected} one {# item selected} other {# items selected}}",
     "totalsAtCheckout": "Shipping, VAT and discounts are calculated at checkout.",
     "selectSomething": "Select at least one item to continue.",
     "steps": {
-      "cart": "Bag",
       "shipping": "Shipping",
       "payment": "Payment",
-      "confirmed": "Done"
+      "confirmed": "Confirmed"
     },
-    "deliverTo": "Deliver to",
+    "orderSteps": {
+      "placed": "Placed",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "delivered": "Delivered"
+    },
+    "shippingTitle": "Shipping",
+    "deliveryAddress": "Delivery address",
+    "shippingMethod": "Shipping method",
+    "priceBreakdown": "Price breakdown",
+    "defaultAddress": "Default",
     "noAddresses": "You haven't saved an address yet.",
-    "addAddress": "Add a new address",
-    "saveAddress": "Save address",
+    "addAddress": "Add New Address",
+    "newAddress": "Add New Address",
+    "editAddress": "Edit Address",
+    "saveAndContinue": "Save & Continue",
+    "prefilledFromProfile": "Pre-filled from your profile — edit if needed.",
     "addAddressFirst": "Add a delivery address to see your total.",
-    "delivery": "Delivery",
+    "estimated": "Estimated {range}",
+    "tracked": "Tracked",
+    "fastest": "Fastest",
+    "coordinateWithSeller": "Coordinate with seller",
     "free": "Free",
     "multiSellerNote": "{count, plural, one {Your order ships as # package.} other {Your order ships as # separate packages, one per seller.}}",
     "package": "Package {index}",
     "itemsInPackage": "{count, plural, one {# item} other {# items}}",
-    "eta": "{min}–{max} business days",
-    "continueToPayment": "Continue to payment",
-    "paymentMethod": "Payment method",
+    "continueToPayment": "Continue to Payment",
+    "securedShipping": "Secured · TLS 1.3 · PCI DSS",
+    "securedPayment": "PCI DSS Compliant · TLS 1.3 Encrypted",
+    "paymentTitle": "Payment",
+    "savedPaymentMethod": "Saved payment method",
+    "otherPaymentMethods": "Other payment methods",
+    "orderBreakdown": "Order breakdown",
     "noPaymentMethods": "You haven't saved a payment method yet.",
-    "addPaymentMethod": "Add a payment method",
-    "savePaymentMethod": "Save payment method",
+    "addNewCard": "Add new card",
+    "payWithStc": "Pay with STC Pay",
+    "change": "Change",
+    "selected": "Selected",
+    "saveForFuture": "Save card for future orders",
+    "saveForFutureHint": "Stored securely · Delete anytime",
     "addPaymentFirst": "Add a payment method to place your order.",
-    "cardSecurityNote": "Card details are sent directly to our payment processor and are never stored by Maison Sale.",
+    "payAmount": "Pay {amount}",
     "paymentTypes": {
       "card": "Card",
       "mada": "mada",
@@ -394,48 +508,67 @@
       "tamara": "Tamara",
       "paytabs": "PayTabs"
     },
-    "coupon": "Coupon",
-    "couponPlaceholder": "Enter code",
+    "paymentBlurbs": {
+      "mada": "Saudi debit network",
+      "stc_pay": "Pay with STC wallet"
+    },
+    "coupon": "Coupons & Discounts",
+    "couponPlaceholder": "Enter coupon code",
     "apply": "Apply",
-    "couponApplied": "Coupon applied — you saved {amount}.",
+    "couponAvailable": "Available",
+    "couponAppliedTitle": "{code} applied",
+    "couponSaving": "You're saving {amount}",
+    "couponWillApply": "You'll save {amount} at checkout.",
     "couponInvalid": "That code isn't valid for this order.",
-    "donateTitle": "Round up for {charity}",
-    "donateBody": "Add a small donation to your order. 100% goes to the charity.",
-    "donateAmount": "Donate {amount}",
-    "removeDonation": "No thanks",
+    "donateTitle": "Donate to {charity}",
+    "donateBody": "Support charitable causes in KSA",
+    "donateOn": "Turn the donation on",
+    "donateOff": "Turn the donation off",
+    "roundUp": "Round up your total",
+    "totalGoesFromTo": "Your total {from} → {to}",
+    "donateFootnote": "Your donation helps fund education in KSA.",
     "subtotal": "Subtotal",
+    "subtotalWithCount": "Subtotal ({count, plural, one {# item} other {# items}})",
     "shipping": "Shipping",
     "discount": "Discount",
+    "discountWithCode": "Discount ({code})",
     "vat": "VAT (15%)",
     "donation": "Donation",
+    "donationTo": "{charity} Donation",
     "total": "Total",
-    "status": "Status",
-    "placeOrder": "Place order — {amount}",
-    "confirmedTitle": "Order confirmed",
-    "confirmedBody": "Thank you. We've sent a confirmation to your email.",
-    "orderNumber": "Order number",
+    "totalPaid": "Total paid",
+    "confirmedTitle": "Order Placed!",
+    "confirmedGreeting": "You're all set, {name}!",
+    "confirmedBody": "Your order has been placed and the seller has been notified.",
+    "orderNumber": "Order ID",
+    "item": "Item",
+    "andMoreItems": "{count, plural, one {and # more} other {and # more}}",
+    "estDelivery": "Est. delivery",
+    "sellerRating": "{rating} stars · {count} sales",
+    "donationThanksTitle": "Thank you for your donation",
+    "donationThanksBody": "You donated {amount} · 100% of your donation goes to charity.",
     "escrowNote": "Your payment is held securely until the Maison Hub authenticates the item and it's delivered.",
-    "trackOrder": "Track order",
-    "continueShopping": "Continue shopping",
+    "trackOrder": "Track My Order",
+    "continueShopping": "Continue Shopping",
     "fields": {
       "label": "Label",
-      "recipientName": "Recipient name",
+      "labelPlaceholder": "Home, Work…",
+      "fullName": "Full Name",
       "phone": "Phone",
-      "country": "Country",
       "city": "City",
-      "area": "Area",
+      "district": "District",
       "street": "Street",
-      "building": "Building",
-      "apartment": "Apartment",
-      "postalCode": "Postal code",
-      "setDefault": "Set as default address",
-      "cardNumber": "Card number",
-      "cardholderName": "Name on card",
-      "expiryMonth": "Month",
-      "expiryYear": "Year",
-      "cvv": "CVV",
-      "walletPhone": "STC Pay phone number"
-    }
+      "postalCode": "Postal Code",
+      "setDefault": "Save as default address",
+      "setDefaultHint": "Auto-used on your next order",
+      "cardNumber": "Card Number",
+      "cardholderName": "Cardholder Name",
+      "cardholderPlaceholder": "Enter name on card",
+      "expiry": "MM / YY",
+      "cvv": "CVV / CVC",
+      "walletPhone": "STC Pay Mobile Number"
+    },
+    "shippingCoveredBySeller": "Free shipping — the seller covers it"
   },
   "Account": {
     "nav": {
@@ -445,11 +578,135 @@
       "wallet": "Wallet",
       "listings": "My listings",
       "trades": "Trade history",
+      "bids": "My Bids",
+      "notifications": "Notifications",
       "settings": "Settings"
     }
   },
+  "Dashboard": {
+    "title": "My Account",
+    "welcome": "Welcome back",
+    "welcomeNamed": "Welcome back, {name}",
+    "summary": "You have {orders, plural, =0 {no active orders} one {# active order} other {# active orders}} and {offers, plural, =0 {no pending trade offers} one {# pending trade offer} other {# pending trade offers}}",
+    "listItem": "+ List an Item",
+    "stats": {
+      "activeOrders": "Active Orders",
+      "wishlistItems": "Wishlist Items",
+      "walletBalance": "Wallet Balance",
+      "tradeOffers": "Trade Offers"
+    },
+    "recentOrders": "Recent Orders",
+    "viewAll": "View All",
+    "orderLine": "{count, plural, one {# item} other {# items}} · {amount}",
+    "track": "Track",
+    "noOrdersTitle": "No orders yet",
+    "noOrdersBody": "When you buy something, it shows up here with its tracking.",
+    "startShopping": "Start shopping"
+  },
+  "Settings": {
+    "accountTitle": "My Account",
+    "editProfile": "Edit Profile",
+    "groups": {
+      "account": "Account",
+      "shopping": "Shopping",
+      "general": "General",
+      "appearance": "Appearance"
+    },
+    "rows": {
+      "personal": "Personal Information",
+      "addresses": "Shipping Addresses",
+      "payment": "Payment Methods",
+      "payout": "Payout Settings",
+      "orders": "Orders & Returns (Tracking)",
+      "wishlist": "Wishlist",
+      "wallet": "Wallet",
+      "notifications": "Notifications",
+      "contact": "Contact Us",
+      "faqs": "FAQs",
+      "about": "About Maison Sale",
+      "lightMode": "Light Mode",
+      "edit": "Edit",
+      "card": "Card",
+      "none": "None yet",
+      "bankAccount": "Bank account",
+      "saved": "{count, plural, =0 {None saved} one {# saved} other {# saved}}",
+      "items": "{count, plural, =0 {Empty} one {# item} other {# items}}"
+    },
+    "channels": {
+      "push": "Push",
+      "email": "Email",
+      "sms": "SMS"
+    },
+    "profileTitle": "Profile Information",
+    "changePhoto": "Change Photo",
+    "photoUnavailable": "Photo uploads aren't wired up yet — the API's field name isn't published.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email address",
+    "phone": "Phone number",
+    "saveChanges": "Save Changes",
+    "savedProfile": "Your profile is saved.",
+    "savedNotifications": "Your notification preferences are saved.",
+    "notificationsTitle": "Notifications",
+    "notifications": {
+      "orders": {
+        "title": "Order updates",
+        "body": "Get notified about your order status"
+      },
+      "messages": {
+        "title": "New messages",
+        "body": "Alerts for buyer/seller messages"
+      },
+      "priceDrops": {
+        "title": "Price drops",
+        "body": "When wishlisted items drop in price"
+      },
+      "promotions": {
+        "title": "Promotions & deals",
+        "body": "Weekly deals and special offers"
+      },
+      "auctions": {
+        "title": "Auction alerts",
+        "body": "Outbid and ending soon alerts"
+      },
+      "social": {
+        "title": "Followers & reviews",
+        "body": "New followers, likes and reviews"
+      }
+    },
+    "errors": {
+      "nameRequired": "Enter your name.",
+      "emailInvalid": "That email address was rejected.",
+      "phoneInvalid": "That phone number was rejected.",
+      "invalid": "Some details were rejected. Check them and try again.",
+      "unauthenticated": "Sign in to change your settings.",
+      "requestFailed": "We could not save that. Try again."
+    }
+  },
+  "Notifications": {
+    "accountTitle": "My Account",
+    "title": "Notifications",
+    "new": "{count} new",
+    "markAllRead": "Mark all read",
+    "tabs": {
+      "all": "All",
+      "orders": "Orders",
+      "priceDrops": "Price drops",
+      "social": "Social",
+      "promotions": "Promotions"
+    },
+    "badges": {
+      "orders": "ORDER",
+      "priceDrops": "PRICE",
+      "social": "SOCIAL",
+      "promotions": "OFFER"
+    },
+    "view": "View",
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "Order updates, price drops and offers will appear here."
+  },
   "Orders": {
-    "accountTitle": "My account",
+    "accountTitle": "My Account",
     "nav": "My orders",
     "pagination": "Pagination",
     "tabs": {
@@ -467,12 +724,13 @@
       "processing": "Processing",
       "shipped": "Shipped",
       "delivered": "Delivered",
-      "cancelled": "Cancelled"
+      "cancelled": "Cancelled",
+      "paid": "Paid"
     },
     "itemCount": "{count, plural, one {# item} other {# items}}",
     "andMore": "{count, plural, one {and # more item} other {and # more items}}",
     "emptyTitle": "No orders yet",
-    "emptyBody": "Once you buy something it'll show up here.",
+    "emptyBody": "When you place your first order,\nit will appear here.",
     "emptyTabTitle": "Nothing in this tab",
     "emptyTabBody": "Try another tab to see your other orders.",
     "startShopping": "Start shopping",
@@ -510,13 +768,1134 @@
     "total": "Total",
     "deliveryAddress": "Delivery address",
     "contactSeller": "Message seller",
-    "reportIssue": "Report an issue or return",
+    "reportIssue": "Report an Issue / Return",
     "invoice": "Tax invoice",
     "billedTo": "Billed to",
     "item": "Item",
-    "amount": "Amount",
-    "invoicePrintHint": "Use your browser's print function to save or print this invoice.",
     "invoiceUnavailableTitle": "Invoice not available yet",
-    "invoiceUnavailableBody": "We couldn't load the tax invoice for this order. Please try again later or contact support."
+    "invoiceUnavailableBody": "We couldn't load the tax invoice for this order. Please try again later or contact support.",
+    "estimatedDelivery": "Estimated delivery",
+    "awaitingDelivery": "Awaiting delivery",
+    "estimated": "Est. {date}",
+    "service": "Service",
+    "weight": "Weight",
+    "weightKg": "{kg} kg",
+    "trackOn": "Track on {carrier}",
+    "trackParcel": "Track parcel",
+    "sellerRole": "Seller",
+    "sellerWithRating": "Seller · {rating} stars",
+    "browseCategories": "Browse Categories",
+    "taxInvoice": "Tax Invoice",
+    "seller": "Seller",
+    "vatNo": "VAT No. {number}",
+    "issuedOn": "Issued {date}",
+    "shippedToSameAsBilling": "Shipped to the billing address.",
+    "qty": "Qty",
+    "lineTotal": "Total",
+    "vatAt": "VAT {rate}",
+    "discountWithCode": "Discount ({code})",
+    "donation": "Donation",
+    "donationTo": "{charity} donation",
+    "totalPaid": "Total paid",
+    "paidWith": "Paid with {method}",
+    "printInvoice": "Print / Save PDF",
+    "invoiceFootnote": "This is a system-generated tax invoice. Prices are in SAR and include VAT where applicable.",
+    "writeReview": "Write a review"
+  },
+  "Review": {
+    "title": "Write a review",
+    "subtitle": "Share how your purchase went with {seller}.",
+    "theSeller": "the seller",
+    "orderRef": "Order #{number}",
+    "overall": "Overall rating",
+    "scale": {
+      "1": "Poor",
+      "2": "Fair",
+      "3": "Good",
+      "4": "Very good",
+      "5": "Excellent"
+    },
+    "tagsLegend": "What went well?",
+    "tags": {
+      "as_described": "Item as described",
+      "fast_shipping": "Fast shipping",
+      "great_packaging": "Great packaging",
+      "authentic": "Authentic",
+      "good_condition": "Good condition",
+      "friendly_seller": "Friendly seller"
+    },
+    "yourReview": "Your review",
+    "commentPlaceholder": "How was the item, the packaging, the seller?",
+    "commentLimit": "Up to {max} characters.",
+    "addPhotos": "Add photos (optional)",
+    "photosUnavailable": "Photo uploads aren't available yet — the review API takes image paths but nothing produces one.",
+    "submit": "Submit review",
+    "thanksTitle": "Thanks for your review!",
+    "thanksBody": "Your feedback helps buyers trust great sellers.",
+    "ratingOf": "You rated {rating} out of {max}.",
+    "backToOrders": "Back to orders",
+    "errors": {
+      "ratingRequired": "Pick a star rating before submitting.",
+      "commentTooLong": "That review is too long.",
+      "alreadyReviewed": "You have already reviewed this item.",
+      "notDelivered": "You can review an item once it has been delivered.",
+      "itemNotFound": "We could not find that item on your order.",
+      "unauthenticated": "Sign in to leave a review.",
+      "requestFailed": "We could not save that review. Try again."
+    }
+  },
+  "Returns": {
+    "breadcrumbOrders": "My Orders",
+    "breadcrumbOrder": "Order #{number}",
+    "breadcrumbReturn": "Return Request",
+    "title": "Request a Return",
+    "subtitle": "We'll review your request within 24 hours",
+    "daysLeft": "{count, plural, one {# day left to return} other {# days left to return}}",
+    "someIneligible": "{count, plural, one {# item on this order can no longer be returned} other {# items on this order can no longer be returned}}.",
+    "noneEligibleTitle": "Nothing on this order can be returned",
+    "noneEligibleBody": "The return window has closed, or the items were not delivered.",
+    "reasonLegend": "Reason for return",
+    "reasons": {
+      "doesnt_match_description": "Item not as described",
+      "not_authentic": "Counterfeit / fake item",
+      "damaged_defective": "Item arrived damaged",
+      "wrong_size": "Wrong size",
+      "changed_mind": "Change of mind",
+      "other": "Something else"
+    },
+    "describeLegend": "Describe the issue",
+    "describePlaceholder": "Tell us what happened — the more detail, the faster the review.",
+    "noteLimit": "Up to {max} characters.",
+    "photosLegend": "Upload photos (required)",
+    "photosBlocked": "This reason needs photo evidence, and photo uploads aren't available yet. Please start this return with us directly —",
+    "contactSupport": "contact support",
+    "submit": "Submit Return Request",
+    "footnote": "Our team will review within 24 hours · {days}-day return window applies",
+    "statusTitle": "Return status",
+    "cancelReturn": "Cancel this return",
+    "cancelled": "This return has been cancelled.",
+    "created": "Your return request is in. We'll email you when the seller responds.",
+    "refundAmount": "Refund amount",
+    "trackingLabel": "Return tracking",
+    "rejectedLabel": "Why it was rejected",
+    "statuses": {
+      "requested": "Requested",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "pickup_scheduled": "Pickup scheduled",
+      "in_transit": "On its way back",
+      "delivered_to_seller": "Received by seller",
+      "refunded": "Refunded",
+      "cancelled": "Cancelled"
+    },
+    "errors": {
+      "itemsRequired": "Pick at least one item to return.",
+      "reasonRequired": "Choose a reason for the return.",
+      "photosRequired": "This reason needs photo evidence, which we can't upload yet. Contact support to start this return.",
+      "noteTooLong": "That description is too long.",
+      "notEligible": "This item is outside its return window.",
+      "mixedSellers": "Items from different sellers need separate returns.",
+      "alreadyRequested": "A return has already been requested for this item.",
+      "unauthenticated": "Sign in to request a return.",
+      "requestFailed": "We could not submit that return. Try again."
+    },
+    "returnRef": "Return #{id}",
+    "requestedOn": "Requested on {at}",
+    "reasonLine": "Reason: {reason}",
+    "progress": "Return progress",
+    "inProgress": "In progress",
+    "pending": "Pending",
+    "refundTitle": "Refund summary",
+    "refundNote": "Refunded to your original payment method within 3–5 business days.",
+    "helpTitle": "Need help?",
+    "helpBody": "Our support team can step in if there's a delay or dispute.",
+    "contactSupportCta": "Contact support",
+    "ineligible": {
+      "already_returned": "A return has already been requested for this item.",
+      "window_closed": "The return window has closed.",
+      "not_delivered": "This item hasn't been delivered yet.",
+      "unknown": "This item can no longer be returned."
+    }
+  },
+  "Wallet": {
+    "title": "Wallet",
+    "nav": {
+      "overview": "Overview",
+      "addFunds": "Add funds",
+      "withdraw": "Withdraw",
+      "history": "History",
+      "earnings": "Earnings",
+      "paymentMethods": "Payment methods",
+      "banks": "Banks",
+      "send": "Send"
+    },
+    "availableBalance": "Available balance",
+    "pendingAmount": "Pending: {amount}",
+    "addFunds": "Add funds",
+    "withdraw": "Withdraw",
+    "recentActivity": "Recent activity",
+    "viewAll": "View all",
+    "noTransactions": "No transactions yet.",
+    "transaction": "Transaction",
+    "addedConfirm": "{amount} added to your wallet.",
+    "withdrewConfirm": "{amount} is on its way to your bank.",
+    "addFundsTitle": "Add funds",
+    "addFundsSubtitle": "Add money to your Maison Sale wallet.",
+    "amount": "Amount",
+    "amountRange": "Between {min} and {max}",
+    "paymentMethod": "Payment method",
+    "addPaymentMethod": "Add payment method",
+    "summary": "Summary",
+    "processingFee": "Processing fee",
+    "addToWallet": "Add to wallet",
+    "secured": "Secured by 256-bit encryption",
+    "noMethodsTitle": "No payment method saved",
+    "noMethodsBody": "Add a card or wallet before topping up.",
+    "expires": "Expires {date}",
+    "withdrawTitle": "Withdraw funds",
+    "withdrawSubtitle": "Transfer your wallet balance to your bank account.",
+    "withdrawRange": "Between {min} and {max}",
+    "withdrawTo": "Withdraw to",
+    "withdrawSubmit": "Withdraw",
+    "arrivalNote": "Arrives in 1–3 business days",
+    "noBanksTitle": "No bank account saved",
+    "noBanksBody": "Add a bank account to withdraw your balance.",
+    "addBank": "Add bank account",
+    "belowMinimumTitle": "Balance below the minimum",
+    "belowMinimumBody": "Withdrawals start at {min}.",
+    "historyTitle": "Transaction history",
+    "filters": {
+      "all": "All",
+      "credit": "In",
+      "debit": "Out",
+      "sales": "Sales",
+      "trades": "Trades",
+      "auctions": "Auctions",
+      "transfers": "Transfers"
+    },
+    "reasons": {
+      "topup": "Added funds",
+      "withdrawal": "Withdrawal",
+      "sale_earnings": "Sale earnings",
+      "refund_received": "Refund received",
+      "referral_bonus_referrer": "Referral bonus",
+      "referral_bonus_referee": "Welcome bonus",
+      "auction_entry_fee_refund": "Auction fee refund",
+      "auction_non_payment_penalty": "Auction penalty",
+      "admin_adjustment": "Adjustment",
+      "transfer_sent": "Money sent",
+      "transfer_received": "Money received",
+      "trade_settlement": "Trade settlement"
+    },
+    "earningsTitle": "Earnings",
+    "earnings": {
+      "available": "Available to withdraw",
+      "pending": "Pending clearance",
+      "thisMonth": "This month",
+      "lifetime": "Lifetime earnings",
+      "withdrawn": "Total withdrawn"
+    },
+    "itemsSold": "{count, plural, =0 {No items sold yet} one {# item sold} other {# items sold}}",
+    "recentSales": "Recent sales",
+    "noSales": "No sales yet.",
+    "withdrawEarnings": "Withdraw earnings",
+    "methodsTitle": "Payment methods",
+    "methodsSubtitle": "Used for adding funds and at checkout.",
+    "methodType": "Type",
+    "types": {
+      "card": "Card",
+      "mada": "Mada",
+      "stc_pay": "STC Pay"
+    },
+    "cardNumber": "Card number",
+    "cardholderName": "Name on card",
+    "expiry": "Expiry (MM/YY)",
+    "cvv": "CVV",
+    "walletPhone": "Wallet phone",
+    "walletPhoneHint": "For STC Pay only — leave blank for cards.",
+    "save": "Save",
+    "remove": "Remove",
+    "makeDefault": "Make default",
+    "default": "Default",
+    "banksTitle": "Payout banks",
+    "banksSubtitle": "Withdrawals go to your default account.",
+    "iban": "IBAN",
+    "accountHolder": "Account holder",
+    "bankName": "Bank name",
+    "withdrawalNote": "Withdrawals take 1–3 business days.",
+    "detail": {
+      "title": "Transaction detail",
+      "reference": "Reference",
+      "type": "Type",
+      "date": "Date",
+      "description": "Description",
+      "viewItem": "View item",
+      "item": "Item",
+      "counterparty": "Buyer",
+      "counterpartySent": "Recipient",
+      "counterpartyReceived": "Sender",
+      "itemPrice": "Item price",
+      "platformFee": "Platform fee",
+      "netEarnings": "Net earnings",
+      "order": "Order",
+      "invoice": "Invoice",
+      "downloadReceipt": "Download receipt",
+      "lineItems": "Items in this order",
+      "shippingDeducted": "Shipping deducted",
+      "shippingBuyerPaid": "Shipping paid by the buyer"
+    },
+    "errors": {
+      "amountRequired": "Enter an amount.",
+      "amountTooSmall": "That amount is below the minimum.",
+      "amountTooLarge": "That amount is above the maximum.",
+      "paymentMethodRequired": "Choose a payment method.",
+      "bankRequired": "Choose a bank account.",
+      "insufficientBalance": "You don't have enough balance for that.",
+      "ibanInvalid": "That IBAN doesn't look right.",
+      "holderRequired": "Enter the account holder's name.",
+      "bankNameRequired": "Enter the bank name.",
+      "cardInvalid": "That card number doesn't look right.",
+      "expiryInvalid": "Enter the expiry as MM/YY.",
+      "phoneRequired": "Enter the wallet phone number.",
+      "unauthenticated": "Please sign in again.",
+      "requestFailed": "That didn't go through. Please try again.",
+      "recipientRequired": "Enter who you want to send to.",
+      "recipientNotFound": "We couldn't find that handle or number.",
+      "recipientSelf": "You can't send money to yourself.",
+      "recipientCannotReceive": "That account can't receive transfers."
+    },
+    "sendTitle": "Send money",
+    "sendSubtitle": "Transfer from your wallet to another Maison Sale member.",
+    "recipient": "Recipient",
+    "recipientHint": "Their @handle or the phone number on their account.",
+    "sendRange": "Between {min} and {max}",
+    "noteOptional": "Note (optional)",
+    "sendingTo": "Sending to",
+    "editRecipient": "Change",
+    "transferFee": "Transfer fee",
+    "theyReceive": "They receive",
+    "continue": "Continue",
+    "confirmSend": "Send money",
+    "sendReview": "You'll confirm before anything moves.",
+    "sendFinal": "This moves the money straight away.",
+    "sentConfirm": "{amount} sent to {recipient}."
+  },
+  "Wishlist": {
+    "title": "My Wishlist",
+    "itemCount": "{count, plural, =0 {No items} one {# item} other {# items}}",
+    "tabs": {
+      "all": "All",
+      "on_sale": "On sale",
+      "available": "Available",
+      "sold": "Sold"
+    },
+    "emptyTitle": "Your wishlist is empty",
+    "emptyBody": "Save items you love by tapping the heart icon on any product.",
+    "emptyTab": "Nothing saved in this tab.",
+    "startBrowsing": "Start browsing",
+    "addToCart": "Add to cart",
+    "unavailable": "No longer available",
+    "sold": "Sold",
+    "remove": "Remove from wishlist",
+    "notifyOn": "Notify me if the price drops",
+    "notifyOff": "Stop price-drop alerts",
+    "priceDropped": "Price dropped by {amount}",
+    "share": "Share wishlist",
+    "shareStop": "Stop sharing",
+    "shareLive": "Anyone with this link can see this wishlist.",
+    "shareOff": "Sharing is off. The old link no longer works.",
+    "shareCopyHint": "Copy the link to send it.",
+    "sharedTitle": "{name}'s wishlist",
+    "sharedIntro": "{count, plural, =0 {Nothing saved yet} one {# saved item} other {# saved items}}",
+    "sharedEmpty": "There is nothing on this wishlist yet.",
+    "sharedGone": "This wishlist is no longer shared.",
+    "sharedGoneBody": "The owner has turned sharing off, or the link was mistyped.",
+    "browse": "Browse Maison"
+  },
+  "MyListings": {
+    "title": "My Listings",
+    "stats": {
+      "active": "Active listings",
+      "sold": "Sold",
+      "earned": "Total earned",
+      "soldThisMonth": "Sold this month",
+      "expiringSoon": "Expiring soon",
+      "expiringSoonNote": "Within {days, plural, one {# day} other {# days}}",
+      "monthNote": "Since {date}"
+    },
+    "filters": {
+      "all": "All",
+      "live": "Active",
+      "pending": "In review",
+      "sold_out": "Sold",
+      "draft": "Drafts",
+      "expired": "Expired",
+      "withdrawn": "Withdrawn",
+      "rejected": "Rejected"
+    },
+    "statuses": {
+      "live": "Active",
+      "pending": "In review",
+      "draft": "Draft",
+      "sold_out": "Sold",
+      "rejected": "Rejected",
+      "withdrawn": "Withdrawn",
+      "expired": "Expired",
+      "pending_review": "In review",
+      "pending_payment": "Awaiting payment",
+      "sold": "Sold",
+      "traded": "Traded"
+    },
+    "columns": {
+      "item": "Item",
+      "price": "Price",
+      "status": "Status",
+      "views": "Views",
+      "likes": "Likes",
+      "listed": "Listed",
+      "actions": "Actions",
+      "expires": "Expires"
+    },
+    "draftStep": "Step {step} of {total}",
+    "delete": "Delete",
+    "emptyTitle": "You haven't listed anything yet",
+    "emptyBody": "Items you list for sale will appear here with their views, likes and status.",
+    "emptyFilter": "Nothing in this tab."
+  },
+  "Sell": {
+    "heading": "Sell an item",
+    "stepOf": "Step {step} of {total}",
+    "back": "Back",
+    "continue": "Continue",
+    "submitForReview": "Submit for review",
+    "steps": {
+      "category": "Category",
+      "type": "Listing type",
+      "details": "Item details",
+      "condition": "Condition",
+      "photos": "Photos",
+      "authenticity": "Authenticity",
+      "pricing": "Pricing",
+      "shipping": "Shipping",
+      "review": "Review"
+    },
+    "titles": {
+      "category": "What are you listing?",
+      "type": "How do you want to sell it?",
+      "details": "Item details",
+      "condition": "Condition",
+      "photos": "Add photos",
+      "authenticity": "Authenticity",
+      "pricing": "Set your price",
+      "shipping": "Shipping & location",
+      "review": "Review your listing"
+    },
+    "subtitles": {
+      "category": "Choose a category, then a sub-category.",
+      "type": "Sale and Trade are always separate product types.",
+      "details": "The fields below come from the category you picked.",
+      "condition": "Be honest — buyers can return an item that isn't as described.",
+      "photos": "Add up to 5 photos. Good lighting improves your Authenticity Score.",
+      "authenticity": "Tell us what you have. Your score is calculated once the listing is created.",
+      "pricing": "",
+      "shipping": "",
+      "review": ""
+    },
+    "types": {
+      "fashion": {
+        "name": "Fashion",
+        "blurb": "Clothing, shoes, bags"
+      },
+      "electronics": {
+        "name": "Electronics",
+        "blurb": "Phones, laptops, gaming"
+      },
+      "furniture": {
+        "name": "Furniture",
+        "blurb": "Home & office"
+      },
+      "toys_art": {
+        "name": "Toys, Games & Art",
+        "blurb": "Toys, games, art"
+      }
+    },
+    "subCategory": "Sub-category",
+    "pickOne": "Pick a group to see its sub-categories.",
+    "listing": {
+      "sell": {
+        "title": "Sell · Shop Now",
+        "body": "Fixed price, single item. Buyer pays and checks out."
+      },
+      "trade": {
+        "title": "Trade · Request Trade",
+        "body": "Swap item-for-item with an optional cash difference."
+      },
+      "auction": {
+        "title": "Auction · Bid Now",
+        "body": "Live bidding with legal terms, entry fee and anti-snipe."
+      },
+      "footnote": "You can relist under a different type later. Listings expire after 60 days."
+    },
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Vintage Levi's Denim Jacket",
+      "brand": "Brand",
+      "brandNone": "No brand",
+      "description": "Description",
+      "descriptionPlaceholder": "Barely worn, no flaws. Classic straight fit.",
+      "charLimit": "Up to {max} characters.",
+      "required": "Required",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "attributes": {
+      "size": "Size",
+      "color": "Colour",
+      "material": "Material",
+      "gender": "Gender",
+      "model": "Model",
+      "storageRam": "Storage / RAM",
+      "warrantyStatus": "Warranty",
+      "accessories": "Accessories",
+      "dimensions": "Dimensions",
+      "numberOfPieces": "Number of pieces",
+      "assemblyRequired": "Assembly required",
+      "weightKg": "Weight (kg)",
+      "ageRange": "Age range",
+      "completeSet": "Complete set",
+      "fineArt": "Fine art",
+      "batteryPowerRequired": "Needs batteries"
+    },
+    "options": {
+      "men": "Men",
+      "women": "Women",
+      "kids": "Kids",
+      "under_warranty": "Under warranty",
+      "expired": "Expired",
+      "none": "None",
+      "original_box": "Original box",
+      "charger": "Charger",
+      "cable": "Cable",
+      "manual": "Manual",
+      "case": "Case",
+      "length": "Length",
+      "width": "Width",
+      "height": "Height",
+      "medium": "Medium",
+      "yes": "Yes",
+      "no": "No",
+      "na": "Not applicable"
+    },
+    "conditions": {
+      "new": {
+        "title": "New",
+        "body": "Never used, sealed or unworn."
+      },
+      "new_with_tags": {
+        "title": "New with tags",
+        "body": "Never worn, with tags."
+      },
+      "new_without_tags": {
+        "title": "New without tags",
+        "body": "Never worn, tags removed."
+      },
+      "like_new": {
+        "title": "Like new",
+        "body": "Worn once or twice, no signs of use."
+      },
+      "good": {
+        "title": "Good",
+        "body": "Gently used, minor wear."
+      },
+      "fair": {
+        "title": "Fair",
+        "body": "Visible wear, still functional."
+      }
+    },
+    "flaws": "Any flaws? Select all that apply",
+    "defects": {
+      "no_scratches": "No scratches",
+      "minor_scratches": "Minor scratches",
+      "visible_scratches": "Visible scratches",
+      "cracked": "Cracked",
+      "dented": "Dented",
+      "stained": "Stained",
+      "faded": "Faded",
+      "other": "Something else"
+    },
+    "photos": {
+      "addCover": "+  Add cover photo",
+      "tip": "Tip: include brand tags, serial/date codes and receipts to raise your score.",
+      "remove": "Remove photo",
+      "needMore": "Add at least {min} photos.",
+      "tooLarge": "Some photos were over 5 MB and were skipped."
+    },
+    "authenticity": {
+      "legend": "What can you show?",
+      "scoreLater": "Your Authenticity Score is calculated from these and your photos once the listing is created."
+    },
+    "verification": {
+      "receipt_invoice": "Original receipt or invoice",
+      "authentication_tag": "Authentication tag",
+      "original_box": "Original box",
+      "brand_label": "Brand label visible",
+      "serial_code": "Serial / date code",
+      "dust_bag_accessories": "Dust bag or accessories"
+    },
+    "pricing": {
+      "price": "Price (SAR)",
+      "discount": "Discount (SAR)",
+      "earnings": "Your earnings",
+      "buyerPays": "Buyer pays",
+      "buyerPaysAfter": "Buyer pays (after {amount} discount)",
+      "vat": "VAT 15% (on discounted price)",
+      "platformFee": "Platform fee ({percent}%)",
+      "youReceive": "You receive",
+      "vatNote": "VAT is calculated on the discounted transaction price ({amount}), not the pre-discount price.",
+      "startingBid": "Starting bid (SAR)",
+      "reservePrice": "Reserve price (SAR)",
+      "duration": "Auction length",
+      "hours": "{hours} hours"
+    },
+    "shipping": {
+      "city": "City",
+      "fulfillment": "How buyers get it",
+      "payer": "Who pays shipping",
+      "note": "Buyers choose a carrier at checkout. Rates are calculated by the carrier."
+    },
+    "cities": {
+      "Riyadh": "Riyadh",
+      "Jeddah": "Jeddah",
+      "Dammam": "Dammam",
+      "Mecca": "Mecca",
+      "Medina": "Medina",
+      "Khobar": "Khobar",
+      "Tabuk": "Tabuk",
+      "Other": "Other"
+    },
+    "fulfillment": {
+      "shipping_only": "Shipping only",
+      "pickup_in_person": "Pickup in person",
+      "both": "Shipping or pickup"
+    },
+    "payers": {
+      "buyer_pays": "Buyer pays",
+      "included_in_price": "Included in price",
+      "to_be_agreed": "To be agreed"
+    },
+    "review": {
+      "listPrice": "List price",
+      "youReceive": "You receive (after VAT + {percent}% fee)",
+      "shipsFrom": "Ships from",
+      "note": "Listings expire after 60 days.",
+      "sale": "Sale",
+      "auction": "Auction",
+      "trade": "Trade"
+    },
+    "submitted": {
+      "title": "Listing submitted for review",
+      "body": "We'll notify you once it's approved — usually within 24 hours. Listings go live only after admin review.",
+      "pending": "Pending review",
+      "viewListings": "View my listings",
+      "listAnother": "List another item",
+      "liveTitle": "Your listing is live",
+      "liveBody": "It is already visible to buyers. You can edit or withdraw it from My Listings.",
+      "live": "Live"
+    },
+    "errors": {
+      "invalid": "Some details need fixing before this can be submitted.",
+      "createdButNotSubmitted": "Your listing was saved as a draft but could not be submitted. You can submit it from My Listings.",
+      "unauthenticated": "Sign in to list an item.",
+      "requestFailed": "We could not create that listing. Try again."
+    }
+  },
+  "Stories": {
+    "someone": "Someone",
+    "close": "Close",
+    "previous": "Previous story",
+    "next": "Next story",
+    "previousAuthor": "Previous person",
+    "nextAuthor": "Next person",
+    "addToBag": "Add to Bag",
+    "title": "Stories",
+    "empty": "No stories right now.",
+    "yourStory": "Your story",
+    "viewStory": "View story",
+    "viewerLabel": "{name}'s story"
+  },
+  "Categories": {
+    "title": "All Categories",
+    "subtitle": "Browse everything available on Maison Sale",
+    "browseAll": "Browse All",
+    "itemsCount": "{count} items",
+    "noSubcategories": "No subcategories yet."
+  },
+  "Brands": {
+    "title": "Browse Brands",
+    "subtitle": "Official stores, trending labels, and Saudi local brands",
+    "allBrands": "All Brands",
+    "brandCount": "{count} brands",
+    "mostPopular": "Most Popular",
+    "itemsCount": "{count} items",
+    "browse": "Browse",
+    "filters": {
+      "all": "All Brands",
+      "official": "Official",
+      "trending": "Trending",
+      "saudi": "Saudi Local",
+      "fashion": "Fashion",
+      "electronics": "Electronics",
+      "furniture": "Furniture",
+      "toys_art": "Toys & Art"
+    },
+    "sorts": {
+      "popular": "Most Popular",
+      "followers": "Most Followed",
+      "name": "A–Z",
+      "newest": "Newest"
+    },
+    "sortLabel": "Sort:",
+    "official": "Official",
+    "trending": "Trending",
+    "saudi": "Saudi Local",
+    "verified": "Verified",
+    "followers": "{count} followers",
+    "follow": "Follow",
+    "following": "Following",
+    "emptyFilter": "No brands in this tab yet."
+  },
+  "Trends": {
+    "title": "Trend Hub",
+    "subtitle": "Discover what's hot this week across all categories",
+    "updatedWeekly": "Updated weekly",
+    "week": "WEEK · {year}",
+    "viewAll": "View all",
+    "topStores": "Top Stores This Week",
+    "topStoresSubtitle": "Most sales in the last 7 days",
+    "topStoresEmpty": "No sales ranked yet this week. The board resets every Monday.",
+    "salesThisWeek": "{count} sales this week",
+    "thisWeek": "This week",
+    "stars": "{rating} stars",
+    "noRating": "No rating yet",
+    "rating": "Rating",
+    "followers": "{count} followers",
+    "followersLabel": "Followers",
+    "visitStore": "Visit Store",
+    "trendingCategories": "Trending Categories",
+    "trendingCategoriesSubtitle": "Most searched this week",
+    "trendingCategoriesEmpty": "No trending searches recorded yet.",
+    "hotDeals": "Hot Deals This Week",
+    "hotDealsSubtitle": "Best discounts right now",
+    "hotDealsEmpty": "No discounted listings right now.",
+    "buyNow": "Buy Now",
+    "searches": "{count} searches"
+  },
+  "Auctions": {
+    "title": "Live Auctions",
+    "subtitle": "Bid on authenticated luxury items from verified sellers",
+    "live": "LIVE",
+    "liveAuctions": "Live auctions",
+    "sort": "Sort:",
+    "endingSoonest": "Ending soonest",
+    "activeCount": "{count} active auctions",
+    "currentBid": "Current bid",
+    "bids": "{count, plural, one {# bid} other {# bids}}",
+    "placeBid": "Place Bid",
+    "ended": "Ended",
+    "emptyTitle": "No live auctions right now",
+    "emptyBody": "Auctions run for a few days at a time — check back soon.",
+    "tabs": {
+      "all": "All Auctions",
+      "endingSoon": "Ending Soon",
+      "justStarted": "Just Started"
+    },
+    "conditions": {
+      "new": "New",
+      "new_with_tags": "New with tags",
+      "new_without_tags": "New without tags",
+      "like_new": "Like new",
+      "good": "Good",
+      "fair": "Fair"
+    },
+    "activeBidders": "Active bidders",
+    "bidsToday": "Bids today",
+    "bidVolumeToday": "Bid volume today",
+    "endingSoonCount": "Ending soon",
+    "endingSoonNote": "Within {hours, plural, one {# hour} other {# hours}}"
+  },
+  "AuctionTerms": {
+    "title": "Auction terms & conditions",
+    "subtitle": "Please review all clauses. You must agree before placing your first bid.",
+    "auctionBadge": "AUCTION",
+    "ageBadge": "18+ ONLY",
+    "ends": "Ends",
+    "agreeLabel": "I have read and agree to the Auction Terms, and I confirm that I am 18 years or older.",
+    "agreeCta": "Agree & continue",
+    "cancel": "Cancel",
+    "clauses": {
+      "eligibility": {
+        "title": "Eligibility",
+        "body": "You must be 18 or older with a verified Maison Sale account to place bids."
+      },
+      "binding": {
+        "title": "Bids are binding",
+        "body": "Every bid is a legal commitment to purchase the item at that price if you win."
+      },
+      "entryFee": {
+        "title": "Entry fee",
+        "body": "A refundable entry fee is held to enable bidding and returned if you do not win."
+      },
+      "antiSnipe": {
+        "title": "Anti-snipe",
+        "body": "Any bid placed in the final 60 seconds extends the auction by another 60 seconds."
+      },
+      "reserve": {
+        "title": "Reserve price",
+        "body": "Some lots carry a hidden reserve; the item sells only if the reserve is met."
+      },
+      "winning": {
+        "title": "Winning & payment",
+        "body": "The highest bid at close wins. Payment is due within 24 hours of closing."
+      },
+      "nonPayment": {
+        "title": "Non-payment",
+        "body": "Failure to pay forfeits the entry fee and may lead to account suspension."
+      },
+      "authenticity": {
+        "title": "Authenticity",
+        "body": "Every lot is authenticated by Maison Sale before dispatch through the Hub."
+      },
+      "cancellation": {
+        "title": "Cancellation",
+        "body": "Maison Sale may cancel or relist a lot in the event of error or dispute."
+      },
+      "law": {
+        "title": "Governing law",
+        "body": "Auctions are governed by the laws of the Kingdom of Saudi Arabia and Saudi courts."
+      }
+    },
+    "errors": {
+      "mustAgree": "Tick the box to confirm you have read the terms.",
+      "termsRequired": "You need to accept the auction terms first.",
+      "auctionEnded": "This auction has already closed.",
+      "ownListing": "You cannot bid on your own listing.",
+      "unauthenticated": "Sign in to enter this auction.",
+      "requestFailed": "We could not enter you into this auction. Try again."
+    }
+  },
+  "AuctionBid": {
+    "endsIn": "Auction ends in",
+    "endsAt": "Ends {at}",
+    "totalBids": "{count, plural, one {total bid} other {total bids}}",
+    "currentBid": "Current bid",
+    "youAreLeading": "You are leading",
+    "youAreOutbid": "You have been outbid",
+    "startedAt": "Starting bid was {amount} · {count, plural, one {# bid placed} other {# bids placed}}",
+    "quickBid": "Quick Bid",
+    "minNextBid": "Min next bid: {amount}",
+    "customAmount": "Or enter custom amount",
+    "antiSnipe": "Anti-snipe: Bids in the last {window, plural, one {minute} other {# minutes}} extend the auction by {extension, plural, one {a minute} other {# minutes}}",
+    "placeBidFor": "Place Bid — {amount}",
+    "binding": "Bid is legally binding · Cannot be cancelled after confirmation",
+    "readTerms": "Read full Auction Terms & Conditions >",
+    "bidPlaced": "Your bid is in. You will be told the moment someone outbids you.",
+    "errors": {
+      "bidTooLow": "That is below the minimum next bid.",
+      "invalid": "Enter a bid amount.",
+      "auctionEnded": "This auction has already closed.",
+      "ownListing": "You cannot bid on your own listing.",
+      "termsRequired": "Accept the auction terms before bidding.",
+      "unauthenticated": "Sign in to place a bid.",
+      "requestFailed": "We could not place that bid. Try again."
+    }
+  },
+  "MyBids": {
+    "accountTitle": "My Account",
+    "title": "My Bids",
+    "stats": {
+      "activeBids": "Active Bids",
+      "auctionsWon": "Auctions Won",
+      "totalBidValue": "Total Bid Value",
+      "beingOutbid": "Being Outbid"
+    },
+    "tabs": {
+      "active": "Active ({count})",
+      "won": "Won ({count})",
+      "lost": "Lost ({count})",
+      "watchlist": "Watchlist"
+    },
+    "yourBid": "Your Bid",
+    "currentBid": "Current Bid",
+    "leading": "Leading",
+    "outbid": "Outbid",
+    "viewAuction": "View Auction",
+    "bidAgain": "Bid Again",
+    "emptyTitle": "No bids here yet",
+    "emptyBody": "When you bid on an auction it appears here, with the clock and whether you are still leading.",
+    "emptyCta": "Browse auctions"
+  },
+  "AuctionPayment": {
+    "title": "Congratulations! You won the auction",
+    "subtitle": "Complete your payment within {hours} hours to secure your item.",
+    "remaining": "remaining",
+    "overdue": "Overdue",
+    "wonBadge": "Auction Won",
+    "winningBid": "Winning bid",
+    "address": "Delivery Address",
+    "payment": "Payment Method",
+    "change": "Change",
+    "default": "DEFAULT",
+    "card": "Card",
+    "cardLine": "{brand}  ····{last4}",
+    "noAddress": "Add a delivery address before paying.",
+    "noCard": "Add a payment method before paying.",
+    "summary": "Order Summary",
+    "rows": {
+      "winningBid": "Winning Bid",
+      "shipping": "Shipping",
+      "vat": "VAT",
+      "buyerPremium": "Buyer Premium",
+      "protection": "Buyer Protection"
+    },
+    "included": "Included",
+    "total": "Total",
+    "confirmFor": "Confirm Payment  —  {amount}",
+    "binding": "Payment is binding. Item will be shipped after confirmation.",
+    "protectionTitle": "Buyer Protection Included",
+    "protection": {
+      "authenticated": "Item authenticated at the Maison Hub before shipping",
+      "refund": "Full refund if item is not as described",
+      "held": "Secure payment held until you confirm receipt"
+    },
+    "errors": {
+      "auctionEnded": "The payment window for this auction has closed.",
+      "unauthenticated": "Sign in to complete this payment.",
+      "requestFailed": "We could not take that payment. Try again."
+    }
+  },
+  "About": {
+    "title": "About Maison Sale",
+    "subtitle": "Saudi Arabia's Premier Second-Hand Marketplace",
+    "missionEyebrow": "Our Mission",
+    "missionLead": "Maison Sale was founded with a simple belief: pre-loved items deserve a second life, and sellers deserve a fair, transparent marketplace to trade them.",
+    "missionBody": "We built the most trusted second-hand marketplace in Saudi Arabia — where authenticity, simplicity, and community come first.",
+    "startSelling": "Start Selling",
+    "stats": {
+      "listed": "Listed Items",
+      "categories": "Categories",
+      "fee": "Platform Fee"
+    },
+    "valuesTitle": "Our Values",
+    "values": {
+      "trust": {
+        "title": "Trust First",
+        "body": "Every seller is verified. Every item is reviewed before going live."
+      },
+      "fair": {
+        "title": "Fair for All",
+        "body": "You only pay the platform fee when you sell. Listing is free."
+      },
+      "authenticity": {
+        "title": "Authenticity",
+        "body": "We partner with Riyadh Hub for item authentication on high-value trades."
+      },
+      "community": {
+        "title": "Community",
+        "body": "Stories, Trade, and Auctions — built for Saudi buyers and sellers."
+      }
+    }
+  },
+  "Pricing": {
+    "title": "Simple, Transparent Pricing",
+    "subtitle": "Free to list. Only {percent}% when you sell.",
+    "feeCaption": "Platform fee on every sale",
+    "points": {
+      "free": "Free to list — no upfront cost",
+      "onSale": "Only charged when the item sells",
+      "payout": "Instant payout after the buyer confirms",
+      "noSubscription": "No monthly subscription or hidden fees",
+      "included": "Auctions and Trade — included for free"
+    },
+    "startFree": "Start Selling for Free",
+    "exampleTitle": "Example Calculation",
+    "exampleListed": "Item listed for",
+    "exampleFee": "Platform fee ({percent}%)",
+    "exampleEarnings": "Your earnings"
+  },
+  "SellerGuide": {
+    "title": "Seller Guide",
+    "subtitle": "Everything you need to know to sell successfully on Maison Sale",
+    "contents": "Guide contents",
+    "topics": {
+      "gettingStarted": {
+        "title": "Getting Started",
+        "body": "Sign up for a free account and complete your profile. Add a profile photo and bio to build trust with buyers. You'll need to verify your phone number and email before listing your first item."
+      },
+      "listing": {
+        "title": "Listing Your Item",
+        "body": "Go to + Sell in the navigation. Choose your category and sub-category, then fill in the item details. The more information you provide, the faster your item will sell."
+      },
+      "photos": {
+        "title": "Photos & Condition",
+        "body": "Use natural light and a clean background. Take at least 5 photos including front, back, close-ups of any defects, and tags or labels. Honest condition descriptions build trust and reduce returns."
+      },
+      "pricingTips": {
+        "title": "Pricing Tips",
+        "body": "Research similar sold items to price competitively. Enable \"Open to Negotiation\" if you're flexible. Auction mode works well for high-demand or rare items."
+      },
+      "gettingPaid": {
+        "title": "Getting Paid",
+        "body": "Maison Sale charges a {percent}% platform fee when your item sells. Your earnings are credited to your wallet as soon as the delivery is confirmed, and you can withdraw to your bank account at any time — transfers take 1–3 business days."
+      }
+    }
+  },
+  "Help": {
+    "title": "Help Center",
+    "subtitle": "How can we help you today?",
+    "nav": {
+      "faq": "FAQ",
+      "contact": "Contact Us",
+      "returns": "Returns Policy",
+      "sellerGuide": "Seller Guide"
+    },
+    "faqTitle": "Frequently Asked Questions",
+    "faq": {
+      "authentic": {
+        "q": "How do I know if an item is authentic?",
+        "a": "All sellers are verified by our team. Items over SAR 5,000 go through our Riyadh Hub for authentication before delivery."
+      },
+      "wrongItem": {
+        "q": "What happens if I receive a wrong or fake item?",
+        "a": "You are fully protected. Report within 48 hours and receive a full refund. Your money is held in escrow until you confirm delivery."
+      },
+      "trade": {
+        "q": "How does the Trade feature work?",
+        "a": "Select an item you want, choose \"Offer Trade\", then pick your item to trade. Both ship to our Riyadh Hub for inspection, then are exchanged."
+      },
+      "cancel": {
+        "q": "Can I cancel an order after placing it?",
+        "a": "Regular orders can be cancelled within 1 hour. Auction wins and Trade agreements cannot be cancelled after confirmation."
+      },
+      "shipping": {
+        "q": "How long does shipping take?",
+        "a": "Standard: 3–5 business days. Express: 1–2 business days. Riyadh Hub items add 2–4 days for authentication."
+      },
+      "payment": {
+        "q": "What payment methods are accepted?",
+        "a": "Mada, STC Pay, Tabby, Tamara, PayTabs, Apple Pay and cards (Visa, Mastercard). All transactions are secured and encrypted, and sellers pay a {percent}% platform fee on each sale."
+      }
+    },
+    "contactTitle": "Contact Us",
+    "emailSupport": "Email Support",
+    "emailSupportBody": "Reply within 24 hours",
+    "sendEmail": "Send Email",
+    "formTitle": "Send us a message",
+    "sendMessage": "Send Message",
+    "sent": "Thanks — your message is with our support team.",
+    "sentWithTicket": "Thanks — your message is with our support team. Reference: {ticket}",
+    "fields": {
+      "name": "Your name",
+      "email": "Email",
+      "category": "Category",
+      "subject": "Subject",
+      "subjectPlaceholder": "How can we help?",
+      "message": "Message",
+      "messagePlaceholder": "Describe your issue…"
+    },
+    "categories": {
+      "general": "General",
+      "order_issue": "Order issue",
+      "technical": "Technical",
+      "account": "Account",
+      "payment": "Payment",
+      "seller_support": "Seller support",
+      "other": "Other"
+    },
+    "errors": {
+      "missingFields": "Please fill in every field.",
+      "requestFailed": "That didn't go through. Please try again.",
+      "tooShort": "Subject needs at least 5 characters and the message at least 10."
+    },
+    "returnsTitle": "Returns Policy",
+    "returns": {
+      "window": {
+        "title": "14-Day Return Window",
+        "body": "You have 14 days from delivery to request a return. Items must be in the same condition as received. Report issues within 48 hours of delivery."
+      },
+      "eligible": {
+        "title": "Eligible for Return",
+        "body": "Item not as described · Counterfeit or fake item · Wrong item received · Item arrived damaged · Seller misrepresented condition"
+      },
+      "notEligible": {
+        "title": "Not Eligible for Return",
+        "body": "Change of mind · Size issues (check the size guide before buying) · Items marked \"Final Sale\" · Auction items (unless not as described)"
+      },
+      "refund": {
+        "title": "Refund Timeline",
+        "body": "Approved refunds are processed within 3–5 business days to your original payment method or your Maison Sale wallet."
+      },
+      "howTo": {
+        "title": "How to Request a Return",
+        "body": "Go to My Orders → select the order → Request Return → choose a reason → upload photos if needed → submit. Our team reviews within 24 hours."
+      }
+    }
+  },
+  "Blog": {
+    "title": "Maison Sale Blog",
+    "subtitle": "Tips, trends, and stories from the community",
+    "latest": "Latest Articles",
+    "emptyTitle": "No articles yet",
+    "emptyBody": "The blog needs somewhere to publish from. Until an article source exists, our selling advice lives in the Seller Guide.",
+    "readGuide": "Read the Seller Guide"
+  },
+  "VisualSearch": {
+    "title": "Visual Search",
+    "subtitle": "Upload a photo to find matching items on Maison Sale",
+    "scopeBadge": "Maison Sale only",
+    "close": "Close",
+    "dropHere": "Drag & drop a photo here",
+    "or": "or",
+    "browse": "Browse from device",
+    "formats": "JPG, PNG up to 10MB",
+    "tipsTitle": "Tips for best results",
+    "tips": {
+      "lighting": "Use good lighting, avoid shadows",
+      "framing": "Keep the full item visible in frame",
+      "background": "A plain background works best"
+    },
+    "searchingBadge": "Searching Maison Sale database",
+    "steps": {
+      "captured": "Image captured",
+      "detected": "Item detected",
+      "searching": "Searching Maison Sale…",
+      "matching": "Finding best matches…"
+    },
+    "detected": {
+      "brand": "Brand:",
+      "color": "Color:",
+      "type": "Type:",
+      "size": "Size:"
+    },
+    "foundTitle": "{count, plural, one {# match found on Maison Sale} other {# matches found on Maison Sale}}",
+    "foundBody": "Showing listings that match your photo",
+    "notFoundTitle": "Not listed on Maison Sale yet",
+    "notFoundBody": "We couldn't find this exact item in the catalogue.",
+    "newSearch": "New Search",
+    "exactMatch": "Exact Match",
+    "viewItem": "View Item",
+    "similarItems": "Similar Items",
+    "youMightLike": "You might also like these similar items:",
+    "matchScore": "{score}% match",
+    "nothingAtAll": "No listings matched this photo.",
+    "tooLarge": "That image is over 10MB. Try a smaller photo.",
+    "failed": "We couldn't search that photo. Please try again.",
+    "conditions": {
+      "new": "New",
+      "new_with_tags": "New with tags",
+      "new_without_tags": "New without tags",
+      "like_new": "Like new",
+      "good": "Good",
+      "fair": "Fair"
+    }
   }
 }

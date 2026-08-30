@@ -1098,7 +1098,14 @@
     "addAmount": "المبلغ المضاف",
     "newBalance": "الرصيد الجديد",
     "addToWalletAmount": "أضف {amount} إلى المحفظة",
-    "walletCrumb": "المحفظة"
+    "walletCrumb": "المحفظة",
+    "withdrawAmount": "مبلغ السحب",
+    "withdrawAmountRow": "مبلغ السحب",
+    "remainingBalance": "الرصيد المتبقي",
+    "minimumNote": "الحد الأدنى: {min}",
+    "withdrawMax": "سحب الحد الأقصى ({max})",
+    "withdrawSubmitAmount": "سحب {amount}",
+    "estimatedArrival": "الوصول المتوقع: من يوم إلى ٣ أيام عمل"
   },
   "Wishlist": {
     "title": "قائمة رغباتي",

@@ -1097,7 +1097,14 @@
     "addAmount": "Add amount",
     "newBalance": "New balance",
     "addToWalletAmount": "Add {amount} to Wallet",
-    "walletCrumb": "Wallet"
+    "walletCrumb": "Wallet",
+    "withdrawAmount": "Withdraw Amount",
+    "withdrawAmountRow": "Withdraw amount",
+    "remainingBalance": "Remaining balance",
+    "minimumNote": "Minimum: {min}",
+    "withdrawMax": "Withdraw Max ({max})",
+    "withdrawSubmitAmount": "Withdraw {amount}",
+    "estimatedArrival": "Estimated arrival: 1–3 business days"
   },
   "Wishlist": {
     "title": "My Wishlist",

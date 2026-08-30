@@ -1091,7 +1091,8 @@
     "confirmSend": "Send money",
     "sendReview": "You'll confirm before anything moves.",
     "sendFinal": "This moves the money straight away.",
-    "sentConfirm": "{amount} sent to {recipient}."
+    "sentConfirm": "{amount} sent to {recipient}.",
+    "accountTitle": "My Account"
   },
   "Wishlist": {
     "title": "My Wishlist",

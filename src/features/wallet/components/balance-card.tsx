@@ -12,6 +12,9 @@ import type { WalletBalance } from "@/lib/api/schemas/wallet";
  * returns `pendingBalance` but nothing about where it came from, so the line
  * renders without the attribution rather than inventing one — and only when
  * there is actually something pending.
+ *
+ * `ink-900` and `base` both flip with the theme, so the card inverts as a pair
+ * and the balance keeps its contrast either way.
  */
 export async function BalanceCard({
   wallet,
@@ -25,15 +28,15 @@ export async function BalanceCard({
   const pending = wallet.pendingBalance ?? 0;
 
   return (
-    <section className="border-line bg-base flex flex-wrap items-end justify-between gap-6 rounded-16 border p-6">
-      <div className="flex flex-col gap-1">
-        <p className="text-caption text-ink-tertiary">{t("availableBalance")}</p>
+    <section className="bg-ink-900 flex flex-wrap items-center justify-between gap-6 rounded-16 p-7">
+      <div className="flex flex-col gap-1.5">
+        <p className="text-ink-400 text-[13px]">{t("availableBalance")}</p>
         {/* dir="ltr": a currency amount must not be reordered in Arabic. */}
-        <p className="text-[36px] leading-none font-bold" dir="ltr">
+        <p className="text-base text-[36px] leading-none font-bold" dir="ltr">
           {formatPrice(wallet.balance, currency)}
         </p>
         {pending > 0 && (
-          <p className="text-caption text-ink-tertiary">
+          <p className="text-ink-500 text-[12px]">
             {t("pendingAmount", { amount: formatPrice(pending, currency) })}
           </p>
         )}
@@ -43,14 +46,14 @@ export async function BalanceCard({
         <div className="flex gap-3">
           <Link
             href="/account/wallet/add-funds"
-            className="bg-aqua text-on-accent text-label flex h-11 items-center gap-2 rounded-[22px] px-5 font-semibold"
+            className="bg-aqua text-on-accent flex h-11 items-center gap-2 rounded-[22px] px-5 text-[13px] font-bold"
           >
             <Plus className="size-4" aria-hidden />
             {t("addFunds")}
           </Link>
           <Link
             href="/account/wallet/withdraw"
-            className="border-ink text-label flex h-11 items-center gap-2 rounded-[22px] border px-5 font-semibold"
+            className="border-ink-700 text-base flex h-11 items-center gap-2 rounded-[22px] border px-5 text-[13px] font-medium"
           >
             <ArrowUpRight className="size-4 rtl:-scale-x-100" aria-hidden />
             {t("withdraw")}

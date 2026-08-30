@@ -76,19 +76,19 @@ export async function TransactionRow({
   return (
     <Link
       href={`/account/wallet/transactions/${transaction.id}`}
-      className="hover:bg-surface flex items-center gap-4 px-4 py-3"
+      className="hover:bg-surface flex items-center gap-3.5 px-4 py-3.5"
     >
       {thumbnail ? (
         // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
         <img
           src={thumbnail}
           alt=""
-          className="bg-tint size-9 shrink-0 rounded-10 object-cover"
+          className="bg-fill-100 size-9 shrink-0 rounded-[18px] object-cover"
         />
       ) : (
         <span
-          className={`flex size-9 shrink-0 items-center justify-center rounded-full ${
-            credit ? "bg-action-tint text-action" : "bg-tint text-ink-secondary"
+          className={`flex size-9 shrink-0 items-center justify-center rounded-[18px] ${
+            credit ? "bg-action-tint text-action" : "bg-error-tint text-error"
           }`}
           aria-hidden
         >
@@ -97,10 +97,10 @@ export async function TransactionRow({
       )}
 
       <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-label truncate" dir="auto">
+        <span className="text-ink-700 truncate text-[13px]" dir="auto">
           {label}
         </span>
-        <span className="text-caption text-ink-tertiary truncate">
+        <span className="text-ink-400 truncate text-[11px]">
           {handle && <span dir="ltr">@{handle}</span>}
           {handle && transaction.createdAt ? " · " : ""}
           {transaction.createdAt
@@ -113,8 +113,8 @@ export async function TransactionRow({
 
       {/* Sign carries the meaning, so it is text rather than colour alone. */}
       <span
-        className={`text-label shrink-0 font-semibold ${
-          credit ? "text-action" : "text-ink"
+        className={`shrink-0 text-[14px] font-bold ${
+          credit ? "text-action" : "text-error"
         }`}
         dir="ltr"
       >

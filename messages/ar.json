@@ -1092,7 +1092,8 @@
     "confirmSend": "إرسال الأموال",
     "sendReview": "ستؤكّد قبل تحويل أي مبلغ.",
     "sendFinal": "سيتم تحويل المبلغ فوراً.",
-    "sentConfirm": "تم إرسال {amount} إلى {recipient}."
+    "sentConfirm": "تم إرسال {amount} إلى {recipient}.",
+    "accountTitle": "حسابي"
   },
   "Wishlist": {
     "title": "قائمة رغباتي",

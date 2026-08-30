@@ -14,7 +14,13 @@ import {
 } from "@/components/ui/input-otp";
 import { ApiError } from "@/lib/api/errors";
 import { authApi } from "../api";
-import { OTP_EXPIRY_SECONDS } from "../config";
+
+/** Whole seconds from now until `iso`, floored at 0. Null when unknown. */
+function secondsUntil(iso: string | null, now: number): number | null {
+  if (!iso) return null;
+  const ms = Date.parse(iso) - now;
+  return Number.isNaN(ms) ? null : Math.max(0, Math.ceil(ms / 1000));
+}
 
 /**
  * OTP verification — Figma node 651:16515 ("Check your email").
@@ -22,6 +28,11 @@ import { OTP_EXPIRY_SECONDS } from "../config";
  * Six large slots, an expiry countdown paired with "Resend code", and a spam
  * folder hint. The code is submitted automatically once six digits are entered;
  * the button is there for the keyboard/paste path and as an explicit action.
+ *
+ * Both countdowns run off timestamps the API returns (GAP-29): `expiresAt` for
+ * the code, `resendAvailableAt` for the 60s resend cooldown, which the API
+ * enforces with a 400. Neither is assumed — when they're absent (a deep link
+ * into this screen), the countdown is simply not shown.
  */
 export function OtpForm() {
   const t = useTranslations("Auth");
@@ -35,23 +46,27 @@ export function OtpForm() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(OTP_EXPIRY_SECONDS);
+  const [resending, setResending] = useState(false);
+  const [expiresAt, setExpiresAt] = useState(searchParams.get("expiresAt"));
+  const [resendAt, setResendAt] = useState(searchParams.get("resendAt"));
 
   /**
-   * Countdown. setState lives in the interval callback, not the effect body —
-   * a synchronous setState in an effect causes cascading renders and is
-   * rejected by the React Compiler lint rules.
+   * The clock both countdowns read. Re-read from `Date.now()` each tick rather
+   * than decremented, so a backgrounded tab doesn't drift away from the real
+   * deadline. setState lives in the interval callback, not the effect body —
+   * a synchronous setState in an effect is rejected by the lint rules.
    */
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const timer = setInterval(() => {
-      setSecondsLeft((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
+    const timer = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
 
+  const secondsLeft = secondsUntil(expiresAt, now);
+  const resendIn = secondsUntil(resendAt, now) ?? 0;
   const expired = secondsLeft === 0;
-  const minutes = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
-  const seconds = String(secondsLeft % 60).padStart(2, "0");
+  const clock = (total: number) =>
+    `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
 
   async function verify(value: string) {
     setSubmitting(true);
@@ -70,13 +85,17 @@ export function OtpForm() {
 
   async function resend() {
     setError(null);
+    setResending(true);
     try {
-      await authApi.resendOtp({ userId });
+      const sent = await authApi.resendOtp({ userId });
       setNotice(t("otpResent"));
-      setSecondsLeft(OTP_EXPIRY_SECONDS);
+      setExpiresAt(sent.expiresAt ?? null);
+      setResendAt(sent.resendAvailableAt ?? null);
       setCode("");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("otpResendFailed"));
+    } finally {
+      setResending(false);
     }
   }
 
@@ -142,16 +161,20 @@ export function OtpForm() {
         <span
           className={`text-[13px] ${expired ? "text-error" : "text-ink-400"}`}
         >
-          {expired
-            ? t("otpExpired")
-            : t("otpExpiresIn", { time: `${minutes}:${seconds}` })}
+          {expired && t("otpExpired")}
+          {secondsLeft !== null &&
+            !expired &&
+            t("otpExpiresIn", { time: clock(secondsLeft) })}
         </span>
         <button
           type="button"
           onClick={resend}
-          className="text-action text-[13px] font-semibold"
+          disabled={resending || resendIn > 0}
+          className="text-action text-[13px] font-semibold disabled:opacity-50"
         >
-          {t("otpResend")}
+          {resendIn > 0
+            ? t("otpResendIn", { time: clock(resendIn) })
+            : t("otpResend")}
         </button>
       </div>
 

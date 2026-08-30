@@ -43,7 +43,8 @@ export const authApi = {
   verifyOtp: (body: { userId: string; code: string }) =>
     post<SessionResult>("verify-otp", body),
 
-  resendOtp: (body: { userId: string }) => post<unknown>("resend-otp", body),
+  /** Same shape as register, `userId` included — GAP-29. */
+  resendOtp: (body: { userId: string }) => post<Registration>("resend-otp", body),
 
   forgotPassword: (body: { email: string }) =>
     post<unknown>("forgot-password", body),

@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { mapValidationErrors } from "@/lib/api/field-errors";
 import { authApi } from "../api";
 import { signInSchema, type SignInValues } from "../schemas";
-import { SOCIAL_AUTH_ENABLED } from "../config";
 
 /**
  * Sign in — Figma node 651:16404.
@@ -22,7 +21,12 @@ import { SOCIAL_AUTH_ENABLED } from "../config";
  */
 const FIELDS = ["email", "phoneNumber", "password"] as const;
 
-export function SignInForm() {
+export function SignInForm({
+  socialProviders = [],
+}: {
+  /** From `GET /auth/social/config` — which buttons the environment can serve. */
+  socialProviders?: string[];
+}) {
   const t = useTranslations("Auth");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -133,13 +137,12 @@ export function SignInForm() {
       <OrDivider label={t("or")} />
 
       {/*
-        The design shows "Continue with Google" and "Continue with Apple", but the
-        API has no OAuth endpoints — /auth/* is email/phone + password only. Two
-        prominent buttons that can't do anything would be worse than none, so the
-        phone alternative occupies that row until social sign-in exists.
-        See GAP-28; flip SOCIAL_AUTH_ENABLED when it lands.
+        The design shows "Continue with Google" and "Continue with Apple". The
+        row is drawn from `providers`, which is what says *which* buttons the
+        environment can serve — empty today, so the phone alternative takes the
+        space rather than two buttons that can't do anything. See config.ts.
       */}
-      {SOCIAL_AUTH_ENABLED ? null : (
+      {socialProviders.length > 0 ? null : (
         <Link
           href={usePhone ? "/sign-in" : "/sign-in?method=phone"}
           className="border-line-200 text-ink-700 flex h-[46px] items-center justify-center rounded-10 border text-[13px] font-medium"

@@ -11,12 +11,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { mapValidationErrors } from "@/lib/api/field-errors";
 import { authApi } from "../api";
 import { signUpSchema, type SignUpValues } from "../schemas";
-import { SOCIAL_AUTH_ENABLED } from "../config";
 
 /** Create account — Figma node 651:16454. */
 const FIELDS = ["fullName", "email", "phoneNumber", "password"] as const;
 
-export function SignUpForm() {
+export function SignUpForm({
+  socialProviders = [],
+}: {
+  socialProviders?: string[];
+}) {
   const t = useTranslations("Auth");
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
@@ -49,6 +52,11 @@ export function SignUpForm() {
         userId: registration.userId,
         destination: registration.destination,
         channel: registration.channel,
+        // Carries the real expiry and cooldown to the countdown (GAP-29).
+        ...(registration.expiresAt ? { expiresAt: registration.expiresAt } : {}),
+        ...(registration.resendAvailableAt
+          ? { resendAt: registration.resendAvailableAt }
+          : {}),
       });
       router.push(`/verify-otp?${params.toString()}`);
     } catch (error) {
@@ -156,8 +164,8 @@ export function SignUpForm() {
 
       <OrDivider label={t("or")} />
 
-      {/* Social sign-in has no backend — see config.ts and GAP-28. */}
-      {SOCIAL_AUTH_ENABLED ? null : (
+      {/* Drawn from `providers` — empty while no client ids are set. */}
+      {socialProviders.length > 0 ? null : (
         <p className="text-ink-400 text-center text-[12px]">
           {t("socialComingSoon")}
         </p>

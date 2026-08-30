@@ -41,8 +41,10 @@
   --t-warn-tint2: #FFFBEB;
   --t-warn-tint4: #FFF8E7;
   --t-purple-tint: #EDE9FE;
+  --t-pink-tint: #FDF2F8;
   --t-purple-text: #7C3AED;
   --t-purple-500: #8B5CF6;
+  --t-purple-600: #9333EA;
   --t-ink-900: #111827;
   --t-ink-800: #1F2937;
   --t-ink-700: #374151;
@@ -54,6 +56,7 @@
   --t-fill-50: #F9FAFB;
   --t-surface-cool: #FAFFFE;
   --t-success-tint2: #D1FAE5;
+  --t-success-deep: #1A5C38;
   --t-success-tint3: #DEF7EC;
   --t-ink-550: #8B949E;
 }
@@ -95,8 +98,10 @@
   --t-warn-tint2: #422006;
   --t-warn-tint4: #2E210A;
   --t-purple-tint: #2E1065;
+  --t-pink-tint: #500724;
   --t-purple-text: #A78BFA;
   --t-purple-500: #A78BFA;
+  --t-purple-600: #C084FC;
   --t-ink-900: #F9FAFB;
   --t-ink-800: #E5E7EB;
   --t-ink-700: #D1D5DB;
@@ -108,6 +113,7 @@
   --t-fill-50: #0F1117;
   --t-surface-cool: #0D1512;
   --t-success-tint2: #064E3B;
+  --t-success-deep: #1A5C38;
   --t-success-tint3: #053E2E;
   --t-ink-550: #6B7280;
 }
@@ -149,8 +155,10 @@
   --color-warn-tint2: var(--t-warn-tint2);
   --color-warn-tint4: var(--t-warn-tint4);
   --color-purple-tint: var(--t-purple-tint);
+  --color-pink-tint: var(--t-pink-tint);
   --color-purple-text: var(--t-purple-text);
   --color-purple: var(--t-purple-500);
+  --color-purple-600: var(--t-purple-600);
   --color-ink-900: var(--t-ink-900);
   --color-ink-800: var(--t-ink-800);
   --color-ink-700: var(--t-ink-700);
@@ -162,6 +170,7 @@
   --color-fill-50: var(--t-fill-50);
   --color-surface-cool: var(--t-surface-cool);
   --color-success-tint2: var(--t-success-tint2);
+  --color-success-deep: var(--t-success-deep);
   --color-success-tint3: var(--t-success-tint3);
   --color-ink-550: var(--t-ink-550);
 

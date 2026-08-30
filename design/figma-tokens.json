@@ -205,6 +205,12 @@
       "tw": "purple-tint",
       "_note": "Figma variable behind the Toys band (651:2935). Dark INFERRED, same rule as warn-tint."
     },
+    "t-pink-tint": {
+      "light": "#FDF2F8",
+      "dark": "#500724",
+      "tw": "pink-tint",
+      "_note": "t/pink-tint in Figma — one of the six inbox avatar tints (651:6847). Dark INFERRED."
+    },
     "t-purple-text": {
       "light": "#7C3AED",
       "dark": "#A78BFA",
@@ -215,6 +221,12 @@
       "light": "#8B5CF6",
       "dark": "#A78BFA",
       "tw": "purple"
+    },
+    "t-purple-600": {
+      "light": "#9333EA",
+      "dark": "#C084FC",
+      "tw": "purple-600",
+      "_note": "t/purple-600 in Figma — the initials on the pink inbox avatar (651:6848). Dark INFERRED."
     },
     "t-ink-900": {
       "light": "#111827",
@@ -273,6 +285,12 @@
       "dark": "#064E3B",
       "tw": "success-tint2",
       "_note": "Light from the Figma variable collection. Dark is INFERRED — it mirrors t/action-tint's dark, since the HANDOFF dark table omits this token. Confirm with design."
+    },
+    "t-success-deep": {
+      "light": "#1A5C38",
+      "dark": "#1A5C38",
+      "tw": "success-deep",
+      "_note": "t/success-deep in Figma — the timestamp inside an own-message bubble on aqua (651:6884). Mode-invariant: the bubble is aqua in both themes."
     },
     "t-success-tint3": {
       "light": "#DEF7EC",

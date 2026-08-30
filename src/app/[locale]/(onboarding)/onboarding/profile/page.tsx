@@ -1,4 +1,5 @@
 import { setRequestLocale } from "next-intl/server";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { ProfileSetupForm } from "@/features/auth/components/profile-setup-form";
 
 /** Gated by proxy.ts — /onboarding is in PROTECTED_PREFIXES. */
@@ -10,5 +11,8 @@ export default async function Page({
   const { locale } = await params;
   setRequestLocale(locale);
 
-  return <ProfileSetupForm />;
+  // The frame prefills Full name; sign-up already asked for it.
+  const user = await getCurrentUser();
+
+  return <ProfileSetupForm defaultName={user?.fullName ?? ""} />;
 }

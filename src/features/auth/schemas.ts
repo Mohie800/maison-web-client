@@ -103,11 +103,12 @@ export const resetPasswordSchema = z
   });
 
 export const profileSetupSchema = z.object({
+  /** `651:16716`. Prefilled from the name given at sign-up. */
+  fullName: z.string().optional(),
   username: z.string().regex(usernameRegex, "usernameInvalid"),
   dob: z.string().optional(),
   gender: z.enum(["male", "female"]).optional(),
   city: z.string().optional(),
-  country: z.string().optional(),
   // See the note on accountType above — defaults live in useForm, not the schema.
   notifyPriceDrops: z.boolean(),
 });

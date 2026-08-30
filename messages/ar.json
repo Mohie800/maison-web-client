@@ -197,7 +197,13 @@
     "otpResendFailed": "تعذّر إعادة إرسال الرمز. حاول مرة أخرى.",
     "otpNoEmail": "لم يصلك البريد؟",
     "otpCheckSpam": "تحقّق من مجلد الرسائل غير المرغوبة",
-    "resetEmailPlaceholder": "your@email.com"
+    "resetEmailPlaceholder": "your@email.com",
+    "wordmark": "ميزون سيل",
+    "stepOne": "الخطوة ١ من ٢ · أنشئ ملفك الشخصي",
+    "stepTwo": "الخطوة ٢ من ٢ · اختر اهتماماتك",
+    "addPhotoUnavailable": "رفع الصور غير متاح بعد",
+    "startExploring": "ابدأ التصفح",
+    "skipInterests": "تخطّي الآن"
   },
   "Validation": {
     "required": "هذا الحقل مطلوب.",

@@ -1,5 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import {
+  Bell,
+  Gavel,
   Heart,
   LayoutDashboard,
   Package,
@@ -25,6 +27,8 @@ const NAV = [
   { key: "wallet", href: "/account/wallet", icon: Wallet },
   { key: "listings", href: "/account/listings", icon: Tag },
   { key: "trades", href: "/trade/requests", icon: Repeat },
+  { key: "bids", href: "/account/bids", icon: Gavel },
+  { key: "notifications", href: "/account/notifications", icon: Bell },
   { key: "settings", href: "/account/settings", icon: Settings },
 ] as const;
 

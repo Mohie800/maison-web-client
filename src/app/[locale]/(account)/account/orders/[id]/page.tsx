@@ -1,29 +1,38 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
-import { Check, MessageSquare, TriangleAlert } from "lucide-react";
+import { Check } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getOrder } from "@/lib/api/endpoints/orders";
 import { resolveMediaUrl } from "@/lib/api/media";
-import { formatPrice } from "@/lib/format/money";
+import { trackingTimeline } from "@/lib/api/schemas/order";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
 import {
   orderItemImage,
+  orderItemTitle,
   orderReference,
   orderStatus,
 } from "@/features/orders/helpers";
-import { TRACKING_STEPS, stepReached } from "@/lib/api/schemas/order";
+import type { Locale } from "@/i18n/routing";
 
 /**
- * Order tracking — Figma node 651:8338 (Web_OrderTracking).
+ * Order tracking — Figma `651:8338` (Web_OrderTracking). This frame is the
+ * order detail screen; totals and the delivery address live on Web_Invoice,
+ * which the aside links to.
  *
- * The design's carrier panel (Aramex, tracking number, service, weight) and live
- * map have no backend source: `UpdateShipmentStatusDto` accepts only `status`,
- * and there is no per-event history with timestamps and locations. The timeline
- * below is built from shipment status, which is what the API actually knows.
- * Raised as GAP-27 — the carrier block appears automatically if those fields
- * arrive, since the schema already declares them optional.
+ * The **live map is cut** — permanently, decided 2026-08-28. It needs a carrier
+ * GPS feed and there is no carrier integration; see plans/09 C1 before putting
+ * it back.
+ *
+ * Two of the frame's controls are omitted because they have nowhere to go:
+ * "Chat" (messaging is Phase 6) and "Report an Issue / Return" (the return flow
+ * isn't built). Both are recorded in plans/09 — a dead control is worse than an
+ * absent one.
+ *
+ * The design's "Out for Delivery" and "In Transit" steps come from a carrier
+ * feed we don't have, so the timeline renders the events that exist rather than
+ * padding it out. Same for per-step locations: seller-entered and often blank.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -39,229 +48,314 @@ export default async function OrderTrackingPage({
   if (!order) notFound();
 
   const t = await getTranslations("Orders");
-  const activeLocale = await getLocale();
+  const activeLocale = (await getLocale()) as Locale;
 
   const status = orderStatus(order);
+  const shipment = order.shipments?.[0];
   const items =
     order.items ?? order.shipments?.flatMap((s) => s.items ?? []) ?? [];
-  const shipment = order.shipments?.[0];
   const placed = order.placedAt ?? order.createdAt;
+
+  const first = items[0];
+  const cover = resolveMediaUrl(orderItemImage(first));
+
+  const timeline = trackingTimeline(shipment);
 
   const dateFmt = new Intl.DateTimeFormat(
     activeLocale === "ar" ? "ar-SA-u-nu-latn" : "en-GB",
-    { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" },
+    { day: "numeric", month: "short", year: "numeric" },
+  );
+  const stampFmt = new Intl.DateTimeFormat(
+    activeLocale === "ar" ? "ar-SA-u-nu-latn" : "en-GB",
+    {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
   );
 
-  /** Timestamps the API does expose per shipment, keyed to the step. */
-  const stepTimestamps: Record<string, string | null | undefined> = {
-    placed,
-    packed: shipment?.packedAt,
-    shipped: shipment?.shippedAt,
-    delivered: shipment?.deliveredAt,
-  };
+  /** "15 May – 16 May 2026", or a single date when the range collapses. */
+  const deliveryRange = (() => {
+    const from = shipment?.estDeliveryFrom;
+    const to = shipment?.estDeliveryTo;
+    if (!from && !to) return null;
+    if (from && to && from !== to) {
+      return `${dateFmt.format(new Date(from))} – ${dateFmt.format(new Date(to))}`;
+    }
+    return dateFmt.format(new Date((from ?? to)!));
+  })();
 
-  const hasCarrierInfo = Boolean(
-    shipment?.trackingCarrier || shipment?.trackingNumber,
+  const carrier = shipment?.trackingCarrier;
+  const service =
+    shipment?.shippingOption?.nameEn ?? shipment?.shippingOption?.code;
+  // Rounded off the gram value, not via toFixed — 850g floats to "0.8", not "0.9".
+  const weightKg =
+    shipment?.parcelWeightGrams != null
+      ? (Math.round(shipment.parcelWeightGrams / 100) / 10).toString()
+      : null;
+
+  const carrierRows = [
+    carrier ? { label: t("carrier"), value: carrier } : null,
+    shipment?.trackingNumber
+      ? { label: t("trackingNumber"), value: shipment.trackingNumber, ltr: true }
+      : null,
+    service ? { label: t("service"), value: service } : null,
+    weightKg
+      ? { label: t("weight"), value: t("weightKg", { kg: weightKg }) }
+      : null,
+  ].filter(
+    (row): row is { label: string; value: string; ltr?: boolean } =>
+      row !== null,
   );
+
+  const seller = shipment?.seller;
+  const sellerHandle = seller?.username ?? seller?.fullName;
+  const sellerAvatar = resolveMediaUrl(seller?.profilePic);
+  const sellerInitials = (seller?.fullName ?? seller?.username ?? "")
+    .split(" ")
+    .map((word) => word[0])
+    .filter(Boolean)
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 lg:px-20">
-      <Breadcrumbs
-        items={[
-          { label: t("nav"), href: "/account/orders" },
-          { label: orderReference(order) },
-        ]}
-      />
+    <div className="bg-surface min-h-full">
+      <div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-4 pt-8 pb-16 lg:px-20">
+        <Breadcrumbs
+          items={[
+            { label: t("nav"), href: "/account/orders" },
+            { label: orderReference(order) },
+          ]}
+        />
 
-      <header className="bg-base border-line mt-6 flex flex-wrap items-center justify-between gap-4 rounded-16 border p-5">
-        <div className="flex min-w-0 items-center gap-4">
-          {items[0] && (
-            <span className="bg-surface size-16 shrink-0 overflow-hidden rounded-8">
-              {resolveMediaUrl(orderItemImage(items[0])) ? (
-                // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                <img
-                  src={resolveMediaUrl(orderItemImage(items[0]))!}
-                  alt=""
-                  className="size-full object-cover"
-                />
-              ) : null}
-            </span>
-          )}
-          <div className="flex min-w-0 flex-col gap-1">
-            <h1 className="text-h3 truncate" dir="auto">
-              {items[0]?.title ?? items[0]?.listing?.title ?? orderReference(order)}
+        {/* OrderHdr — 651:8343 */}
+        <header className="bg-base border-line flex items-center gap-4 rounded-16 border px-6 py-5">
+          <span className="bg-fill-100 size-[60px] shrink-0 overflow-hidden rounded-10">
+            {cover && (
+              // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+              <img src={cover} alt="" className="size-full object-cover" />
+            )}
+          </span>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <h1 className="truncate text-[15px] font-semibold" dir="auto">
+              {orderItemTitle(first) ?? orderReference(order)}
             </h1>
-            <p className="text-caption text-ink-tertiary" dir="auto">
+            <p className="text-ink-500 truncate text-[12px]" dir="auto">
               {orderReference(order)}
-              {placed && ` · ${t("placedOn", { date: dateFmt.format(new Date(placed)) })}`}
+              {placed &&
+                ` · ${t("placedOn", { date: dateFmt.format(new Date(placed)) })}`}
             </p>
           </div>
-        </div>
-        <OrderStatusBadge status={status} />
-      </header>
+          <OrderStatusBadge status={status} size="pill" />
+        </header>
 
-      <div className="mt-6 flex flex-col gap-6 lg:flex-row">
-        <section className="min-w-0 flex-1">
-          <ol className="bg-base border-line rounded-16 border p-6">
-            {TRACKING_STEPS.map((step, index) => {
-              const reached = stepReached(step.statuses, status);
-              const timestamp = stepTimestamps[step.key];
-              const isLast = index === TRACKING_STEPS.length - 1;
+        {/* Main — 651:8350 */}
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="flex min-w-0 flex-1 flex-col gap-5">
+            {/* ETA — 651:8352 */}
+            {(deliveryRange || carrier) && (
+              <section className="bg-action-tint border-action text-action flex items-center justify-between gap-4 rounded-[14px] border px-5 py-4">
+                <div className="flex min-w-0 flex-col gap-[3px]">
+                  <p className="text-[12px]">{t("estimatedDelivery")}</p>
+                  <p className="truncate text-[20px] font-bold" dir="auto">
+                    {deliveryRange ?? t("awaitingDelivery")}
+                  </p>
+                </div>
+                {(service || carrier) && (
+                  <div className="flex shrink-0 flex-col items-end gap-[3px] text-end">
+                    {service && <p className="text-[11px]">{service}</p>}
+                    {carrier && (
+                      <p className="text-[12px] font-semibold" dir="ltr">
+                        {shipment?.trackingNumber
+                          ? `${carrier} · ${shipment.trackingNumber}`
+                          : carrier}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </section>
+            )}
 
-              return (
-                <li key={step.key} className="flex gap-4">
-                  <div className="flex flex-col items-center">
-                    <span
-                      className={`flex size-6 shrink-0 items-center justify-center rounded-full ${
-                        reached ? "bg-action text-white" : "bg-tint text-ink-tertiary"
-                      }`}
-                    >
-                      {reached ? (
-                        <Check className="size-3.5" aria-hidden />
-                      ) : (
-                        <span className="size-2 rounded-full bg-current" />
-                      )}
-                    </span>
-                    {!isLast && (
+            {/* Timeline — 651:8359 */}
+            <ol className="bg-base border-line rounded-16 border p-6">
+              {timeline.map((step, index) => {
+                const isLast = index === timeline.length - 1;
+                const isCurrent = index === 0 && !step.pending;
+                const label = t.has(`steps.${step.status}.title`)
+                  ? t(`steps.${step.status}.title`)
+                  : step.status;
+                const body = step.pending
+                  ? t("awaitingDelivery")
+                  : (step.note ??
+                    (t.has(`steps.${step.status}.body`)
+                      ? t(`steps.${step.status}.body`)
+                      : null));
+                const meta = step.pending
+                  ? deliveryRange && t("estimated", { date: deliveryRange })
+                  : [
+                      step.occurredAt &&
+                        stampFmt.format(new Date(step.occurredAt)),
+                      step.location,
+                    ]
+                      .filter(Boolean)
+                      .join("  ·  ");
+
+                return (
+                  <li key={`${step.status}-${index}`} className="flex gap-4">
+                    {/* DC — 651:8361 */}
+                    <div className="flex w-5 flex-col items-center">
                       <span
-                        className={`w-px flex-1 ${reached ? "bg-action" : "bg-line"}`}
-                        aria-hidden
-                      />
-                    )}
-                  </div>
-
-                  <div className={`flex flex-col gap-1 ${isLast ? "" : "pb-6"}`}>
-                    <span
-                      className={`text-label ${
-                        reached ? "" : "text-ink-tertiary"
-                      }`}
-                    >
-                      {t(`steps.${step.key}.title`)}
-                    </span>
-                    <span className="text-caption text-ink-secondary">
-                      {t(`steps.${step.key}.body`)}
-                    </span>
-                    {reached && timestamp && (
-                      <span className="text-caption text-ink-tertiary">
-                        {dateFmt.format(new Date(timestamp))}
+                        className={`flex size-5 shrink-0 items-center justify-center rounded-full ${
+                          step.pending
+                            ? "bg-line-200"
+                            : isCurrent
+                              ? "bg-aqua text-black"
+                              : "bg-ink-900 text-base"
+                        }`}
+                      >
+                        {!step.pending && <Check className="size-3" aria-hidden />}
                       </span>
-                    )}
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+                      {!isLast && (
+                        <span className="bg-ink-900 w-[2px] flex-1" aria-hidden />
+                      )}
+                    </div>
 
-          {status === "cancelled" && (
-            <p className="text-caption text-error mt-4">{t("cancelledNote")}</p>
-          )}
-        </section>
+                    {/* SI — 651:8365 */}
+                    <div
+                      className={`flex min-w-0 flex-1 flex-col gap-[3px] ${isLast ? "" : "pb-6"}`}
+                    >
+                      <p
+                        className={`text-[14px] ${
+                          step.pending
+                            ? "text-ink-400 font-semibold"
+                            : isCurrent
+                              ? "text-action font-bold"
+                              : "font-semibold"
+                        }`}
+                      >
+                        {label}
+                      </p>
+                      {body && (
+                        <p
+                          className={`text-[12px] ${step.pending ? "text-ink-400" : "text-ink-500"}`}
+                          dir="auto"
+                        >
+                          {body}
+                        </p>
+                      )}
+                      {meta && (
+                        <p className="text-ink-400 text-[11px]" dir="auto">
+                          {meta}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
 
-        <aside className="flex w-full flex-col gap-4 lg:w-[360px] lg:shrink-0">
-          {/* Only rendered if the backend actually supplies carrier data. */}
-          {hasCarrierInfo && (
-            <div className="bg-base border-line rounded-16 border p-6">
-              <h2 className="text-h3 mb-4">{t("carrierInfo")}</h2>
-              <dl className="flex flex-col gap-3">
-                {shipment?.trackingCarrier && (
-                  <Row label={t("carrier")} value={shipment.trackingCarrier} />
-                )}
-                {shipment?.trackingNumber && (
-                  <Row label={t("trackingNumber")} value={shipment.trackingNumber} />
-                )}
-              </dl>
-            </div>
-          )}
+            {status === "cancelled" && (
+              <p className="text-caption text-error">{t("cancelledNote")}</p>
+            )}
 
-          <div className="bg-base border-line rounded-16 border p-6">
-            <h2 className="text-h3 mb-4">{t("orderTotal")}</h2>
-            <dl className="flex flex-col gap-3">
-              <Row
-                label={t("subtotal")}
-                value={formatPrice(order.subtotalAmount, order.currency ?? "SAR")}
-              />
-              <Row
-                label={t("shipping")}
-                value={formatPrice(order.shippingAmount, order.currency ?? "SAR")}
-              />
-              <Row
-                label={t("vat")}
-                value={formatPrice(order.vatAmount, order.currency ?? "SAR")}
-              />
-              <div className="border-line flex items-baseline justify-between border-t pt-3">
-                <dt className="text-label">{t("total")}</dt>
-                <dd className="text-h3">
-                  {formatPrice(order.totalAmount, order.currency ?? "SAR")}
-                </dd>
+            {/* Both pages decide for themselves what is eligible and 404 when
+                nothing is, so the links only show once delivered. The return
+                link is what restores C15. */}
+            {status === "delivered" && (
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={`/account/orders/${order.id}/review`}
+                  className="bg-aqua text-on-accent flex h-12 w-fit items-center rounded-[24px] px-6 text-[14px] font-semibold"
+                >
+                  {t("writeReview")}
+                </Link>
+                <Link
+                  href={`/account/orders/${order.id}/return`}
+                  className="border-ink flex h-12 w-fit items-center rounded-[24px] border px-6 text-[14px] font-semibold"
+                >
+                  {t("reportIssue")}
+                </Link>
               </div>
-            </dl>
+            )}
+          </div>
+
+          <aside className="flex w-full flex-col gap-4 lg:w-[576px] lg:shrink-0">
+            {/* Carrier — 651:8417. The Live Map above it in the frame is cut (plans/09 C1). */}
+            {carrierRows.length > 0 && (
+              <section className="bg-base border-line flex flex-col gap-3 rounded-[14px] border p-4">
+                <h2 className="text-[14px] font-semibold">{t("carrierInfo")}</h2>
+                <dl className="flex flex-col gap-3">
+                  {carrierRows.map((row) => (
+                    <div key={row.label} className="flex justify-between gap-4">
+                      <dt className="text-ink-500 text-[12px]">{row.label}</dt>
+                      <dd
+                        className="min-w-0 truncate text-[12px] font-semibold"
+                        dir={row.ltr ? "ltr" : "auto"}
+                      >
+                        {row.value}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+                {shipment?.trackingUrl && (
+                  <a
+                    href={shipment.trackingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-ink-900 text-base flex h-10 items-center justify-center rounded-[20px] text-[13px] font-medium"
+                  >
+                    {carrier ? t("trackOn", { carrier }) : t("trackParcel")}
+                  </a>
+                )}
+              </section>
+            )}
+
+            {/* Seller — 651:8433. The frame's Chat button is omitted (plans/09 C14). */}
+            {seller && (
+              <section className="bg-base border-line flex items-center gap-3 rounded-[14px] border px-4 py-3.5">
+                <span className="bg-action-tint text-action flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-[12px] font-bold">
+                  {sellerAvatar ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+                    <img
+                      src={sellerAvatar}
+                      alt=""
+                      className="size-full object-cover"
+                    />
+                  ) : (
+                    sellerInitials
+                  )}
+                </span>
+                <div className="flex min-w-0 flex-1 flex-col gap-[2px]">
+                  <Link
+                    href={`/sellers/${seller.id}`}
+                    className="truncate text-[13px] font-semibold"
+                    dir={seller.username ? "ltr" : "auto"}
+                  >
+                    {seller.username ? `@${sellerHandle}` : sellerHandle}
+                  </Link>
+                  <p className="text-ink-500 text-[11px]">
+                    {seller.ratingAvg != null
+                      ? t("sellerWithRating", {
+                          rating: Number(seller.ratingAvg).toFixed(1),
+                        })
+                      : t("sellerRole")}
+                  </p>
+                </div>
+              </section>
+            )}
+
             <Link
               href={`/account/orders/${order.id}/invoice`}
-              className="border-line text-label mt-5 flex h-10 items-center justify-center rounded-[20px] border"
+              className="border-line flex h-10 items-center justify-center rounded-[20px] border text-[13px] font-medium"
             >
               {t("viewInvoice")}
             </Link>
-          </div>
-
-          {order.address && (
-            <div className="bg-base border-line rounded-16 border p-6">
-              <h2 className="text-h3 mb-3">{t("deliveryAddress")}</h2>
-              <p className="text-caption text-ink-secondary" dir="auto">
-                {[
-                  order.address.recipientName,
-                  order.address.street,
-                  order.address.area,
-                  order.address.city,
-                  order.address.country,
-                ]
-                  .filter(Boolean)
-                  .join(", ")}
-              </p>
-              {order.address.phone && (
-                <p className="text-caption text-ink-tertiary mt-1" dir="ltr">
-                  {order.address.phone}
-                </p>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3">
-            <Link
-              href="/inbox"
-              className="border-line text-label flex h-11 items-center justify-center gap-2 rounded-[22px] border"
-            >
-              <MessageSquare className="size-4" aria-hidden />
-              {t("contactSeller")}
-            </Link>
-
-            {/*
-              Returns are only possible on delivered items — the eligibility
-              endpoint is buyer-and-delivered only.
-            */}
-            {status === "delivered" && (
-              <Link
-                href={`/account/orders/${order.id}/return`}
-                className="text-caption text-error flex h-11 items-center justify-center gap-2"
-              >
-                <TriangleAlert className="size-4" aria-hidden />
-                {t("reportIssue")}
-              </Link>
-            )}
-          </div>
-        </aside>
+          </aside>
+        </div>
       </div>
-    </div>
-  );
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  if (!value) return null;
-  return (
-    <div className="flex items-baseline justify-between gap-4">
-      <dt className="text-caption text-ink-secondary">{label}</dt>
-      <dd className="text-caption" dir="ltr">
-        {value}
-      </dd>
     </div>
   );
 }

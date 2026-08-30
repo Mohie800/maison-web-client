@@ -3,7 +3,13 @@ import { Link } from "@/i18n/navigation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
 import { OrderStatusBadge } from "./order-status-badge";
-import { orderItemImage, orderReference, orderStatus } from "../helpers";
+import {
+  orderItemImage,
+  orderItemPrice,
+  orderItemTitle,
+  orderReference,
+  orderStatus,
+} from "../helpers";
 import type { Order } from "@/lib/api/schemas/order";
 
 /** One order in the My Orders list — Figma node 651:8208. */
@@ -62,10 +68,10 @@ export async function OrderCard({ order }: { order: Order }) {
                   ) : null}
                 </span>
                 <span className="text-body min-w-0 flex-1 truncate" dir="auto">
-                  {item.title ?? item.listing?.title ?? ""}
+                  {orderItemTitle(item)}
                 </span>
                 <span className="text-body shrink-0">
-                  {formatPrice(item.price, order.currency ?? "SAR")}
+                  {formatPrice(orderItemPrice(item), order.currency ?? "SAR")}
                 </span>
               </li>
             );

@@ -1105,7 +1105,13 @@
     "minimumNote": "الحد الأدنى: {min}",
     "withdrawMax": "سحب الحد الأقصى ({max})",
     "withdrawSubmitAmount": "سحب {amount}",
-    "estimatedArrival": "الوصول المتوقع: من يوم إلى ٣ أيام عمل"
+    "estimatedArrival": "الوصول المتوقع: من يوم إلى ٣ أيام عمل",
+    "walletBalanceLine": "رصيد المحفظة {amount}",
+    "recipientLabel": "المستلم (@المعرّف أو رقم الجوال)",
+    "amountLabel": "المبلغ ({currency})",
+    "feeNote": "لا توجد رسوم على التحويلات بين المحافظ.",
+    "transferFeeLine": "رسوم التحويل {amount}",
+    "sendSubmitAmount": "إرسال {amount}"
   },
   "Wishlist": {
     "title": "قائمة رغباتي",

@@ -1425,7 +1425,11 @@
     "empty": "لا توجد قصص الآن.",
     "yourStory": "قصتك",
     "viewStory": "عرض القصة",
-    "viewerLabel": "قصة {name}"
+    "viewerLabel": "قصة {name}",
+    "hubTitle": "القصص",
+    "hubBody": "أحدث القطع والإطلالات من البائعين الذين تتابعهم.",
+    "latestTitle": "أحدث القصص",
+    "hubEmpty": "لم تُنشر أي قصص بعد."
   },
   "Categories": {
     "title": "كل الفئات",

@@ -1424,7 +1424,11 @@
     "empty": "No stories right now.",
     "yourStory": "Your story",
     "viewStory": "View story",
-    "viewerLabel": "{name}'s story"
+    "viewerLabel": "{name}'s story",
+    "hubTitle": "Stories",
+    "hubBody": "Fresh drops and looks from sellers you follow.",
+    "latestTitle": "Latest stories",
+    "hubEmpty": "No stories have been posted yet."
   },
   "Categories": {
     "title": "All Categories",

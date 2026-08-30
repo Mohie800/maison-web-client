@@ -92,12 +92,17 @@ export default async function WishlistPage({
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-h1">{t("title")}</h1>
           {(counts.all ?? wishlist.total) > 0 && (
-            <span className="bg-tint text-caption text-ink-secondary rounded-[12px] px-3 py-1">
+            <span className="bg-fill-100 text-ink-500 flex h-6 items-center rounded-12 px-2.5 text-[12px] font-medium">
               {t("itemCount", { count: counts.all ?? wishlist.total })}
             </span>
           )}
 
-          {/* Share — 651:8771's "Share Wishlist" control (GAP-42). */}
+          {/*
+            Share — 651:8804. The frame draws a plain "Share Wishlist >" link in
+            t/action, not a bordered button. It toggles rather than only opening,
+            because minting a public link is reversible and the frame has no
+            second control to stop it (GAP-42).
+          */}
           <form
             action={share && share !== "off" ? unshareWishlistAction : shareWishlistAction}
             className="ms-auto"
@@ -105,7 +110,7 @@ export default async function WishlistPage({
             <input type="hidden" name="locale" value={locale} />
             <button
               type="submit"
-              className="border-line text-caption text-ink-secondary hover:border-ink-tertiary flex h-9 items-center gap-2 rounded-[18px] border px-4"
+              className="text-action flex items-center gap-1.5 text-[13px] font-medium"
             >
               <Share2 className="size-3.5" aria-hidden />
               {share && share !== "off" ? t("shareStop") : t("share")}
@@ -186,11 +191,11 @@ export default async function WishlistPage({
                   return (
                     <li
                       key={item.listingId}
-                      className="bg-base border-line flex flex-col overflow-hidden rounded-12 border"
+                      className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
                     >
                       <Link
                         href={`/products/${item.listingId}`}
-                        className="bg-tint relative block aspect-square"
+                        className="bg-fill-100 relative block h-[200px]"
                       >
                         {image ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -207,29 +212,36 @@ export default async function WishlistPage({
                         )}
                       </Link>
 
-                      <div className="flex flex-1 flex-col gap-2 p-3">
+                      <div className="flex flex-1 flex-col gap-1.5 p-3">
                         <Link
                           href={`/products/${item.listingId}`}
-                          className="text-label line-clamp-2"
+                          className="text-ink-900 line-clamp-2 text-[13px] font-semibold"
                           dir="auto"
                         >
                           {item.title}
                         </Link>
 
                         {(item.category?.name || item.condition) && (
-                          <p className="text-caption text-ink-tertiary truncate">
-                            {[
-                              item.condition &&
-                                tListing(`conditions.${item.condition}`),
-                              item.category?.name,
-                            ]
-                              .filter(Boolean)
-                              .join(" · ")}
-                          </p>
+                          /* M — 651:8811 */
+                          <div className="flex items-center gap-1.5">
+                            {item.condition && (
+                              <span className="bg-action-tint text-action flex h-[18px] items-center rounded-[9px] px-1.5 text-[9px] font-medium">
+                                {tListing(`conditions.${item.condition}`)}
+                              </span>
+                            )}
+                            {item.category?.name && (
+                              <span
+                                className="text-ink-500 truncate text-[10px]"
+                                dir="auto"
+                              >
+                                {item.category.name}
+                              </span>
+                            )}
+                          </div>
                         )}
 
                         <div className="flex flex-wrap items-baseline gap-2">
-                          <span className="text-label font-semibold" dir="ltr">
+                          <span className="text-ink-900 text-[15px] font-bold" dir="ltr">
                             {formatPrice(item.price, currency)}
                           </span>
                           {saving !== null && (
@@ -265,7 +277,7 @@ export default async function WishlistPage({
                               />
                               <button
                                 type="submit"
-                                className="bg-aqua text-on-accent text-caption h-9 w-full rounded-[18px] font-semibold"
+                                className="bg-aqua h-9 w-full rounded-8 text-[11px] font-bold text-black"
                               >
                                 {t("addToCart")}
                               </button>
@@ -294,8 +306,8 @@ export default async function WishlistPage({
                                 notifying ? t("notifyOff") : t("notifyOn")
                               }
                               title={notifying ? t("notifyOff") : t("notifyOn")}
-                              className={`border-line flex size-9 items-center justify-center rounded-full border ${
-                                notifying ? "text-action" : "text-ink-tertiary"
+                              className={`border-line-200 flex size-9 items-center justify-center rounded-8 border ${
+                                notifying ? "text-action" : "text-ink-500"
                               }`}
                             >
                               {notifying ? (
@@ -317,7 +329,7 @@ export default async function WishlistPage({
                               type="submit"
                               aria-label={t("remove")}
                               title={t("remove")}
-                              className="border-line text-ink-tertiary hover:text-ink flex size-9 items-center justify-center rounded-full border"
+                              className="bg-error-tint text-error flex size-9 items-center justify-center rounded-8"
                             >
                               <X className="size-4" aria-hidden />
                             </button>

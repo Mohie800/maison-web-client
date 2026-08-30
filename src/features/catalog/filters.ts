@@ -22,7 +22,7 @@ export const FILTER_SUPPORT = {
   price: true,
   saleMode: true,
 
-/**
+  /**
    * BUG-01 is fixed — `minDiscountPercent` filters `total` and pages in the
    * database (verified 2026-08-23: `?minDiscountPercent=20` → total 46,
    * items 46). The sidebar control is built to the design's own thresholds
@@ -137,7 +137,10 @@ export function toListingQuery(filters: PlpFilters): ListingQuery {
       ? { search: filters.search }
       : {}),
     ...(FILTER_SUPPORT.saleMode && filters.saleMode
-      ? { saleMode: filters.saleMode as "fixed" | "negotiable" | "auction" | "trade" }
+      ? {
+          saleMode: filters.saleMode as
+            "fixed" | "negotiable" | "auction" | "trade",
+        }
       : {}),
     // Sent as numbers; blank or non-numeric input is dropped rather than sent.
     ...(FILTER_SUPPORT.price && numeric(filters.minPrice) !== undefined
@@ -147,7 +150,8 @@ export function toListingQuery(filters: PlpFilters): ListingQuery {
       ? { maxPrice: numeric(filters.maxPrice) }
       : {}),
     // Out-of-range values are dropped rather than sent — the API 400s on them.
-    ...(FILTER_SUPPORT.discount && percentage(filters.minDiscountPercent) !== undefined
+    ...(FILTER_SUPPORT.discount &&
+    percentage(filters.minDiscountPercent) !== undefined
       ? { minDiscountPercent: percentage(filters.minDiscountPercent) }
       : {}),
     ...(FILTER_SUPPORT.material && filters.materialId
@@ -199,13 +203,13 @@ export function buildHref(
 export function hasActiveFilters(filters: PlpFilters): boolean {
   return Boolean(
     filters.categoryId ||
-      filters.brandId ||
-      filters.condition ||
-      filters.search ||
-      filters.saleMode ||
-      filters.minPrice ||
-      filters.maxPrice ||
-      filters.materialId ||
-      filters.minDiscountPercent,
+    filters.brandId ||
+    filters.condition ||
+    filters.search ||
+    filters.saleMode ||
+    filters.minPrice ||
+    filters.maxPrice ||
+    filters.materialId ||
+    filters.minDiscountPercent,
   );
 }

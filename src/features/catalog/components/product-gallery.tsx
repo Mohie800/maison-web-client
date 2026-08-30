@@ -18,7 +18,9 @@ export function ProductGallery({
   title: string;
 }) {
   const [active, setActive] = useState(0);
-  const images = urls.map(resolveMediaUrl).filter((u): u is string => Boolean(u));
+  const images = urls
+    .map(resolveMediaUrl)
+    .filter((u): u is string => Boolean(u));
 
   if (images.length === 0) {
     return <div className="bg-tint aspect-square w-full rounded-16" />;

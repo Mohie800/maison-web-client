@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
 import { Search, X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getBrands, getCategoryTree, getMaterials } from "@/lib/api/endpoints/catalog";
+import {
+  getBrands,
+  getCategoryTree,
+  getMaterials,
+} from "@/lib/api/endpoints/catalog";
 import { getListingFacets, getListings } from "@/lib/api/endpoints/listings";
 import { listingToCard } from "@/lib/api/adapters";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { ProductCard } from "@/components/commerce/product-card";
 import { FilterPanel } from "@/features/catalog/components/filter-panel";
+import { SortMenu } from "@/features/catalog/components/sort-menu";
 import { Pagination } from "@/features/catalog/components/pagination";
 import {
   buildHref,
@@ -83,10 +88,16 @@ export default async function SearchPage({
     name: pickLocalized(brand, "name", activeLocale) || brand.name,
   }));
 
-  const href = (patch: Partial<PlpFilters>) => buildHref(filters, patch, "/search");
+  const href = (patch: Partial<PlpFilters>) =>
+    buildHref(filters, patch, "/search");
 
   /** AF — 651:2715. Every filter that's on, each removable on its own. */
-  const active: { key: string; label: string; patch: Partial<PlpFilters>; tone: string }[] = [];
+  const active: {
+    key: string;
+    label: string;
+    patch: Partial<PlpFilters>;
+    tone: string;
+  }[] = [];
   if (filters.condition) {
     active.push({
       key: "condition",
@@ -125,7 +136,7 @@ export default async function SearchPage({
   return (
     <div className="bg-surface flex flex-col">
       {/* SS — 651:2624 */}
-      <div className="bg-base border-line border-b">
+      <div className="bg-base border-line-200 border-b">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 lg:px-20">
           {/* BS — 651:2625 */}
           <form
@@ -191,6 +202,9 @@ export default async function SearchPage({
                 {t("resultsFound", { count: result.total })}
               </p>
             </div>
+
+            {/* Sort — 651:2712. Was missing; same control as the PLP. */}
+            <SortMenu filters={filters} basePath="/search" />
           </div>
 
           {/* AF — 651:2715 */}
@@ -207,7 +221,11 @@ export default async function SearchPage({
                 </Link>
               ))}
               <Link
-                href={filters.search ? `/search?q=${encodeURIComponent(filters.search)}` : "/search"}
+                href={
+                  filters.search
+                    ? `/search?q=${encodeURIComponent(filters.search)}`
+                    : "/search"
+                }
                 className="text-error text-[12px] font-medium"
               >
                 {t("clearAll")}

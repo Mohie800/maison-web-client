@@ -1,13 +1,9 @@
 import { getTranslations, getLocale } from "next-intl/server";
-import { ChevronDown, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { SortMenu } from "./sort-menu";
 import { pickLocalized } from "@/lib/i18n/localized";
-import {
-  buildHref,
-  hasActiveFilters,
-  SORT_OPTIONS,
-  type PlpFilters,
-} from "../filters";
+import { buildHref, hasActiveFilters, type PlpFilters } from "../filters";
 import type { Category } from "@/lib/api/schemas/catalog";
 import type { Locale } from "@/i18n/routing";
 
@@ -138,42 +134,8 @@ export async function PlpToolbar({
           </span>
         </div>
 
-        {/* Sort — 651:4035. A disclosure so it needs no JavaScript. */}
-        <details className="relative">
-          <summary className="bg-base border-line-200 flex h-[38px] cursor-pointer list-none items-center justify-center gap-2 rounded-10 border ps-3.5 pe-2.5">
-            <span className="text-ink-900 text-[12px] font-medium">
-              {t("sortValue", {
-                value: t(
-                  `sortOptions.${
-                    SORT_OPTIONS.find((o) => o.value === filters.sort)
-                      ?.labelKey ?? SORT_OPTIONS[0].labelKey
-                  }`,
-                ),
-              })}
-            </span>
-            <ChevronDown className="text-ink-500 size-3" aria-hidden />
-          </summary>
-
-          <div className="bg-base border-line-200 absolute end-0 z-20 mt-1 flex min-w-full flex-col overflow-hidden rounded-10 border shadow-lg">
-            {SORT_OPTIONS.map((option) => {
-              const active = filters.sort === option.value;
-              return (
-                <Link
-                  key={option.value}
-                  href={buildHref(filters, { sort: option.value })}
-                  aria-current={active ? "true" : undefined}
-                  className={`px-3.5 py-2 text-[12px] whitespace-nowrap ${
-                    active
-                      ? "bg-action-tint text-action font-semibold"
-                      : "text-ink-700 hover:bg-surface"
-                  }`}
-                >
-                  {t(`sortOptions.${option.labelKey}`)}
-                </Link>
-              );
-            })}
-          </div>
-        </details>
+        {/* Sort — 651:4035. Shared with search; see the component. */}
+        <SortMenu filters={filters} />
       </div>
 
       {/* AF — 651:4038 */}

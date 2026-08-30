@@ -64,7 +64,10 @@ export async function FilterPanel({
 
   /** Facet lookups, keyed the way each list identifies its options. */
   const countBy = (
-    rows: { id?: string | null; value?: string | null; count: number }[] | null | undefined,
+    rows:
+      | { id?: string | null; value?: string | null; count: number }[]
+      | null
+      | undefined,
     key: "id" | "value",
   ) => new Map((rows ?? []).map((row) => [row[key] ?? "", row.count]));
 
@@ -93,11 +96,14 @@ export async function FilterPanel({
   const conditionCounts = countBy(facets?.conditions, "value");
   const saleModeCounts = countBy(facets?.saleModes, "value");
   const materialCounts = countBy(facets?.materials, "id");
-  const discountRows =
-    facets?.discountThresholds?.map((row) => row.minPercent) ??
-    [...DISCOUNT_THRESHOLDS];
+  const discountRows = facets?.discountThresholds?.map(
+    (row) => row.minPercent,
+  ) ?? [...DISCOUNT_THRESHOLDS];
   const discountCounts = new Map(
-    (facets?.discountThresholds ?? []).map((row) => [row.minPercent, row.count]),
+    (facets?.discountThresholds ?? []).map((row) => [
+      row.minPercent,
+      row.count,
+    ]),
   );
 
   return (
@@ -111,9 +117,13 @@ export async function FilterPanel({
                 return (
                   <li key={category.id}>
                     <Link
-                      href={buildHref(filters, {
-                        categoryId: active ? undefined : category.id,
-                      }, basePath)}
+                      href={buildHref(
+                        filters,
+                        {
+                          categoryId: active ? undefined : category.id,
+                        },
+                        basePath,
+                      )}
                       aria-current={active ? "true" : undefined}
                       className={`text-body flex items-center justify-between py-1.5 ${
                         active
@@ -141,9 +151,13 @@ export async function FilterPanel({
                 return (
                   <Link
                     key={condition}
-                    href={buildHref(filters, {
-                      condition: active ? undefined : condition,
-                    }, basePath)}
+                    href={buildHref(
+                      filters,
+                      {
+                        condition: active ? undefined : condition,
+                      },
+                      basePath,
+                    )}
                     aria-pressed={active}
                     className={`text-caption rounded-[16px] border px-3 py-1.5 ${
                       active
@@ -185,15 +199,25 @@ export async function FilterPanel({
             <form action={basePath} className="flex flex-col gap-3">
               {/* Carry the other filters through the submit. */}
               {filters.categoryId && (
-                <input type="hidden" name="categoryId" value={filters.categoryId} />
+                <input
+                  type="hidden"
+                  name="categoryId"
+                  value={filters.categoryId}
+                />
               )}
               {filters.brandId && (
                 <input type="hidden" name="brandId" value={filters.brandId} />
               )}
               {filters.condition && (
-                <input type="hidden" name="condition" value={filters.condition} />
+                <input
+                  type="hidden"
+                  name="condition"
+                  value={filters.condition}
+                />
               )}
-              {filters.search && <input type="hidden" name="q" value={filters.search} />}
+              {filters.search && (
+                <input type="hidden" name="q" value={filters.search} />
+              )}
               {filters.saleMode && (
                 <input type="hidden" name="saleMode" value={filters.saleMode} />
               )}
@@ -265,9 +289,15 @@ export async function FilterPanel({
                       JavaScript. `aria-pressed` reports the real semantics.
                     */}
                     <Link
-                      href={buildHref(filters, {
-                        minDiscountPercent: active ? undefined : String(threshold),
-                      }, basePath)}
+                      href={buildHref(
+                        filters,
+                        {
+                          minDiscountPercent: active
+                            ? undefined
+                            : String(threshold),
+                        },
+                        basePath,
+                      )}
                       aria-pressed={active}
                       className="group/row flex items-center gap-3 py-2"
                     >
@@ -305,9 +335,13 @@ export async function FilterPanel({
                 return (
                   <Link
                     key={mode}
-                    href={buildHref(filters, {
-                      saleMode: active ? undefined : mode,
-                    }, basePath)}
+                    href={buildHref(
+                      filters,
+                      {
+                        saleMode: active ? undefined : mode,
+                      },
+                      basePath,
+                    )}
                     aria-pressed={active}
                     className={`text-caption rounded-[16px] border px-3 py-1.5 ${
                       active
@@ -339,9 +373,13 @@ export async function FilterPanel({
                 return (
                   <li key={material.id}>
                     <Link
-                      href={buildHref(filters, {
-                        materialId: active ? undefined : material.id,
-                      }, basePath)}
+                      href={buildHref(
+                        filters,
+                        {
+                          materialId: active ? undefined : material.id,
+                        },
+                        basePath,
+                      )}
                       aria-current={active ? "true" : undefined}
                       className={`text-body flex items-center justify-between py-1.5 ${
                         active
@@ -381,9 +419,13 @@ export async function FilterPanel({
                 return (
                   <li key={brand.id}>
                     <Link
-                      href={buildHref(filters, {
-                        brandId: active ? undefined : brand.id,
-                      }, basePath)}
+                      href={buildHref(
+                        filters,
+                        {
+                          brandId: active ? undefined : brand.id,
+                        },
+                        basePath,
+                      )}
                       aria-current={active ? "true" : undefined}
                       className={`text-body flex items-center justify-between py-1.5 ${
                         active

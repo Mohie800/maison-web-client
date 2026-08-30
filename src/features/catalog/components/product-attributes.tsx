@@ -40,7 +40,9 @@ export async function ProductAttributes({
   const rows = Object.entries(attributes ?? {}).filter(
     ([key, value]) =>
       !INTERNAL_KEYS.has(key) &&
-      value !== null && value !== undefined && value !== "" &&
+      value !== null &&
+      value !== undefined &&
+      value !== "" &&
       !(Array.isArray(value) && value.length === 0),
   );
 
@@ -49,8 +51,11 @@ export async function ProductAttributes({
   return (
     <div className="flex flex-col gap-4">
       {rows.map(([key, value]) => {
-        const values = Array.isArray(value) ? value.map(String) : [String(value)];
-        const isColour = key.toLowerCase() === "color" || key.toLowerCase() === "colour";
+        const values = Array.isArray(value)
+          ? value.map(String)
+          : [String(value)];
+        const isColour =
+          key.toLowerCase() === "color" || key.toLowerCase() === "colour";
 
         return (
           <div key={key} className="flex flex-col gap-2">

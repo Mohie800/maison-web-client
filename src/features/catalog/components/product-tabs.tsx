@@ -28,10 +28,7 @@ export function ProductTabs({ tabs }: { tabs: ProductTab[] }) {
 
   return (
     <div className="mt-14">
-      <div
-        role="tablist"
-        className="border-line flex flex-wrap gap-1 border-b"
-      >
+      <div role="tablist" className="border-line flex flex-wrap gap-1 border-b">
         {available.map((tab) => {
           const isActive = tab.key === active;
           return (

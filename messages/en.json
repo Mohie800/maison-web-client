@@ -62,21 +62,21 @@
     "nothingYet": "Nothing here yet — check back soon.",
     "sponsored": "Sponsored",
     "trust": {
-      "authenticity": {
-        "title": "Authenticated",
-        "body": "Every item checked before it ships."
+      "sellers": {
+        "title": "Verified Sellers",
+        "body": "Every seller is reviewed and verified by our team"
       },
-      "shipping": {
-        "title": "Fast delivery",
-        "body": "Tracked shipping across Saudi Arabia."
+      "payment": {
+        "title": "Secure Payment",
+        "body": "Protected transactions with Mada, STC Pay & more"
       },
       "returns": {
-        "title": "Easy returns",
-        "body": "Return eligible items after delivery."
+        "title": "Easy Returns",
+        "body": "Hassle-free returns within 14 days"
       },
-      "sellers": {
-        "title": "Trusted sellers",
-        "body": "Verified stores and rated individuals."
+      "support": {
+        "title": "24/7 Support",
+        "body": "Always here to help via chat, email, or phone"
       }
     },
     "yourStory": "Your story",
@@ -104,7 +104,9 @@
     "currentBid": "Current bid",
     "active": "Active",
     "ended": "Ended",
-    "bids": "{count, plural, one {# bid} other {# bids}}"
+    "bids": "{count, plural, one {# bid} other {# bids}}",
+    "ratingStat": "Rating",
+    "soldStat": "Sold"
   },
   "Listing": {
     "condition": "Condition",

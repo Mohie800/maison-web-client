@@ -1,5 +1,11 @@
 import { getTranslations, getLocale } from "next-intl/server";
-import { ShieldCheck, Store, Truck, Undo2 } from "lucide-react";
+import {
+  BadgeCheck,
+  Headset,
+  Lock,
+  RefreshCw,
+  ShieldCheck,
+} from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { ProductCard } from "@/components/commerce/product-card";
 import { resolveMediaUrl } from "@/lib/api/media";
@@ -67,7 +73,7 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
           return (
             <article
               key={category.id}
-              className="bg-base border-line flex flex-col overflow-hidden rounded-16 border"
+              className="bg-base border-line-200 flex flex-col overflow-hidden rounded-16 border"
             >
               {/* Band — 651:607 */}
               <div className={`h-[180px] ${tone.band}`}>
@@ -83,7 +89,10 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
               </div>
               {/* Ctn — 651:609 */}
               <div className="flex flex-1 flex-col gap-1.5 p-4">
-                <h3 className="text-[18px] font-semibold" dir="auto">
+                <h3
+                  className="text-ink-900 text-[18px] font-semibold"
+                  dir="auto"
+                >
                   {pickLocalized(category, "name", locale)}
                 </h3>
                 {children && (
@@ -211,9 +220,16 @@ export async function ProductRail({
   );
 }
 
-
 /* -------------------------------------------------------- top sellers */
 
+/**
+ * Section_TopVerifiedSellers — Figma `651:969`, card `651:976`.
+ *
+ * The card's stat pair is "Rating / Items". `ratingAvg` is on the seller, but
+ * nothing in `/discovery/top-stores` carries a listing count, so the second
+ * stat is `salesCount` — the ranking this rail is sorted by — labelled for what
+ * it is rather than mislabelled "Items" (plans/09 C54).
+ */
 export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
   const t = await getTranslations("Home");
   const locale = (await getLocale()) as Locale;
@@ -240,46 +256,87 @@ export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
             return (
               <article
                 key={seller.id}
-                className="bg-base border-line flex flex-col items-center gap-2 rounded-16 border p-5"
+                className="bg-base border-line-200 flex flex-col items-center gap-2.5 rounded-16 border px-4 py-5"
               >
-                <span className="bg-action-tint text-action text-h3 flex size-14 items-center justify-center overflow-hidden rounded-full">
+                {/* Av — 651:977 */}
+                <span className="bg-action-tint text-action flex size-14 items-center justify-center overflow-hidden rounded-[28px] text-[16px] font-bold">
                   {avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                    <img src={avatar} alt="" className="size-full object-cover" />
+                    <img
+                      src={avatar}
+                      alt=""
+                      className="size-full object-cover"
+                    />
                   ) : (
                     name.slice(0, 2).toUpperCase()
                   )}
                 </span>
+                {/* VBdg — 651:979 */}
                 {seller.isVerified && (
-                  <span className="text-[10px] text-action flex items-center gap-1 font-semibold">
+                  <span className="bg-action-tint text-action flex h-5 items-center gap-1 rounded-10 px-2 text-[9px] font-bold">
                     <ShieldCheck className="size-3" aria-hidden />
                     {t("verified")}
                   </span>
                 )}
-                <h3 className="text-label truncate" dir="auto">
+                <h3
+                  className="text-ink-900 w-full truncate text-center text-[13px] font-semibold"
+                  dir="auto"
+                >
                   {name}
                 </h3>
                 {seller.username && (
-                  <p className="text-caption text-ink-tertiary truncate" dir="ltr">
+                  <p
+                    className="text-ink-500 w-full truncate text-center text-[11px]"
+                    dir="ltr"
+                  >
                     @{seller.username}
                   </p>
                 )}
-                {store.salesCount != null && (
-                  <p className="text-caption text-ink-tertiary">
-                    {t("soldThisWeek", {
-                      count: formatCount(store.salesCount, locale),
-                    })}
-                  </p>
-                )}
+
+                {/* R — 651:984 */}
+                <div className="flex w-full items-stretch justify-center">
+                  <div className="flex flex-1 flex-col items-center gap-0.5">
+                    <span
+                      className="text-ink-900 text-[13px] font-bold"
+                      dir="ltr"
+                    >
+                      {seller.ratingAvg != null
+                        ? Number(seller.ratingAvg).toFixed(1)
+                        : "—"}
+                    </span>
+                    <span className="text-ink-500 text-[9px]">
+                      {t("ratingStat")}
+                    </span>
+                  </div>
+                  <span
+                    className="bg-line-200 w-px self-center"
+                    style={{ height: 28 }}
+                    aria-hidden
+                  />
+                  <div className="flex flex-1 flex-col items-center gap-0.5">
+                    <span
+                      className="text-ink-900 text-[13px] font-bold"
+                      dir="ltr"
+                    >
+                      {store.salesCount != null
+                        ? formatCount(store.salesCount, locale)
+                        : "—"}
+                    </span>
+                    <span className="text-ink-500 text-[9px]">
+                      {t("soldStat")}
+                    </span>
+                  </div>
+                </div>
+
+                {/* StoreBtn — 651:992 */}
                 <Link
                   /*
                     A store is a seller — same id the profile and
                     `listing.sellerId` use. `/stores/` never had a route.
                   */
                   href={`/sellers/${seller.id}`}
-                  className="border-action text-action text-label mt-2 flex h-9 w-full items-center justify-center rounded-[18px] border"
+                  className="bg-surface border-action text-action mt-0.5 flex h-9 w-full items-center justify-center rounded-[18px] border text-[12px] font-bold"
                 >
-                  <Store className="me-1 size-4" aria-hidden />
                   {t("visitStore")}
                 </Link>
               </article>
@@ -292,6 +349,17 @@ export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
 }
 
 /* ------------------------------------------------------------ trending */
+
+/**
+ * Rank badge tones — Figma `651:1218`. The frame colours the podium and then
+ * settles: gold, silver, bronze, and brand green from fourth down. Gold and
+ * bronze land on the same pair of tokens in the file.
+ */
+const RANK_TONE = [
+  "bg-warn-tint text-warning",
+  "bg-fill-100 text-ink-500",
+  "bg-warn-tint text-warning",
+];
 
 export async function TrendingRail({ cards }: { cards: Card[] }) {
   const t = await getTranslations("Home");
@@ -316,19 +384,24 @@ export async function TrendingRail({ cards }: { cards: Card[] }) {
         <div className="grid gap-5 lg:grid-cols-2">
           {/* self-start: the ranked list is shorter than the card grid and
               should keep its natural height rather than stretch to match it. */}
-          <ol className="bg-base border-line divide-line self-start divide-y overflow-hidden rounded-16 border">
+          <ol className="bg-base border-line-200 divide-line-200 self-start divide-y overflow-hidden rounded-16 border">
             {ranked.map((card, index) => (
               <li key={card.id}>
+                {/* R — 651:1219 */}
                 <Link
                   href={`/products/${card.id}`}
-                  className="hover:bg-surface flex items-center gap-3 p-3"
+                  className="hover:bg-surface flex items-center gap-3 px-4 py-3.5"
                 >
-                  <span className="bg-action-tint text-action text-caption flex size-7 shrink-0 items-center justify-center rounded-full font-bold">
-                    {index + 1}
+                  <span
+                    className={`flex size-9 shrink-0 items-center justify-center rounded-[18px] text-[12px] font-bold ${
+                      RANK_TONE[index] ?? "bg-action-tint text-action"
+                    }`}
+                  >
+                    #{index + 1}
                   </span>
 
                   {/* Thumbnail, as in the design's ranked list. */}
-                  <span className="bg-surface size-10 shrink-0 overflow-hidden rounded-8">
+                  <span className="bg-fill-100 size-11 shrink-0 overflow-hidden rounded-8">
                     {resolveMediaUrl(card.coverPhotoUrl) ? (
                       // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
                       <img
@@ -340,19 +413,26 @@ export async function TrendingRail({ cards }: { cards: Card[] }) {
                     ) : null}
                   </span>
 
-                  <span className="flex min-w-0 flex-1 flex-col">
-                    <span className="text-label truncate" dir="auto">
+                  <span className="flex min-w-0 flex-1 flex-col gap-[3px]">
+                    <span
+                      className="text-ink-900 truncate text-[13px] font-semibold"
+                      dir="auto"
+                    >
                       {card.title}
                     </span>
-                    <span className="text-caption text-ink-tertiary truncate">
-                      {[card.category?.name, card.condition && tListing(`conditions.${card.condition}`)]
+                    <span className="text-ink-500 truncate text-[11px]">
+                      {[
+                        card.category?.name,
+                        card.condition &&
+                          tListing(`conditions.${card.condition}`),
+                      ]
                         .filter(Boolean)
                         .join(" · ")}
                     </span>
                   </span>
 
-                  <span className="flex shrink-0 flex-col items-end">
-                    <span className="text-label">
+                  <span className="flex shrink-0 flex-col items-end gap-[3px]">
+                    <span className="text-ink-900 text-[12px] font-bold">
                       {formatPrice(cardAmount(card), card.currency ?? "SAR")}
                     </span>
                     {/*
@@ -362,8 +442,10 @@ export async function TrendingRail({ cards }: { cards: Card[] }) {
                       actually drives the ranking. See GAP-32.
                     */}
                     {card.likeCount != null && card.likeCount > 0 && (
-                      <span className="text-caption text-ink-tertiary">
-                        {t("likeCount", { count: formatCount(card.likeCount, locale) })}
+                      <span className="text-ink-400 text-[10px]">
+                        {t("likeCount", {
+                          count: formatCount(card.likeCount, locale),
+                        })}
                       </span>
                     )}
                   </span>
@@ -385,25 +467,40 @@ export async function TrendingRail({ cards }: { cards: Card[] }) {
 
 /* ------------------------------------------------------------ trust bar */
 
+/**
+ * Web_TrustBar — Figma `651:940`. Four promises in a row, each on its own tint.
+ *
+ * The frame's glyphs are material-symbols:verified, mdi:secure, refresh-2 and
+ * ix:support; lucide carries the same four, so they are drawn from there like
+ * every other icon in this codebase rather than exported one-off.
+ */
 export async function TrustBar() {
   const t = await getTranslations("Home");
 
   const items = [
-    { key: "authenticity", icon: ShieldCheck },
-    { key: "shipping", icon: Truck },
-    { key: "returns", icon: Undo2 },
-    { key: "sellers", icon: Store },
+    { key: "sellers", icon: BadgeCheck, tone: "bg-action-tint text-action" },
+    { key: "payment", icon: Lock, tone: "bg-info-tint text-info" },
+    { key: "returns", icon: RefreshCw, tone: "bg-purple-tint text-purple" },
+    { key: "support", icon: Headset, tone: "bg-warn-tint text-amber-deep" },
   ] as const;
 
   return (
-    <Section className="bg-surface border-line border-y">
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map(({ key, icon: Icon }) => (
-          <div key={key} className="flex items-start gap-3">
-            <Icon className="text-action size-6 shrink-0" aria-hidden />
-            <div className="flex flex-col">
-              <h3 className="text-label">{t(`trust.${key}.title`)}</h3>
-              <p className="text-caption text-ink-secondary">
+    <Section className="bg-base border-line-200 border-y py-12">
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {items.map(({ key, icon: Icon, tone }) => (
+          /* Trust — 651:942 */
+          <div key={key} className="flex items-start gap-4">
+            <span
+              className={`flex size-12 shrink-0 items-center justify-center rounded-[24px] ${tone}`}
+              aria-hidden
+            >
+              <Icon className="size-6" />
+            </span>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-ink-900 text-[14px] font-bold">
+                {t(`trust.${key}.title`)}
+              </h3>
+              <p className="text-ink-500 text-[12px]">
                 {t(`trust.${key}.body`)}
               </p>
             </div>

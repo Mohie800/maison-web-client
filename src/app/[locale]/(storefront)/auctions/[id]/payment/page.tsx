@@ -128,7 +128,7 @@ export default async function AuctionPaymentPage({
               <div className="flex items-center justify-between gap-3">
                 <h2 className="text-[14px] font-semibold">{t("address")}</h2>
                 <Link
-                  href="/account/settings/addresses"
+                  href="/account/settings"
                   className="text-action text-[12px] font-medium"
                 >
                   {t("change")}
@@ -154,7 +154,7 @@ export default async function AuctionPaymentPage({
                 </p>
               ) : (
                 <Link
-                  href="/account/settings/addresses"
+                  href="/account/settings"
                   className="border-line text-ink-secondary rounded-10 border border-dashed px-3.5 py-3 text-[13px]"
                 >
                   {t("noAddress")}

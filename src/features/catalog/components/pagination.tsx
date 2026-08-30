@@ -3,8 +3,14 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 
 /**
- * Offset pagination. The API returns `{ items, total, page, limit }` with no
- * `hasMore`, so the page count is derived.
+ * Offset pagination — `Pgn` on Web_PLP, `651:4162`.
+ *
+ * Every control is the same 34px box: white with a `t/border-200` hairline,
+ * 8px corners, `t/ink-700` at 12px. The current page inverts to `t/ink-900`
+ * with white bold. The ellipsis is one of those boxes too, not a bare glyph.
+ *
+ * The API returns `{ items, total, page, limit }` with no `hasMore`, so the
+ * page count is derived.
  *
  * Takes an `href` builder rather than a filter object: the PLP pages by filter
  * state, the seller profile pages two independent tabs under one route, and
@@ -31,7 +37,7 @@ export async function Pagination({
   return (
     <nav
       aria-label={t("pagination")}
-      className="mt-10 flex items-center justify-center gap-2"
+      className="mt-6 flex items-center justify-center gap-1.5 pt-2"
     >
       <PageLink
         href={buildHref(current - 1)}
@@ -44,7 +50,11 @@ export async function Pagination({
 
       {pages.map((n, i) =>
         n === "…" ? (
-          <span key={`gap-${i}`} className="text-caption text-ink-tertiary px-2">
+          <span
+            key={`gap-${i}`}
+            aria-hidden
+            className="border-line-200 bg-base text-ink-700 flex size-[34px] items-center justify-center rounded-8 border text-[12px]"
+          >
             …
           </span>
         ) : (
@@ -52,10 +62,10 @@ export async function Pagination({
             key={n}
             href={buildHref(n)}
             aria-current={n === current ? "page" : undefined}
-            className={`text-caption flex size-9 items-center justify-center rounded-[10px] ${
+            className={`flex size-[34px] items-center justify-center rounded-8 text-[12px] ${
               n === current
-                ? "bg-invert font-semibold text-white"
-                : "border-line text-ink-secondary border"
+                ? "bg-ink-900 text-base font-bold"
+                : "bg-base border-line-200 text-ink-700 border"
             }`}
           >
             {n}
@@ -89,7 +99,7 @@ function PageLink({
     return (
       <span
         aria-disabled="true"
-        className="border-line text-ink-tertiary flex size-9 items-center justify-center rounded-[10px] border opacity-40"
+        className="bg-base border-line-200 text-ink-700 flex size-[34px] items-center justify-center rounded-8 border opacity-40"
       >
         {children}
       </span>
@@ -100,7 +110,7 @@ function PageLink({
     <Link
       href={href}
       aria-label={label}
-      className="border-line text-ink-secondary flex size-9 items-center justify-center rounded-[10px] border"
+      className="bg-base border-line-200 text-ink-700 flex size-[34px] items-center justify-center rounded-8 border"
     >
       {children}
     </Link>

@@ -323,7 +323,8 @@
     "resultsFound": "{count, plural, one {# نتيجة} other {# نتيجة}}",
     "chipCondition": "الحالة: {value}",
     "chipBrand": "الماركة: {value}",
-    "chipCategory": "الفئة: {value}"
+    "chipCategory": "الفئة: {value}",
+    "sortValue": "الترتيب: {value}"
   },
   "Pdp": {
     "save": "وفّر {percent}%",

@@ -322,7 +322,8 @@
     "resultsFound": "{count, plural, one {# result found} other {# results found}}",
     "chipCondition": "Condition: {value}",
     "chipBrand": "Brand: {value}",
-    "chipCategory": "Category: {value}"
+    "chipCategory": "Category: {value}",
+    "sortValue": "Sort: {value}"
   },
   "Pdp": {
     "save": "Save {percent}%",

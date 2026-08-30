@@ -1110,7 +1110,9 @@
     "amountLabel": "Amount ({currency})",
     "feeNote": "No fee for wallet-to-wallet transfers.",
     "transferFeeLine": "Transfer fee {amount}",
-    "sendSubmitAmount": "Send {amount}"
+    "sendSubmitAmount": "Send {amount}",
+    "soldLine": "Sold {date} · net of fees",
+    "soldLineNoDate": "Net of fees"
   },
   "Wishlist": {
     "title": "My Wishlist",

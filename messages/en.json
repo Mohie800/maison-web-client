@@ -704,7 +704,9 @@
     },
     "view": "View",
     "emptyTitle": "Nothing here yet",
-    "emptyBody": "Order updates, price drops and offers will appear here."
+    "emptyBody": "Order updates, price drops and offers will appear here.",
+    "loading": "Loading…",
+    "seeAll": "See all notifications"
   },
   "Orders": {
     "accountTitle": "My Account",
@@ -1757,7 +1759,8 @@
       "faq": "FAQ",
       "contact": "Contact Us",
       "returns": "Returns Policy",
-      "sellerGuide": "Seller Guide"
+      "sellerGuide": "Seller Guide",
+      "payment": "Payment Info"
     },
     "faqTitle": "Frequently Asked Questions",
     "faq": {
@@ -1839,6 +1842,37 @@
         "title": "How to Request a Return",
         "body": "Go to My Orders → select the order → Request Return → choose a reason → upload photos if needed → submit. Our team reviews within 24 hours."
       }
+    },
+    "payment": {
+      "title": "Payment Methods & Security",
+      "methods": {
+        "mada": {
+          "name": "Mada",
+          "note": "Local debit card"
+        },
+        "stcPay": {
+          "name": "STC Pay",
+          "note": "Mobile wallet"
+        },
+        "tabby": {
+          "name": "Tabby",
+          "note": "Buy now, pay later"
+        },
+        "tamara": {
+          "name": "Tamara",
+          "note": "Buy now, pay later"
+        },
+        "payTabs": {
+          "name": "PayTabs",
+          "note": "Secure gateway"
+        },
+        "cards": {
+          "name": "Visa / MC",
+          "note": "International cards"
+        }
+      },
+      "securityTitle": "Payment Security",
+      "securityBody": "All transactions are secured with SSL encryption. Your payment details are never stored on our servers. We use PCI DSS compliant payment gateways. Funds are held in escrow until you confirm delivery."
     }
   },
   "Blog": {
@@ -2179,6 +2213,11 @@
       "unauthenticated": "Sign in to continue.",
       "sendFailed": "The message didn’t send. Please try again."
     },
-    "attachmentBlocked": "Attachment not shown"
+    "attachmentBlocked": "Attachment not shown",
+    "perspective": {
+      "trade": "TRADE",
+      "selling": "SELLING",
+      "buying": "BUYING"
+    }
   }
 }

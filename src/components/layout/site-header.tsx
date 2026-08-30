@@ -4,14 +4,16 @@ import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getBag } from "@/lib/api/endpoints/checkout";
 import { getUnreadCount } from "@/lib/api/endpoints/conversations";
+import { getNotificationUnreadCount } from "@/lib/api/endpoints/notifications";
 import { resolveMediaUrl } from "@/lib/api/media";
 import {
-  BellFilled,
   CartFilled,
   HeartFilled,
   VisualSearchIcon,
 } from "@/components/icons/header-icons";
 import { MessagesSquare } from "lucide-react";
+import { BellFilled } from "@/components/icons/header-icons";
+import { NotificationsMenu } from "@/features/notifications/components/notifications-menu";
 
 /**
  * Site header — Figma node 651:544.
@@ -42,9 +44,10 @@ export async function SiteHeader() {
     The inbox badge. No frame draws a way into the inbox — not the header, not
     the account rail — but `GET /conversations/unread-count` describes itself as
     being "for the inbox badge", so one is intended somewhere. It goes here,
-    beside the other three, and is recorded in plans/09 C41.
+    beside the other three, and is recorded in plans/09 C44.
   */
   const unreadMessages = user ? await getUnreadCount() : 0;
+  const unreadNotifications = user ? await getNotificationUnreadCount() : 0;
 
   return (
     <header className="bg-base border-line-200 sticky top-0 z-40 h-[72px] border-b">
@@ -126,9 +129,19 @@ export async function SiteHeader() {
             <HeartFilled className="size-6" />
           </IconButton>
 
-          <IconButton href="/account/notifications" label={t("notifications")}>
-            <BellFilled className="size-6" />
-          </IconButton>
+          {user ? (
+            <NotificationsMenu
+              initialUnread={unreadNotifications}
+              label={t("notifications")}
+            />
+          ) : (
+            <IconButton
+              href="/account/notifications"
+              label={t("notifications")}
+            >
+              <BellFilled className="size-6" />
+            </IconButton>
+          )}
 
           {user && (
             <IconButton

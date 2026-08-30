@@ -6,10 +6,10 @@ import { Link } from "@/i18n/navigation";
  * Help Center shell — the hero and sidebar shared by every help page
  * (Figma `651:16267` / `651:16273`).
  *
- * The frame's sidebar lists seven destinations; four have screens designed and
- * routes built. **Payment Info**, **Shipping Info** and **Safety Tips** are
- * omitted: only Payment Info has a frame at all (`651:8155`), and none has a
- * route, so they'd be three rows that lead nowhere (plans/09 C19).
+ * The frame's sidebar lists seven destinations; five are built. **Payment Info**
+ * joined them on 2026-08-30 (`651:8155`). **Shipping Info** and **Safety Tips**
+ * stay omitted — neither has a frame or a route, so they would be two rows that
+ * lead nowhere (plans/09 C19).
  *
  * The hero's search field is omitted for the same reason — there is no
  * help-article search, and a box that swallows what you type is worse than no
@@ -19,6 +19,7 @@ const ITEMS = [
   { key: "faq", href: "/help" },
   { key: "contact", href: "/help/contact" },
   { key: "returns", href: "/help/returns" },
+  { key: "payment", href: "/help/payment" },
   { key: "sellerGuide", href: "/seller-guide" },
 ] as const;
 

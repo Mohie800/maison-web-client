@@ -26,7 +26,7 @@ const NAV = [
   { key: "wishlist", href: "/account/wishlist", icon: Heart },
   { key: "wallet", href: "/account/wallet", icon: Wallet },
   { key: "listings", href: "/account/listings", icon: Tag },
-  { key: "trades", href: "/trade/requests", icon: Repeat },
+  { key: "trades", href: "/account/trades", icon: Repeat },
   { key: "bids", href: "/account/bids", icon: Gavel },
   { key: "notifications", href: "/account/notifications", icon: Bell },
   { key: "settings", href: "/account/settings", icon: Settings },

@@ -21,6 +21,13 @@ export const PROTECTED_PREFIXES = [
   "/cart",
   "/checkout",
   "/inbox",
-  "/trade",
+  /*
+    The trade hub itself is public — `651:6008` is a browse page, and the header
+    lists Trade beside Categories and Brands for signed-out visitors. Making an
+    offer is not: both sub-routes below also call `requireUser`, so this is the
+    outer guard rather than the only one.
+  */
+  "/trade/offer",
+  "/trade/sent",
   "/onboarding",
 ] as const;

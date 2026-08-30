@@ -1897,5 +1897,250 @@
       "good": "Good",
       "fair": "Fair"
     }
+  },
+  "Trade": {
+    "accountTitle": "My Account",
+    "badge": "FEATURE",
+    "heroTitle": "Trade Items Directly",
+    "heroLine1": "Swap your pre-loved items with other sellers.",
+    "heroLine2": "Safe, verified, and fair — powered by our Riyadh Hub.",
+    "start": "Start Trading",
+    "how": "How it Works",
+    "stats": {
+      "trades": {
+        "value": "1,240+",
+        "label": "Successful Trades"
+      },
+      "commission": {
+        "value": "SAR 0",
+        "label": "Commission (Receiver)"
+      },
+      "completion": {
+        "value": "2-4 days",
+        "label": "Average Completion"
+      }
+    },
+    "howTitle": "How Trading Works",
+    "steps": {
+      "find": {
+        "title": "Find & Offer",
+        "body": "Browse items marked as tradeable and send a trade offer with your item"
+      },
+      "negotiate": {
+        "title": "Negotiate",
+        "body": "Discuss and agree on any price difference. Counter-offers welcome."
+      },
+      "ship": {
+        "title": "Ship to Hub",
+        "body": "Both parties ship to our Riyadh Hub for inspection and authentication"
+      },
+      "exchange": {
+        "title": "Exchange",
+        "body": "Verified items are exchanged and delivered to both parties"
+      }
+    },
+    "browseTitle": "Browse Tradeable Items",
+    "viewAll": "View All",
+    "emptyCatalogue": "No tradeable items are listed right now.",
+    "offerTrade": "Offer Trade",
+    "signInToOffer": "Sign in to offer",
+    "listToOffer": "List an item to offer",
+    "offerTitle": "Offer a Trade",
+    "offerSubtitle": "Choose one of your listings to offer in exchange",
+    "reviewTitle": "Review Your Trade Offer",
+    "close": "Close",
+    "stepOf": "Step {step} of {total}",
+    "theyAreOffering": "They are offering:",
+    "closetEmptyTitle": "You have nothing to trade yet",
+    "closetEmptyBody": "List an item and mark it as open to trade to make an offer.",
+    "closetEmptyCta": "List an item",
+    "searchYours": "Search your listings...",
+    "yourListings": "Your active listings ({count})",
+    "noMatches": "No listings match that search.",
+    "noteLabel": "Add a note to your offer (optional)",
+    "notePlaceholder": "e.g. The Nike is in perfect condition, box included...",
+    "cancel": "Cancel",
+    "reviewOffer": "Review Offer",
+    "back": "Back",
+    "sendOffer": "Send Trade Offer",
+    "youOffer": "You offer",
+    "theyOffer": "They offer",
+    "you": "You",
+    "theSeller": "the seller",
+    "yourNote": "Your note:",
+    "nextTitle": "What happens next?",
+    "next": {
+      "notified": "{handle} gets notified of your offer",
+      "respond": "They can accept, counter, or decline",
+      "ship": "If accepted, both ship to Riyadh Hub",
+      "authenticate": "Hub authenticates both items, then delivers"
+    },
+    "holdNotice": "By sending, you agree to hold this item pending a response.",
+    "sentTitle": "Trade offer sent",
+    "sentBody": "Your offer was sent to {handle}. We’ll notify you the moment they respond.",
+    "youOfferCap": "YOU OFFER",
+    "youReceiveCap": "YOU RECEIVE",
+    "cashYouPayFlat": "Cash difference you pay",
+    "cashYouReceiveFlat": "Cash difference you receive",
+    "sentFeeNote": "Shipping is split 50/50 · 1% platform fee applies to the cash difference only.",
+    "sentProgress": {
+      "sent": "Sent",
+      "awaiting": "Awaiting reply",
+      "accepted": "Accepted",
+      "ship": "Ship via Hub"
+    },
+    "viewTradeStatus": "View trade status",
+    "backToBrowsing": "Back to browsing",
+    "historyTitle": "Trade History",
+    "browseToTrade": "Browse to Trade",
+    "offerSentBanner": "Your trade offer was sent.",
+    "tabs": {
+      "received": "Received",
+      "sent": "Sent",
+      "history": "History"
+    },
+    "empty": {
+      "received": {
+        "title": "No offers to answer",
+        "body": "When someone offers a swap for one of your items, it lands here."
+      },
+      "sent": {
+        "title": "You haven’t offered a swap yet",
+        "body": "Find something you want and offer one of your own items for it."
+      },
+      "history": {
+        "title": "No finished trades yet",
+        "body": "Completed, declined and cancelled trades collect here."
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "countered": "Counter Offer",
+      "accepted": "In Hub",
+      "completed": "Completed",
+      "declined": "Declined",
+      "cancelled": "Cancelled",
+      "expired": "Expired"
+    },
+    "yourItem": "Your item",
+    "itemUnavailable": "Item unavailable",
+    "evenTrade": "Even trade",
+    "youReceive": "+{amount} (you receive)",
+    "theyWant": "+{amount} (they want)",
+    "accept": "Accept",
+    "counter": "Counter",
+    "decline": "Decline",
+    "trackShipment": "Track Shipment",
+    "viewTrade": "View Trade",
+    "tradeRef": "Trade",
+    "startedOn": "Started {date}",
+    "theyreOffering": "THEY’RE OFFERING",
+    "forYourItem": "FOR YOUR ITEM",
+    "estValue": "Est. value",
+    "cashTitle": "Cash breakdown",
+    "theirItemValue": "Their item value",
+    "yourItemValue": "Your item value",
+    "cashTheyPay": "Cash difference (they pay you)",
+    "cashYouPay": "Cash difference (you pay them)",
+    "cashDifference": "Cash difference",
+    "platformFee": "Platform fee (1%)",
+    "shippingShare": "Your shipping share (50%)",
+    "youllReceive": "You’ll receive",
+    "youllPay": "You’ll pay",
+    "directionUnknown": "The API does not say which side owes this counter’s cash; it is shown from the counter’s own terms.",
+    "topSeller": "Top seller",
+    "noNote": "No note was sent with this offer.",
+    "verifiedSwapper": "Verified swapper",
+    "expiresOn": "Expires {date}",
+    "acceptTrade": "Accept trade",
+    "counterOffer": "Counter offer",
+    "escrowNotice": "Accepting moves both items into Hub escrow. Funds settle once both parties confirm delivery.",
+    "timelineTitle": "Trade Timeline",
+    "timeline": {
+      "offered": {
+        "title": "Trade Offered",
+        "body": "The swap was proposed"
+      },
+      "accepted": {
+        "title": "Offer Accepted",
+        "body": "Both sides agreed the swap"
+      },
+      "shipping": {
+        "title": "Shipping to Hub",
+        "body": "Both parties shipped to Riyadh Hub"
+      },
+      "inHub": {
+        "title": "In Hub — Inspection",
+        "body": "Items being authenticated and inspected by our team"
+      },
+      "inspected": {
+        "title": "Exchange Complete",
+        "body": "Items dispatched to respective owners"
+      },
+      "completed": {
+        "title": "Delivered",
+        "body": "Both parties confirm receipt"
+      }
+    },
+    "itemsTitle": "Items in Trade",
+    "yourItemCap": "Your Item",
+    "theirItemCap": "Their Item",
+    "detailsTitle": "Trade Details",
+    "tradeId": "Trade ID",
+    "started": "Started",
+    "hubLocation": "Hub Location",
+    "hubValue": "Riyadh — Al Malaz",
+    "shipBy": "Ship by",
+    "authentication": "Authentication",
+    "authDone": "Complete",
+    "authInProgress": "In Progress",
+    "authPending": "Not started",
+    "hubTitle": "Hub Authentication",
+    "hubChecks": {
+      "authentic": "Items inspected for authenticity",
+      "condition": "Condition verified against listing",
+      "bothPass": "Exchange only if both items pass"
+    },
+    "shipTitle": "Ship your item",
+    "shipBody": "Send it to the Riyadh Hub, then add the tracking details.",
+    "carrier": "Carrier",
+    "trackingNumber": "Tracking number",
+    "markShipped": "Mark as shipped",
+    "confirmReceipt": "Confirm receipt",
+    "cancelTrade": "Cancel Trade",
+    "counterTitle": "Make a counter offer",
+    "counterSubtitle": "Adjust the cash difference, then send it back to {handle}.",
+    "theirItemValueInline": "Their item · {amount}",
+    "yourItemValueInline": "Your item · {amount}",
+    "theyPayYou": "They pay you",
+    "setToZero": "Set to 0",
+    "counterHelp": "The amount the other side pays you on top of the swap.",
+    "updatedBreakdown": "Updated breakdown",
+    "addNote": "Add a note (optional)",
+    "counterNotePlaceholder": "e.g. Deal! Can you ship by Thursday?",
+    "sendCounter": "Send counter offer",
+    "flags": {
+      "accepted": "Trade accepted. Both items now move through the Hub.",
+      "countered": "Your counter offer was sent.",
+      "declined": "Trade declined.",
+      "cancelled": "Trade cancelled.",
+      "shipped": "Marked as shipped.",
+      "confirmed": "Receipt confirmed.",
+      "sent": "Your trade offer was sent."
+    },
+    "errors": {
+      "itemsRequired": "Choose one of your listings to offer.",
+      "wrongState": "This trade has moved on and no longer accepts that action.",
+      "addressRequired": "Add a default address before trading.",
+      "ownListing": "You cannot trade for your own listing.",
+      "expired": "This offer has expired.",
+      "alreadyResponded": "This offer has already been answered.",
+      "amountInvalid": "Enter a cash amount of zero or more.",
+      "noteTooLong": "That note is too long.",
+      "trackingTooLong": "Those tracking details are too long.",
+      "notFound": "That trade could not be found.",
+      "unauthenticated": "Sign in to continue.",
+      "requestFailed": "Something went wrong. Please try again."
+    }
   }
 }

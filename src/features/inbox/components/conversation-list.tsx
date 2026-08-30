@@ -4,6 +4,13 @@ import type { ConversationRow } from "@/lib/api/schemas/conversation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { avatarTint, initials, shortAge } from "../helpers";
 
+/** badge — `651:6745` (TRADE) and `651:6755` (SELLING). */
+const PERSPECTIVE_TONE: Record<string, string> = {
+  trade: "bg-info-tint3 text-azure",
+  selling: "bg-aqua-tint text-success",
+  buying: "bg-purple-tint text-purple-text",
+};
+
 /**
  * The 340px conversation rail — `651:6802`.
  *
@@ -32,6 +39,7 @@ export function ConversationList({
       yesterday: string;
       days: string;
     };
+    perspective: Record<string, string>;
   };
 }) {
   return (
@@ -98,6 +106,17 @@ export function ConversationList({
                     >
                       {name}
                     </span>
+                    {row.perspective && labels.perspective[row.perspective] && (
+                      /* badge — 651:6745 */
+                      <span
+                        className={`flex h-[22px] w-fit items-center rounded-6 px-2.5 text-[10px] font-bold tracking-[0.4px] ${
+                          PERSPECTIVE_TONE[row.perspective] ??
+                          "bg-fill-100 text-ink-700"
+                        }`}
+                      >
+                        {labels.perspective[row.perspective]}
+                      </span>
+                    )}
                     <span
                       className="text-ink-400 truncate text-[11px]"
                       dir="auto"

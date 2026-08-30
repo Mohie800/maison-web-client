@@ -8,6 +8,7 @@ import { resolveMediaUrl } from "@/lib/api/media";
 import { sendMessageAction } from "../actions";
 import { avatarTint, initials, safeAttachmentUrl } from "../helpers";
 import { ThreadPoller } from "./thread-poller";
+import { TradeSwapPanel } from "./trade-swap-panel";
 
 /**
  * The chat pane — `651:6865`: a header strip, the bubbles, and the composer.
@@ -36,6 +37,14 @@ export function MessageThread({
     placeholder: string;
     send: string;
     attachmentBlocked: string;
+    trade: {
+      theirItem: string;
+      yourItem: string;
+      viewTrade: string;
+      accept: string;
+      decline: string;
+      status: string;
+    };
     error: string | null;
     time: (iso: string) => string;
   };
@@ -102,6 +111,15 @@ export function MessageThread({
           </Link>
         )}
       </div>
+
+      {conversation.trade && (
+        <TradeSwapPanel
+          conversation={conversation}
+          viewerId={viewerId}
+          locale={locale}
+          labels={labels.trade}
+        />
+      )}
 
       {/* Msgs — 651:6876 */}
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4">

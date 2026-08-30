@@ -26,7 +26,7 @@ import { MessageThread } from "./message-thread";
  * The filter chips come from the empty frame — the populated frame does not
  * draw them, but they map to `GET /conversations?filter=` and dropping them
  * would leave the filter unreachable exactly when there is something to filter
- * (plans/09 C40).
+ * (plans/09 C43).
  */
 export async function InboxShell({
   locale,
@@ -43,6 +43,7 @@ export async function InboxShell({
   );
 
   const t = await getTranslations("Inbox");
+  const tTrade = await getTranslations("Trade");
   const format = await getFormatter();
 
   const filter: InboxFilter =
@@ -138,6 +139,11 @@ export async function InboxShell({
                   yesterday: t("age.yesterday"),
                   days: t("age.days"),
                 },
+                perspective: {
+                  trade: t("perspective.trade"),
+                  selling: t("perspective.selling"),
+                  buying: t("perspective.buying"),
+                },
               }}
             />
 
@@ -160,6 +166,16 @@ export async function InboxShell({
                   placeholder: t("composerPlaceholder"),
                   send: t("send"),
                   attachmentBlocked: t("attachmentBlocked"),
+                  trade: {
+                    theirItem: tTrade("theirItemCap"),
+                    yourItem: tTrade("yourItemCap"),
+                    viewTrade: tTrade("viewTrade"),
+                    accept: tTrade("accept"),
+                    decline: tTrade("decline"),
+                    status: conversation.trade?.status
+                      ? tTrade(`status.${conversation.trade.status}`)
+                      : "",
+                  },
                   error: error ? t(`errors.${error}`) : null,
                   time: (iso) =>
                     format.dateTime(new Date(iso), { timeStyle: "short" }),

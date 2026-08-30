@@ -60,12 +60,28 @@ export const conversationSchema = z.object({
   perspective: z.string().nullish(),
   listing: listingRefSchema.nullish(),
   otherUser: otherUserSchema.nullish(),
-  /** Set when the thread hangs off a trade request rather than a listing. */
+  /**
+   * Set when the thread hangs off a trade request rather than a listing.
+   *
+   * Note `offeredListings` here carries `coverPhotoUrl` — the join the trade
+   * endpoints themselves are missing (GAP-83). It is the only place the offered
+   * side of a swap arrives ready to render.
+   */
   trade: z
     .object({
-      id: z.string().nullish(),
-      tradeNumber: z.string().nullish(),
+      id: z.string(),
       status: z.string().nullish(),
+      requesterId: z.string().nullish(),
+      offeredListings: z
+        .array(
+          z.object({
+            id: z.string(),
+            title: z.string().nullish(),
+            price: z.string().nullish(),
+            coverPhotoUrl: z.string().nullish(),
+          }),
+        )
+        .nullish(),
     })
     .nullish(),
   createdAt: z.string().nullish(),

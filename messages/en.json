@@ -2223,5 +2223,36 @@
       "selling": "SELLING",
       "buying": "BUYING"
     }
+  },
+  "Bundles": {
+    "home": "Home",
+    "title": "Bundles",
+    "subtitle": "Buy multiple pieces together and save. Curated by our sellers.",
+    "sorts": {
+      "newest": "Newest",
+      "savings_desc": "Biggest saving"
+    },
+    "empty": "No bundles have been published yet.",
+    "save": "SAVE {n}%",
+    "itemCount": "{n} items · bundle",
+    "view": "View bundle",
+    "unavailable": "Unavailable",
+    "badge": "BUNDLE",
+    "itemsFrom": "{count} items from {handle}",
+    "theSeller": "this seller",
+    "bundlePrice": "Bundle price",
+    "included": "What’s included",
+    "includedRow": "Included",
+    "itemUnavailable": "Item unavailable",
+    "addToBag": "Add bundle to bag",
+    "messageSeller": "Message seller",
+    "addedBanner": "Bundle added to your bag.",
+    "terms": "Bundles ship together. 1% platform fee applies. No partial returns on bundles.",
+    "errors": {
+      "addFailed": "That didn’t work. Please try again.",
+      "alreadyInBag": "This bundle is already in your bag.",
+      "unavailable": "This bundle is no longer available.",
+      "unauthenticated": "Sign in to add a bundle to your bag."
+    }
   }
 }

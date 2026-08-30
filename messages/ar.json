@@ -583,7 +583,8 @@
       "trades": "سجل المقايضات",
       "bids": "مزايداتي",
       "notifications": "الإشعارات",
-      "settings": "الإعدادات"
+      "settings": "الإعدادات",
+      "signOut": "تسجيل الخروج"
     }
   },
   "Dashboard": {

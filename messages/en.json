@@ -582,7 +582,8 @@
       "trades": "Trade history",
       "bids": "My Bids",
       "notifications": "Notifications",
-      "settings": "Settings"
+      "settings": "Settings",
+      "signOut": "Sign Out"
     }
   },
   "Dashboard": {

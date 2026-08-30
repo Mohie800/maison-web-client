@@ -20,6 +20,12 @@
       "dark": "#12151C",
       "tw": "surface"
     },
+    "bg-elevated": {
+      "light": "#FFFFFF",
+      "dark": "#171A21",
+      "tw": "elevated",
+      "_note": "bg/elevated in Figma — the raised confirmation card on Web_Trade_OfferSent (651:6284). Light is white, same as bg/base; dark INFERRED one step above bg/base so the card still reads as lifted."
+    },
     "bg-tint": {
       "light": "#EEF0F4",
       "dark": "#1A1D27",
@@ -105,6 +111,11 @@
       "dark": "#064E3B",
       "tw": "action-tint"
     },
+    "t-action-deep": {
+      "light": "#056D43",
+      "dark": "#056D43",
+      "tw": "action-deep"
+    },
     "t-info": {
       "light": "#2563EB",
       "dark": "#60A5FA",
@@ -145,6 +156,12 @@
       "dark": "#172554",
       "tw": "info-tint2",
       "_note": "t/info-tint2 — the AI tip panel on VS_Results_NotFound (651:3895) and a brands band. Dark INFERRED."
+    },
+    "t-info-tint3": {
+      "light": "#E3F1F8",
+      "dark": "#0E3346",
+      "tw": "info-tint3",
+      "_note": "t/info-tint3 in Figma — the azure TRADE badge on Web_Trade_OfferReceived (651:6335). Dark INFERRED from the step t/info-tint takes against t/info. Confirm with design."
     },
     "t-blue-strong": {
       "light": "#1E40AF",
@@ -229,6 +246,12 @@
       "dark": "#2A2D3A",
       "tw": "line-200"
     },
+    "t-border-300": {
+      "light": "#D1D5DB",
+      "dark": "#374151",
+      "tw": "line-300",
+      "_note": "t/border-300 in Figma — the reached connector on the trade timeline (651:6468). Dark INFERRED, mirroring how t/border-200 darkens."
+    },
     "t-fill-100": {
       "light": "#F3F4F6",
       "dark": "#1E2530",
@@ -250,6 +273,12 @@
       "dark": "#064E3B",
       "tw": "success-tint2",
       "_note": "Light from the Figma variable collection. Dark is INFERRED — it mirrors t/action-tint's dark, since the HANDOFF dark table omits this token. Confirm with design."
+    },
+    "t-success-tint3": {
+      "light": "#DEF7EC",
+      "dark": "#053E2E",
+      "tw": "success-tint3",
+      "_note": "t/success-tint3 in Figma — the \"They pay you\" tag on Web_Trade_CounterOffer (651:6415). Dark INFERRED. Confirm with design."
     },
     "t-ink-550": {
       "light": "#8B949E",

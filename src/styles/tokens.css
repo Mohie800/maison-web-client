@@ -7,6 +7,7 @@
 :root {
   --bg-base: #FFFFFF;
   --bg-surface: #F7F8FA;
+  --bg-elevated: #FFFFFF;
   --bg-tint: #EEF0F4;
   --text-primary: #010413;
   --text-secondary: #5A5F72;
@@ -24,6 +25,7 @@
   --surface-invert: #010413;
   --t-action: #059669;
   --t-action-tint: #ECFDF5;
+  --t-action-deep: #056D43;
   --t-info: #2563EB;
   --t-info-tint: #DBEAFE;
   --t-error-tint: #FEF2F2;
@@ -31,6 +33,7 @@
   --t-success-tint: #F0FDF4;
   --t-warn-tint3: #FEF9C3;
   --t-info-tint2: #EFF6FF;
+  --t-info-tint3: #E3F1F8;
   --t-blue-strong: #1E40AF;
   --t-amber-text: #92400E;
   --t-amber-deep: #D97706;
@@ -46,16 +49,19 @@
   --t-ink-500: #6B7280;
   --t-ink-400: #9CA3AF;
   --t-border-200: #E5E7EB;
+  --t-border-300: #D1D5DB;
   --t-fill-100: #F3F4F6;
   --t-fill-50: #F9FAFB;
   --t-surface-cool: #FAFFFE;
   --t-success-tint2: #D1FAE5;
+  --t-success-tint3: #DEF7EC;
   --t-ink-550: #8B949E;
 }
 
 .dark {
   --bg-base: #010413;
   --bg-surface: #12151C;
+  --bg-elevated: #171A21;
   --bg-tint: #1A1D27;
   --text-primary: #F9FAFB;
   --text-secondary: #9CA3AF;
@@ -73,6 +79,7 @@
   --surface-invert: #0F1117;
   --t-action: #34D399;
   --t-action-tint: #064E3B;
+  --t-action-deep: #056D43;
   --t-info: #60A5FA;
   --t-info-tint: #1E3A8A;
   --t-error-tint: #450A0A;
@@ -80,6 +87,7 @@
   --t-success-tint: #052E16;
   --t-warn-tint3: #422006;
   --t-info-tint2: #172554;
+  --t-info-tint3: #0E3346;
   --t-blue-strong: #93C5FD;
   --t-amber-text: #92400E;
   --t-amber-deep: #FBBF24;
@@ -95,16 +103,19 @@
   --t-ink-500: #9CA3AF;
   --t-ink-400: #6B7280;
   --t-border-200: #2A2D3A;
+  --t-border-300: #374151;
   --t-fill-100: #1E2530;
   --t-fill-50: #0F1117;
   --t-surface-cool: #0D1512;
   --t-success-tint2: #064E3B;
+  --t-success-tint3: #053E2E;
   --t-ink-550: #6B7280;
 }
 
 @theme inline {
   --color-base: var(--bg-base);
   --color-surface: var(--bg-surface);
+  --color-elevated: var(--bg-elevated);
   --color-tint: var(--bg-tint);
   --color-ink: var(--text-primary);
   --color-ink-secondary: var(--text-secondary);
@@ -122,6 +133,7 @@
   --color-invert: var(--surface-invert);
   --color-action: var(--t-action);
   --color-action-tint: var(--t-action-tint);
+  --color-action-deep: var(--t-action-deep);
   --color-info: var(--t-info);
   --color-info-tint: var(--t-info-tint);
   --color-error-tint: var(--t-error-tint);
@@ -129,6 +141,7 @@
   --color-success-tint: var(--t-success-tint);
   --color-warn-tint3: var(--t-warn-tint3);
   --color-info-tint2: var(--t-info-tint2);
+  --color-info-tint3: var(--t-info-tint3);
   --color-blue-strong: var(--t-blue-strong);
   --color-amber-text: var(--t-amber-text);
   --color-amber-deep: var(--t-amber-deep);
@@ -144,10 +157,12 @@
   --color-ink-500: var(--t-ink-500);
   --color-ink-400: var(--t-ink-400);
   --color-line-200: var(--t-border-200);
+  --color-line-300: var(--t-border-300);
   --color-fill-100: var(--t-fill-100);
   --color-fill-50: var(--t-fill-50);
   --color-surface-cool: var(--t-surface-cool);
   --color-success-tint2: var(--t-success-tint2);
+  --color-success-tint3: var(--t-success-tint3);
   --color-ink-550: var(--t-ink-550);
 
   --text-display: 2rem;

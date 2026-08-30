@@ -1,12 +1,12 @@
 {
   "$meta": {
-    "source": "Figma — Maison Sale — Web",
-    "fileKey": "cev4PFbiDVfp0GB2tZETZL",
+    "source": "Figma — Maison Sale — Web (Copy)",
+    "fileKey": "y5AMHVbuYcxIuKsRt52jnZ",
     "nodes": {
       "designSystem": "651:112",
       "handoff": "651:271"
     },
-    "note": "Source of truth for colour tokens. Light values are verifiable via the Figma MCP `get_variable_defs` on node 651:112; light+dark pairs come from the HANDOFF frame (651:271). To resync: re-read those nodes, update this file, then run `npm run tokens`.",
+    "note": "Source of truth for colour tokens. Light values are verifiable via the Figma MCP `get_variable_defs` on node 651:112; light+dark pairs come from the HANDOFF frame (651:271). To resync: re-read those nodes, update this file, then run `npm run tokens`. Re-baselined 2026-08-25 onto the newer duplicate file — node ids carried over from cev4PFbiDVfp0GB2tZETZL unchanged, only the file key differs.",
     "doNotEdit": "src/styles/tokens.css is generated from this file. Edit here, not there."
   },
   "color": {
@@ -110,6 +110,90 @@
       "dark": "#60A5FA",
       "tw": "info"
     },
+    "t-info-tint": {
+      "light": "#DBEAFE",
+      "dark": "#1E3A8A",
+      "tw": "info-tint",
+      "_note": "Light from the Figma variable used by Web_OrderTracking's status pill. Dark is INFERRED — the HANDOFF dark table omits this token, so it mirrors the relationship t/action-tint has to t/action. Confirm with design."
+    },
+    "t-error-tint": {
+      "light": "#FEF2F2",
+      "dark": "#450A0A",
+      "tw": "error-tint",
+      "_note": "t/error-tint in Figma — the discount chip on Web_TrendHub (651:1937) and the LEGO band on Web_BrandsPage. Dark INFERRED. Confirm with design."
+    },
+    "t-error-tint2": {
+      "light": "#FDECEC",
+      "dark": "#4C1111",
+      "tw": "error-tint2",
+      "_note": "t/error-tint2 in Figma — the AUCTION badge on Web_Auction_Terms (651:7128) and the auction lot card. A shade deeper than t-error-tint. Dark INFERRED. Confirm with design."
+    },
+    "t-success-tint": {
+      "light": "#F0FDF4",
+      "dark": "#052E16",
+      "tw": "success-tint",
+      "_note": "t/success-tint — the upload zone and tip card on VS_Upload (651:3690, 651:3705) and the featured post on Web_Blog. Lighter than t-success-tint2. Dark INFERRED."
+    },
+    "t-warn-tint3": {
+      "light": "#FEF9C3",
+      "dark": "#422006",
+      "tw": "warn-tint3",
+      "_note": "t/warn-tint3 — the icon disc on VS_Results_NotFound (651:3872). Dark INFERRED."
+    },
+    "t-info-tint2": {
+      "light": "#EFF6FF",
+      "dark": "#172554",
+      "tw": "info-tint2",
+      "_note": "t/info-tint2 — the AI tip panel on VS_Results_NotFound (651:3895) and a brands band. Dark INFERRED."
+    },
+    "t-blue-strong": {
+      "light": "#1E40AF",
+      "dark": "#93C5FD",
+      "tw": "blue-strong",
+      "_note": "t/blue-strong — heading on the AI tip panel (651:3899). Dark INFERRED."
+    },
+    "t-amber-text": {
+      "light": "#92400E",
+      "dark": "#92400E",
+      "tw": "amber-text",
+      "_note": "From the Figma variable used for 'Browse' on the gold category card (651:632). Identical in both modes on purpose: it sits on the gold accent, which does not flip, so the text must not either."
+    },
+    "t-amber-deep": {
+      "light": "#D97706",
+      "dark": "#FBBF24",
+      "tw": "amber-deep",
+      "_note": "t/amber-deep in Figma — the #3 rank accent on Web_TrendHub (651:1861). Sits between semantic-warning and t-amber-text; dark INFERRED from the warning token's dark value. Confirm with design."
+    },
+    "t-warn-tint": {
+      "light": "#FEF3C7",
+      "dark": "#78350F",
+      "tw": "warn-tint",
+      "_note": "Figma variable behind the Furniture band on Web_CategoriesOverview (651:2897). Dark is INFERRED, mirroring how t/action-tint darkens. Confirm with design."
+    },
+    "t-warn-tint2": {
+      "light": "#FFFBEB",
+      "dark": "#422006",
+      "tw": "warn-tint2",
+      "_note": "t/warn-tint2 in Figma — the anti-snipe note on Web_PDP_Auction (651:4771). Dark INFERRED. Confirm with design."
+    },
+    "t-warn-tint4": {
+      "light": "#FFF8E7",
+      "dark": "#2E210A",
+      "tw": "warn-tint4",
+      "_note": "t/warn-tint4 in Figma — the auction timer band on Web_PDP_Auction (651:4738). Dark INFERRED. Confirm with design."
+    },
+    "t-purple-tint": {
+      "light": "#EDE9FE",
+      "dark": "#2E1065",
+      "tw": "purple-tint",
+      "_note": "Figma variable behind the Toys band (651:2935). Dark INFERRED, same rule as warn-tint."
+    },
+    "t-purple-text": {
+      "light": "#7C3AED",
+      "dark": "#A78BFA",
+      "tw": "purple-text",
+      "_note": "t/purple in Figma — the readable text tone on t/purple-tint (651:2937). Distinct from t-purple-500, which is the fill on the Browse pill."
+    },
     "t-purple-500": {
       "light": "#8B5CF6",
       "dark": "#A78BFA",
@@ -154,6 +238,12 @@
       "light": "#F9FAFB",
       "dark": "#0F1117",
       "tw": "fill-50"
+    },
+    "t-surface-cool": {
+      "light": "#FAFFFE",
+      "dark": "#0D1512",
+      "tw": "surface-cool",
+      "_note": "t/surface-cool in Figma — the unread row on Web_NotificationsDropdown (651:1586). Dark INFERRED. Confirm with design."
     },
     "t-success-tint2": {
       "light": "#D1FAE5",

@@ -27,7 +27,7 @@ function groupDigits(digits: string): string {
 }
 
 /**
- * "4200.00" → "4,200"  ·  "22.50" → "22.50"  ·  "150" → "150"
+ * "4200.00" → "4,200"  ·  "22.50" → "22.50"  ·  "150" → "150"  ·  "103.5" → "103.50"
  *
  * Accepts a number as well as a string. The API is inconsistent — `/listings`
  * returns `price` as a string, `/trends` as a number — and schema validation is
@@ -47,8 +47,15 @@ export function formatAmount(
 
   const [rawInt = "0", rawFraction = ""] = unsigned.split(DECIMAL_SEPARATOR);
 
-  // Trailing zeros carry no meaning for display: 4200.00 → 4,200.
-  const fraction = rawFraction.replace(/0+$/, "");
+  /**
+   * Either no decimals or exactly two — never one.
+   *
+   * A zero fraction carries no meaning, so 4200.00 → 4,200. Anything else is
+   * padded rather than trimmed: the API sends halves as "103.5" and "13.5", and
+   * printing those as "SAR 103.5" is not a money format. Never truncated, so a
+   * longer fraction is left alone rather than silently rounded.
+   */
+  const fraction = /^0*$/.test(rawFraction) ? "" : rawFraction.padEnd(2, "0");
 
   const formatted =
     groupDigits(rawInt) + (fraction ? DECIMAL_SEPARATOR + fraction : "");

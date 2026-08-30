@@ -94,9 +94,16 @@ export async function generateMetadata(props: {
 
 export default async function LocaleLayout({
   children,
+  storyModal,
   params,
 }: {
   children: React.ReactNode;
+  /**
+   * Parallel slot for the intercepted story viewer. Empty (`default.tsx`
+   * returns null) unless a `/stories/{userId}` link is followed client-side,
+   * at which point the story opens over whatever is already on screen.
+   */
+  storyModal: React.ReactNode;
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
@@ -118,7 +125,10 @@ export default async function LocaleLayout({
       <body className="bg-base text-ink flex min-h-dvh flex-col">
         <NextIntlClientProvider>
           <ThemeProvider>
-            <QueryProvider>{children}</QueryProvider>
+            <QueryProvider>
+              {children}
+              {storyModal}
+            </QueryProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>

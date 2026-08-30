@@ -9,7 +9,8 @@
     "lint": "eslint",
     "tokens": "node scripts/generate-tokens.mjs",
     "api:types": "openapi-typescript https://maison.dockbox.cloud/docs-json -o src/types/api-generated.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "check:tokens": "node scripts/check-tokens.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.0",

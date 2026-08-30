@@ -1,7 +1,7 @@
 /**
  * GENERATED FILE — DO NOT EDIT.
  * Source: design/figma-tokens.json  ·  Regenerate: npm run tokens
- * Figma: cev4PFbiDVfp0GB2tZETZL (design system node 651:112)
+ * Figma: y5AMHVbuYcxIuKsRt52jnZ (design system node 651:112)
  */
 
 :root {
@@ -25,6 +25,20 @@
   --t-action: #059669;
   --t-action-tint: #ECFDF5;
   --t-info: #2563EB;
+  --t-info-tint: #DBEAFE;
+  --t-error-tint: #FEF2F2;
+  --t-error-tint2: #FDECEC;
+  --t-success-tint: #F0FDF4;
+  --t-warn-tint3: #FEF9C3;
+  --t-info-tint2: #EFF6FF;
+  --t-blue-strong: #1E40AF;
+  --t-amber-text: #92400E;
+  --t-amber-deep: #D97706;
+  --t-warn-tint: #FEF3C7;
+  --t-warn-tint2: #FFFBEB;
+  --t-warn-tint4: #FFF8E7;
+  --t-purple-tint: #EDE9FE;
+  --t-purple-text: #7C3AED;
   --t-purple-500: #8B5CF6;
   --t-ink-900: #111827;
   --t-ink-800: #1F2937;
@@ -34,6 +48,7 @@
   --t-border-200: #E5E7EB;
   --t-fill-100: #F3F4F6;
   --t-fill-50: #F9FAFB;
+  --t-surface-cool: #FAFFFE;
   --t-success-tint2: #D1FAE5;
   --t-ink-550: #8B949E;
 }
@@ -59,6 +74,20 @@
   --t-action: #34D399;
   --t-action-tint: #064E3B;
   --t-info: #60A5FA;
+  --t-info-tint: #1E3A8A;
+  --t-error-tint: #450A0A;
+  --t-error-tint2: #4C1111;
+  --t-success-tint: #052E16;
+  --t-warn-tint3: #422006;
+  --t-info-tint2: #172554;
+  --t-blue-strong: #93C5FD;
+  --t-amber-text: #92400E;
+  --t-amber-deep: #FBBF24;
+  --t-warn-tint: #78350F;
+  --t-warn-tint2: #422006;
+  --t-warn-tint4: #2E210A;
+  --t-purple-tint: #2E1065;
+  --t-purple-text: #A78BFA;
   --t-purple-500: #A78BFA;
   --t-ink-900: #F9FAFB;
   --t-ink-800: #E5E7EB;
@@ -68,6 +97,7 @@
   --t-border-200: #2A2D3A;
   --t-fill-100: #1E2530;
   --t-fill-50: #0F1117;
+  --t-surface-cool: #0D1512;
   --t-success-tint2: #064E3B;
   --t-ink-550: #6B7280;
 }
@@ -93,6 +123,20 @@
   --color-action: var(--t-action);
   --color-action-tint: var(--t-action-tint);
   --color-info: var(--t-info);
+  --color-info-tint: var(--t-info-tint);
+  --color-error-tint: var(--t-error-tint);
+  --color-error-tint2: var(--t-error-tint2);
+  --color-success-tint: var(--t-success-tint);
+  --color-warn-tint3: var(--t-warn-tint3);
+  --color-info-tint2: var(--t-info-tint2);
+  --color-blue-strong: var(--t-blue-strong);
+  --color-amber-text: var(--t-amber-text);
+  --color-amber-deep: var(--t-amber-deep);
+  --color-warn-tint: var(--t-warn-tint);
+  --color-warn-tint2: var(--t-warn-tint2);
+  --color-warn-tint4: var(--t-warn-tint4);
+  --color-purple-tint: var(--t-purple-tint);
+  --color-purple-text: var(--t-purple-text);
   --color-purple: var(--t-purple-500);
   --color-ink-900: var(--t-ink-900);
   --color-ink-800: var(--t-ink-800);
@@ -102,6 +146,7 @@
   --color-line-200: var(--t-border-200);
   --color-fill-100: var(--t-fill-100);
   --color-fill-50: var(--t-fill-50);
+  --color-surface-cool: var(--t-surface-cool);
   --color-success-tint2: var(--t-success-tint2);
   --color-ink-550: var(--t-ink-550);
 

@@ -177,6 +177,30 @@
   :lang(ar) {
     font-family: var(--font-arabic), var(--font-latin), ui-sans-serif, sans-serif;
   }
+
+  /*
+    Tailwind v4's preflight dropped `cursor: pointer` on buttons to match the
+    browser default. Ours are clickable UI, not form widgets, so put it back
+    once here rather than per button. A `cursor-*` utility still wins over this.
+  */
+  button,
+  summary,
+  label:has(> input[type="checkbox"]),
+  label:has(> input[type="radio"]),
+  [role="button"],
+  [role="tab"],
+  input:where([type="button"], [type="reset"], [type="submit"], [type="checkbox"], [type="radio"]),
+  select,
+  ::file-selector-button {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  input:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
 }
 /* Horizontal rails (stories, chips) scroll but shouldn't show a scrollbar. */
 @utility scrollbar-none {
@@ -184,4 +208,21 @@
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* The filling segment on the story viewer's progress bar (Figma 651:2133).
+   Duration and play state are set per-slide from the component. */
+@keyframes story-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+@utility animate-story-progress {
+  width: 0%;
+  animation-name: story-progress;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }

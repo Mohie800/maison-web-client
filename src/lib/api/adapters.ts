@@ -1,29 +1,8 @@
 import { coverPhotoUrl, type Listing } from "./schemas/listing";
+import type { SellerItem } from "./schemas/seller";
 import { discountPercent } from "@/lib/format/money";
 import type { Category } from "./schemas/catalog";
 import type { ProductCard } from "./schemas/cards";
-
-/**
- * Flattens the category tree into an id → name lookup.
- *
- * `GET /listings` returns only `categoryId`, while `GET /trends` returns a joined
- * `category { id, name }`. Rather than leave raw-listing cards without a category
- * (which also disables the Just Listed chips), callers that already hold the tree
- * can pass this in and get parity between the two shapes.
- */
-export function categoryIndex(
-  categories: Category[],
-): Map<string, { id: string; name: string }> {
-  const index = new Map<string, { id: string; name: string }>();
-  const walk = (nodes: Category[]) => {
-    for (const node of nodes) {
-      index.set(node.id, { id: node.id, name: node.name });
-      if (node.children?.length) walk(node.children);
-    }
-  };
-  walk(categories);
-  return index;
-}
 
 /**
  * Maps every category id — at any depth — to its **top-level** ancestor.
@@ -57,13 +36,10 @@ export function rootCategoryIndex(
  * the boundary means `ProductCard` renders both, instead of every surface
  * branching on which endpoint the data came from.
  *
- * Fields the raw listing doesn't carry — seller handle, brand and category
- * names — come back undefined rather than being faked; the card omits them.
+ * Since GAP-34 the two shapes carry the same joined `seller`, `brand` and
+ * `category`, so nothing here is derived or omitted any more.
  */
-export function listingToCard(
-  listing: Listing,
-  categories?: Map<string, { id: string; name: string }>,
-): ProductCard {
+export function listingToCard(listing: Listing): ProductCard {
   return {
     id: listing.id,
     title: listing.title,
@@ -82,12 +58,9 @@ export function listingToCard(
     ratingAvg: listing.ratingAvg ?? null,
     ratingCount: listing.ratingCount ?? null,
     viewCount: listing.viewCount ?? null,
-    seller: null,
-    brand: null,
-    // Resolved from the tree when the caller has it; otherwise omitted, never faked.
-    category: listing.categoryId
-      ? (categories?.get(listing.categoryId) ?? null)
-      : null,
+    seller: listing.seller ?? null,
+    brand: listing.brand ?? null,
+    category: listing.category ?? null,
     auction: listing.auctionEnabled
       ? {
           currentBid: listing.currentBid ?? null,
@@ -97,5 +70,55 @@ export function listingToCard(
         }
       : null,
     publishedAt: listing.publishedAt ?? null,
+  };
+}
+
+/**
+ * Normalises an item from `GET /sellers/{id}/items` into the same card shape.
+ *
+ * A third representation of a listing, slimmer than both the others: no
+ * `saleMode`, no auction block, and `photos` is `[{ url }]` with no `isCover`
+ * flag — so the first photo is the cover by position, which is the order the
+ * endpoint returns them in. `category` arrived with GAP-37.
+ *
+ * The seller is passed in rather than read off the item: on a seller's own
+ * profile every card belongs to the same person, and the endpoint doesn't
+ * repeat that on each row.
+ */
+export function sellerItemToCard(
+  item: SellerItem,
+  seller?: { id: string; handle?: string | null; profilePic?: string | null; isVerified?: boolean | null },
+): ProductCard {
+  return {
+    id: item.id,
+    title: item.title,
+    price: item.price != null ? String(item.price) : null,
+    originalPrice: item.originalPrice != null ? String(item.originalPrice) : null,
+    discountPercent: discountPercent(item.originalPrice, item.price),
+    currency: item.currency ?? "SAR",
+    coverPhotoUrl: item.photos?.[0]?.url ?? null,
+    photoUrls: item.photos?.map((p) => p.url) ?? null,
+    saleMode: null,
+    condition: item.condition ?? null,
+    cta: null,
+    badge: null,
+    likeCount: item.likeCount ?? null,
+    isLiked: null,
+    ratingAvg: null,
+    ratingCount: null,
+    viewCount: null,
+    seller: seller
+      ? {
+          id: seller.id,
+          handle: seller.handle ?? null,
+          profilePic: seller.profilePic ?? null,
+          isVerified: seller.isVerified ?? null,
+          isTopSeller: null,
+        }
+      : null,
+    brand: null,
+    category: item.category ?? null,
+    auction: null,
+    publishedAt: null,
   };
 }

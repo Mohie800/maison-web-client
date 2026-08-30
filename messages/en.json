@@ -1055,7 +1055,12 @@
       "downloadReceipt": "Download receipt",
       "lineItems": "Items in this order",
       "shippingDeducted": "Shipping deducted",
-      "shippingBuyerPaid": "Shipping paid by the buyer"
+      "shippingBuyerPaid": "Shipping paid by the buyer",
+      "completed": "Completed",
+      "backToWallet": "Back to Wallet",
+      "walletBalance": "Wallet Balance",
+      "afterThisTransaction": "After this transaction",
+      "recentTransactions": "Recent Transactions"
     },
     "errors": {
       "amountRequired": "Enter an amount.",

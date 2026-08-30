@@ -1,19 +1,24 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
-import { ArrowDownLeft, ArrowUpRight, ChevronRight, Receipt } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { getWallet, getWalletTransaction } from "@/lib/api/endpoints/wallet";
+import {
+  getWallet,
+  getWalletTransaction,
+  getWalletTransactions,
+} from "@/lib/api/endpoints/wallet";
 import { formatPrice } from "@/lib/format/money";
-import { formatDateTime } from "@/lib/format/date";
+import { formatDate, formatDateTime } from "@/lib/format/date";
 import { isCredit } from "@/lib/api/schemas/wallet";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
-import { WalletNav } from "@/features/wallet/components/wallet-nav";
+import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import type { Locale } from "@/i18n/routing";
 
 /**
- * Transaction detail — Figma `651:10726`.
+ * Transaction detail — Figma `651:10726`. Two columns: the detail card, and a
+ * rail carrying the mini balance and the recent-transactions list.
  *
  * All ten of the design's rows (GAP-38, and GAP-45 for the last of them):
  * reference, type, date, item, counterparty, item price, platform fee,
@@ -25,6 +30,11 @@ import type { Locale } from "@/i18n/routing";
  * deduction. Otherwise nothing came out of the payout, and the row states that
  * rather than printing a bare 0 — the buyer paid it, which the seller can't
  * tell from the number alone.
+ *
+ * The frame's "Completed" badge has no field behind it (GAP-91). It is true by
+ * construction — the ledger only holds settled movements, and money that has
+ * not cleared sits in `pendingBalance` instead of as a row — so the badge is
+ * rendered rather than dropped.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -41,7 +51,10 @@ export default async function TransactionDetailPage({
 
   const t = await getTranslations("Wallet");
   const activeLocale = (await getLocale()) as Locale;
-  const wallet = await getWallet();
+  const [wallet, recent] = await Promise.all([
+    getWallet(),
+    getWalletTransactions({ limit: 4 }),
+  ]);
 
   const credit = isCredit(transaction);
   const currency = transaction.currency ?? wallet.currency ?? "SAR";
@@ -52,6 +65,10 @@ export default async function TransactionDetailPage({
   const listing = transaction.listing;
   const thumbnail = resolveMediaUrl(listing?.coverPhotoUrl);
   const listingHref = listing?.id ?? transaction.listingId;
+
+  const typeLabel = t.has(`reasons.${reasonKey}`)
+    ? t(`reasons.${reasonKey}`)
+    : (transaction.label ?? t(`filters.${credit ? "credit" : "debit"}`));
 
   /** Who the other party is depends on which side of the row we're on. */
   const counterpartyLabel =
@@ -66,13 +83,7 @@ export default async function TransactionDetailPage({
 
   const rows = [
     { label: t("detail.reference"), value: transaction.id, ltr: true },
-    {
-      label: t("detail.type"),
-      value: t.has(`reasons.${reasonKey}`)
-        ? t(`reasons.${reasonKey}`)
-        : (transaction.label ??
-          t(`filters.${credit ? "credit" : "debit"}`)),
-    },
+    { label: t("detail.type"), value: typeLabel },
     ...(transaction.createdAt
       ? [
           {
@@ -80,6 +91,9 @@ export default async function TransactionDetailPage({
             value: formatDateTime(transaction.createdAt, activeLocale),
           },
         ]
+      : []),
+    ...(listing?.title
+      ? [{ label: t("detail.item"), value: listing.title }]
       : []),
     ...(transaction.counterparty?.handle
       ? [
@@ -136,188 +150,295 @@ export default async function TransactionDetailPage({
                 value: formatPrice(breakdown.shippingChargedToBuyer, currency),
               }
             : { label: "", value: null },
-        {
-          label: t("detail.netEarnings"),
-          value: money(breakdown.netAmount ?? transaction.amount),
-          strong: true,
-        },
       ].filter((row) => row.value != null) as {
         label: string;
         value: string;
-        strong?: boolean;
       }[])
     : [];
 
+  const netEarnings = breakdown
+    ? money(breakdown.netAmount ?? transaction.amount)
+    : null;
+
+  const detailRow = "flex justify-between gap-6 py-2 text-[13px]";
+
   return (
-    <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-4 py-8 lg:flex-row lg:px-20">
-      <AccountSidebar active="wallet" />
+    <div className="mx-auto flex max-w-[1440px] flex-col px-4 pt-8 pb-16 lg:px-20">
+      <h1 className="text-ink-900 pb-6 text-[28px] font-bold">
+        {t("accountTitle")}
+      </h1>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <nav aria-label="Breadcrumb">
-          <ol className="flex items-center gap-1.5">
-            <li>
-              <Link href="/account/wallet" className="text-caption text-action">
-                {t("title")}
-              </Link>
-            </li>
-            <ChevronRight
-              className="text-ink-tertiary size-3 rtl:rotate-180"
-              aria-hidden
-            />
-            <li className="text-caption text-ink-tertiary" aria-current="page">
-              {t("detail.title")}
-            </li>
-          </ol>
-        </nav>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <AccountSidebar active="wallet" />
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
-          <WalletNav active="overview" />
+        <div className="flex min-w-0 flex-1 flex-col gap-6">
+          {/* R — 651:10752 */}
+          <Breadcrumbs
+            items={[
+              { label: t("walletCrumb"), href: "/account/wallet" },
+              { label: t("detail.title") },
+            ]}
+          />
 
-          <section className="border-line bg-base flex min-w-0 flex-1 flex-col overflow-hidden rounded-16 border">
-            <header className="border-line flex flex-col items-center gap-3 border-b p-8">
-              <span
-                className={`flex size-16 items-center justify-center rounded-full ${
-                  credit ? "bg-action-tint text-action" : "bg-tint text-ink-secondary"
-                }`}
-                aria-hidden
-              >
-                <Icon className="size-7 rtl:-scale-x-100" />
-              </span>
-              <p
-                className={`text-[32px] leading-none font-bold ${
-                  credit ? "text-action" : "text-ink"
-                }`}
-                dir="ltr"
-              >
-                {credit ? "+" : "−"}
-                {formatPrice(transaction.amount, currency)}
-              </p>
-              {transaction.note && (
-                <p className="text-body text-ink-secondary text-center" dir="auto">
-                  {transaction.note}
+          {/* R — 651:10756 */}
+          <div className="flex flex-col gap-6 xl:flex-row xl:items-start">
+            {/* DetCard — 651:10757 */}
+            <section className="border-line-200 bg-base flex min-w-0 flex-1 flex-col gap-5 rounded-16 border p-8">
+              <div className="flex flex-col items-center gap-2">
+                <span
+                  className={`flex size-16 items-center justify-center rounded-[32px] ${
+                    credit
+                      ? "bg-action-tint text-action"
+                      : "bg-error-tint text-error"
+                  }`}
+                  aria-hidden
+                >
+                  <Icon className="size-7 rtl:-scale-x-100" />
+                </span>
+                <p
+                  className={`text-[36px] leading-none font-bold ${
+                    credit ? "text-action" : "text-error"
+                  }`}
+                  dir="ltr"
+                >
+                  {credit ? "+" : "−"}
+                  {formatPrice(transaction.amount, currency)}
                 </p>
-              )}
-            </header>
+                <p className="text-ink-500 text-center text-[16px]" dir="auto">
+                  {transaction.note ?? typeLabel}
+                </p>
+                {/* StatusBdg — 651:10763 */}
+                <span className="bg-action-tint text-action flex h-7 items-center rounded-[14px] px-3.5 text-[12px] font-bold">
+                  {t("detail.completed")}
+                </span>
+              </div>
 
-            {/* The item the money is about, as a card rather than an id. */}
-            {listing && (
-              <div className="border-line border-b p-4">
+              <span className="bg-line-200 h-px w-full" aria-hidden />
+
+              <h2 className="text-ink-900 text-[14px] font-semibold">
+                {t("detail.title")}
+              </h2>
+
+              {/* The item the money is about, as a card rather than an id. */}
+              {listing && (
                 <Link
                   href={`/products/${listingHref}`}
-                  className="hover:bg-surface flex items-center gap-3 rounded-12 p-2"
+                  className="hover:bg-surface -mx-2 flex items-center gap-3 rounded-12 p-2"
                 >
                   {thumbnail ? (
                     // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
                     <img
                       src={thumbnail}
                       alt=""
-                      className="bg-tint size-14 rounded-10 object-cover"
+                      className="bg-tint size-11 rounded-8 object-cover"
                     />
                   ) : (
-                    <span className="bg-tint size-14 rounded-10" aria-hidden />
+                    <span className="bg-tint size-11 rounded-8" aria-hidden />
                   )}
                   <span className="flex min-w-0 flex-col">
-                    <span className="text-caption text-ink-tertiary">
-                      {t("detail.item")}
+                    <span className="text-ink-500 text-[11px]">
+                      {t("detail.viewItem")}
                     </span>
-                    <span className="text-label truncate" dir="auto">
+                    <span
+                      className="text-ink-900 truncate text-[13px]"
+                      dir="auto"
+                    >
                       {listing.title}
                     </span>
                   </span>
                   <ChevronRight
-                    className="text-ink-tertiary ms-auto size-4 shrink-0 rtl:rotate-180"
+                    className="text-ink-400 ms-auto size-4 shrink-0 rtl:rotate-180"
                     aria-hidden
                   />
                 </Link>
-              </div>
-            )}
+              )}
 
-            <dl className="p-2">
-              {rows.map((row, index) => (
-                <div
-                  key={row.label}
-                  className={`flex justify-between gap-6 px-4 py-3 ${
-                    index % 2 === 1 ? "bg-surface" : ""
-                  }`}
-                >
-                  <dt className="text-caption text-ink-tertiary shrink-0">
-                    {row.label}
-                  </dt>
-                  <dd
-                    className="text-caption min-w-0 text-end break-all"
-                    dir={row.ltr ? "ltr" : "auto"}
-                  >
-                    {row.value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            {splitRows.length > 0 && (
-              <dl className="border-line border-t p-2">
-                {splitRows.map((row) => (
-                  <div
-                    key={row.label}
-                    className="flex justify-between gap-6 px-4 py-3"
-                  >
-                    <dt
-                      className={`shrink-0 ${
-                        row.strong ? "text-label" : "text-caption text-ink-tertiary"
-                      }`}
-                    >
-                      {row.label}
-                    </dt>
+              {/* R — 651:10767 */}
+              <dl className="flex flex-col">
+                {rows.map((row) => (
+                  <div key={row.label} className={detailRow}>
+                    <dt className="text-ink-500 shrink-0">{row.label}</dt>
                     <dd
-                      className={`min-w-0 text-end ${
-                        row.strong ? "text-label font-semibold" : "text-caption"
-                      }`}
-                      dir="ltr"
+                      className="text-ink-900 min-w-0 text-end break-all"
+                      dir={row.ltr ? "ltr" : "auto"}
                     >
                       {row.value}
                     </dd>
                   </div>
                 ))}
+                {splitRows.map((row) => (
+                  <div key={row.label} className={detailRow}>
+                    <dt className="text-ink-500 shrink-0">{row.label}</dt>
+                    <dd className="text-ink-900 min-w-0 text-end" dir="ltr">
+                      {row.value}
+                    </dd>
+                  </div>
+                ))}
               </dl>
-            )}
 
-            {/* More than one line on the order — the payout covers all of them. */}
-            {transaction.items && transaction.items.length > 1 && (
-              <div className="border-line border-t p-4">
-                <h2 className="text-caption text-ink-tertiary mb-2">
-                  {t("detail.lineItems")}
-                </h2>
-                <ul className="flex flex-col gap-1.5">
-                  {transaction.items.map((item) => (
-                    <li
-                      key={item.id}
-                      className="text-caption flex justify-between gap-4"
-                    >
-                      <span className="min-w-0 truncate" dir="auto">
-                        {item.title}
-                      </span>
-                      {item.price != null && (
-                        <span className="shrink-0" dir="ltr">
-                          {formatPrice(item.price, currency)}
-                        </span>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+              {netEarnings && (
+                <>
+                  <span className="bg-line-200 h-px w-full" aria-hidden />
+                  <div className={detailRow}>
+                    <span className="text-ink-500">
+                      {t("detail.netEarnings")}
+                    </span>
+                    <span className="text-action font-bold" dir="ltr">
+                      {netEarnings}
+                    </span>
+                  </div>
+                </>
+              )}
 
-            {transaction.order?.id && (
-              <div className="border-line border-t p-4">
+              {/* More than one line on the order — the payout covers all of them. */}
+              {transaction.items && transaction.items.length > 1 && (
+                <>
+                  <span className="bg-line-200 h-px w-full" aria-hidden />
+                  <div>
+                    <h3 className="text-ink-500 mb-2 text-[12px]">
+                      {t("detail.lineItems")}
+                    </h3>
+                    <ul className="flex flex-col gap-1.5">
+                      {transaction.items.map((item) => (
+                        <li
+                          key={item.id}
+                          className="flex justify-between gap-4 text-[12px]"
+                        >
+                          <span className="min-w-0 truncate" dir="auto">
+                            {item.title}
+                          </span>
+                          {item.price != null && (
+                            <span className="shrink-0" dir="ltr">
+                              {formatPrice(item.price, currency)}
+                            </span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
+
+              <span className="bg-line-200 h-px w-full" aria-hidden />
+
+              {/* R — 651:10796 */}
+              <div className="flex flex-wrap gap-3">
+                {transaction.order?.id && (
+                  <Link
+                    href={`/account/orders/${transaction.order.id}/invoice`}
+                    className="border-line-200 text-ink-900 flex h-11 flex-1 items-center justify-center rounded-[22px] border text-[13px] font-medium"
+                  >
+                    {t("detail.downloadReceipt")}
+                  </Link>
+                )}
                 <Link
-                  href={`/account/orders/${transaction.order.id}/invoice`}
-                  className="text-caption text-action inline-flex items-center gap-1.5"
+                  href="/account/wallet"
+                  className="bg-action text-base flex h-11 flex-1 items-center justify-center rounded-[22px] text-[13px] font-bold"
                 >
-                  <Receipt className="size-3.5" aria-hidden />
-                  {t("detail.downloadReceipt")}
+                  {t("detail.backToWallet")}
                 </Link>
               </div>
-            )}
-          </section>
+            </section>
+
+            {/* C — 651:10801 */}
+            <div className="flex w-full shrink-0 flex-col gap-4 xl:w-[420px]">
+              {/* MiniBal — 651:10802 */}
+              <section className="bg-ink-900 flex flex-col gap-2 rounded-[14px] p-5">
+                <p className="text-ink-500 text-[12px]">
+                  {t("detail.walletBalance")}
+                </p>
+                <p
+                  className="text-base text-[24px] leading-none font-bold"
+                  dir="ltr"
+                >
+                  {formatPrice(wallet.balance, currency)}
+                </p>
+                <p className="text-ink-500 text-[11px]">
+                  {t("detail.afterThisTransaction")}
+                </p>
+                <div className="mt-1 flex gap-2.5">
+                  <Link
+                    href="/account/wallet/add-funds"
+                    className="bg-action text-base flex h-9 flex-1 items-center justify-center rounded-[18px] text-[12px] font-bold"
+                  >
+                    {t("addFunds")}
+                  </Link>
+                  <Link
+                    href="/account/wallet/withdraw"
+                    className="bg-base text-action flex h-9 flex-1 items-center justify-center rounded-[18px] text-[12px]"
+                  >
+                    {t("withdraw")}
+                  </Link>
+                </div>
+              </section>
+
+              {/* RecentCard — 651:10811 */}
+              <section className="border-line-200 bg-base flex flex-col rounded-[14px] border px-4 pt-4 pb-1">
+                <div className="flex items-center justify-between pb-3.5">
+                  <h2 className="text-ink-900 text-[14px] font-semibold">
+                    {t("detail.recentTransactions")}
+                  </h2>
+                  <Link
+                    href="/account/wallet/history"
+                    className="text-action text-[11px] font-medium"
+                  >
+                    {t("viewAll")}
+                  </Link>
+                </div>
+
+                <ul className="divide-line-200 divide-y border-t border-line-200">
+                  {recent.items.map((row) => {
+                    const rowCredit = isCredit(row);
+                    return (
+                      <li key={row.id}>
+                        {/* R — 651:10816 */}
+                        <Link
+                          href={`/account/wallet/transactions/${row.id}`}
+                          className="flex items-center gap-3 py-3"
+                        >
+                          <span
+                            className={`flex size-8 shrink-0 items-center justify-center rounded-16 text-[14px] font-bold ${
+                              rowCredit
+                                ? "bg-action-tint text-action"
+                                : "bg-error-tint text-error"
+                            }`}
+                            aria-hidden
+                          >
+                            {rowCredit ? "+" : "−"}
+                          </span>
+                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                            <span
+                              className="text-ink-900 truncate text-[12px]"
+                              dir="auto"
+                            >
+                              {row.note ??
+                                row.listing?.title ??
+                                row.label ??
+                                t("transaction")}
+                            </span>
+                            <span className="text-ink-400 text-[10px]">
+                              {row.createdAt
+                                ? formatDate(row.createdAt, activeLocale)
+                                : ""}
+                            </span>
+                          </span>
+                          <span
+                            className={`shrink-0 text-[13px] font-bold ${
+                              rowCredit ? "text-action" : "text-error"
+                            }`}
+                            dir="ltr"
+                          >
+                            {rowCredit ? "+" : "−"}
+                            {formatPrice(row.amount, row.currency ?? currency)}
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            </div>
+          </div>
         </div>
       </div>
     </div>

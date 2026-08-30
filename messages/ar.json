@@ -1056,7 +1056,12 @@
       "downloadReceipt": "تنزيل الإيصال",
       "lineItems": "عناصر هذا الطلب",
       "shippingDeducted": "الشحن المخصوم",
-      "shippingBuyerPaid": "الشحن يدفعه المشتري"
+      "shippingBuyerPaid": "الشحن يدفعه المشتري",
+      "completed": "مكتملة",
+      "backToWallet": "العودة إلى المحفظة",
+      "walletBalance": "رصيد المحفظة",
+      "afterThisTransaction": "بعد هذه العملية",
+      "recentTransactions": "أحدث العمليات"
     },
     "errors": {
       "amountRequired": "أدخل المبلغ.",

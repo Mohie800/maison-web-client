@@ -16,9 +16,11 @@ import type { Locale } from "@/i18n/routing";
  * is unavailable we say so rather than assembling an invoice-looking page from
  * order fields — a wrong tax document is worse than none.
  *
- * That rule is also why the design's unit-price column isn't rendered: a line
- * carries `lineTotal` and `quantity`, not a unit price, and dividing one by the
- * other is arithmetic on a tax document. See plans/09 C30.
+ * The design's four columns are all here. The unit-price column was dropped
+ * while a line carried only `lineTotal` and `quantity` — dividing one by the
+ * other is arithmetic on a tax document — and came back when GAP-63 put
+ * `unitPrice` on the line. It is printed, never derived: a line without one
+ * leaves the cell blank (plans/09 C30).
  *
  * The design's "Platform fee (1%)" row is not rendered either — the fee is 15%
  * and the seller pays it, so it is not part of what the buyer was charged
@@ -151,7 +153,11 @@ export default async function InvoicePage({
                   {invoice.billedTo?.recipientName}
                 </p>
                 {(invoice.billedTo?.addressLines ?? []).map((line) => (
-                  <p key={line} className="text-caption text-ink-secondary" dir="auto">
+                  <p
+                    key={line}
+                    className="text-caption text-ink-secondary"
+                    dir="auto"
+                  >
                     {line}
                   </p>
                 ))}
@@ -195,23 +201,38 @@ export default async function InvoicePage({
                       {t("qty")}
                     </th>
                     <th className="text-ink-tertiary w-32 pb-3 text-end text-[11px] font-bold tracking-[0.08em] uppercase">
+                      {t("unitPrice")}
+                    </th>
+                    <th className="text-ink-tertiary w-32 pb-3 text-end text-[11px] font-bold tracking-[0.08em] uppercase">
                       {t("lineTotal")}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {lines.map((line, index) => (
-                    <tr key={`${line.title}-${index}`} className="border-line border-b">
+                    <tr
+                      key={`${line.title}-${index}`}
+                      className="border-line border-b"
+                    >
                       <td className="text-body py-3" dir="auto">
                         {line.title}
                         {line.sellerUsername && (
-                          <span className="text-caption text-ink-tertiary block" dir="ltr">
+                          <span
+                            className="text-caption text-ink-tertiary block"
+                            dir="ltr"
+                          >
                             @{line.sellerUsername}
                           </span>
                         )}
                       </td>
                       <td className="text-body py-3 text-end">
                         {line.quantity ?? 1}
+                      </td>
+                      {/* Printed, never derived — see the note at the top. */}
+                      <td className="text-body py-3 text-end">
+                        {line.unitPrice == null
+                          ? ""
+                          : formatPrice(line.unitPrice, currency)}
                       </td>
                       <td className="text-label py-3 text-end">
                         {formatPrice(line.lineTotal, currency)}
@@ -277,7 +298,10 @@ export default async function InvoicePage({
                       {t("paidWith", { method: cardLabel })}
                     </p>
                   )}
-                  <p className="text-caption text-ink-tertiary mt-0.5" dir="auto">
+                  <p
+                    className="text-caption text-ink-tertiary mt-0.5"
+                    dir="auto"
+                  >
                     {[
                       invoice.orderNumber
                         ? `#${invoice.orderNumber}`

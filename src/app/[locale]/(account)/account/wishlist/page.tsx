@@ -58,6 +58,10 @@ export default async function WishlistPage({
   const tListing = await getTranslations("Listing");
   const query = await searchParams;
 
+  /*
+    `?share=off` is only the "sharing stopped" notice; the panel's state is the
+    list's own `isShared` / `shareToken`, read back since GAP-81 landed.
+  */
   const share = Array.isArray(query.share) ? query.share[0] : query.share;
 
   const rawTab = Array.isArray(query.tab) ? query.tab[0] : query.tab;
@@ -68,9 +72,12 @@ export default async function WishlistPage({
   const rawPage = Number(
     (Array.isArray(query.page) ? query.page[0] : query.page) ?? 1,
   );
-  const page = Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
+  const page =
+    Number.isFinite(rawPage) && rawPage > 0 ? Math.floor(rawPage) : 1;
 
   const wishlist = await getWishlist(tab, page);
+  /* The list's own share state, not the token we put in the URL (GAP-81). */
+  const shareToken = wishlist.isShared ? (wishlist.shareToken ?? null) : null;
   const counts = wishlist.counts ?? {};
 
   const href = (next: { tab?: WishlistTab; page?: number }) => {
@@ -104,7 +111,7 @@ export default async function WishlistPage({
             second control to stop it (GAP-42).
           */}
           <form
-            action={share && share !== "off" ? unshareWishlistAction : shareWishlistAction}
+            action={shareToken ? unshareWishlistAction : shareWishlistAction}
             className="ms-auto"
           >
             <input type="hidden" name="locale" value={locale} />
@@ -113,7 +120,7 @@ export default async function WishlistPage({
               className="text-action flex items-center gap-1.5 text-[13px] font-medium"
             >
               <Share2 className="size-3.5" aria-hidden />
-              {share && share !== "off" ? t("shareStop") : t("share")}
+              {shareToken ? t("shareStop") : t("share")}
             </button>
           </form>
         </div>
@@ -123,9 +130,9 @@ export default async function WishlistPage({
             {t("shareOff")}
           </p>
         )}
-        {share && share !== "off" && (
+        {shareToken && (
           <ShareLink
-            url={`${await requestOrigin()}/${locale}/wishlist/shared/${share}`}
+            url={`${await requestOrigin()}/${locale}/wishlist/shared/${shareToken}`}
             live={t("shareLive")}
             hint={t("shareCopyHint")}
           />
@@ -184,7 +191,10 @@ export default async function WishlistPage({
               <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {wishlist.items.map((item) => {
                   const image = resolveMediaUrl(item.coverPhotoUrl);
-                  const saving = discountPercent(item.originalPrice, item.price);
+                  const saving = discountPercent(
+                    item.originalPrice,
+                    item.price,
+                  );
                   const currency = item.currency ?? "SAR";
                   const notifying = Boolean(item.notifyOnPriceDrop);
 
@@ -241,12 +251,18 @@ export default async function WishlistPage({
                         )}
 
                         <div className="flex flex-wrap items-baseline gap-2">
-                          <span className="text-ink-900 text-[15px] font-bold" dir="ltr">
+                          <span
+                            className="text-ink-900 text-[15px] font-bold"
+                            dir="ltr"
+                          >
                             {formatPrice(item.price, currency)}
                           </span>
                           {saving !== null && (
                             <>
-                              <span className="text-caption text-ink-tertiary line-through" dir="ltr">
+                              <span
+                                className="text-caption text-ink-tertiary line-through"
+                                dir="ltr"
+                              >
                                 {formatPrice(item.originalPrice, currency)}
                               </span>
                               <span className="text-caption text-action font-semibold">
@@ -257,19 +273,27 @@ export default async function WishlistPage({
                         </div>
 
                         {/* Only when the price actually fell since saving. */}
-                        {item.priceDropped && (item.priceDropAmount ?? 0) > 0 && (
-                          <p className="text-caption text-action flex items-center gap-1.5">
-                            <TrendingDown className="size-3.5" aria-hidden />
-                            {t("priceDropped", {
-                              amount: formatPrice(item.priceDropAmount, currency),
-                            })}
-                          </p>
-                        )}
+                        {item.priceDropped &&
+                          (item.priceDropAmount ?? 0) > 0 && (
+                            <p className="text-caption text-action flex items-center gap-1.5">
+                              <TrendingDown className="size-3.5" aria-hidden />
+                              {t("priceDropped", {
+                                amount: formatPrice(
+                                  item.priceDropAmount,
+                                  currency,
+                                ),
+                              })}
+                            </p>
+                          )}
 
                         <div className="mt-auto flex items-center gap-2 pt-1">
                           {item.isAvailable && !item.isSold ? (
                             <form action={moveToCartAction} className="flex-1">
-                              <input type="hidden" name="locale" value={locale} />
+                              <input
+                                type="hidden"
+                                name="locale"
+                                value={locale}
+                              />
                               <input
                                 type="hidden"
                                 name="listingId"

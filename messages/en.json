@@ -829,7 +829,8 @@
     "printInvoice": "Print / Save PDF",
     "invoiceFootnote": "This is a system-generated tax invoice. Prices are in SAR and include VAT where applicable.",
     "writeReview": "Write a review",
-    "chat": "Chat"
+    "chat": "Chat",
+    "unitPrice": "Price"
   },
   "Review": {
     "title": "Write a review",

@@ -66,6 +66,13 @@ export const wishlistSchema = z.object({
   limit: z.number().nullish(),
   /** Server-side totals per tab — real counts, not counts of the current page. */
   counts: z.record(z.string(), z.number()).nullish(),
+  /**
+   * Whether this list is published, and under which token. Both arrived with
+   * GAP-81, so the Share panel reads its own state instead of inferring it
+   * from the token we happened to put in the URL after minting.
+   */
+  shareToken: z.string().nullish(),
+  isShared: z.boolean().nullish(),
 });
 
 export const WISHLIST_PAGE_SIZE = 12;

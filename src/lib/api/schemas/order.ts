@@ -251,6 +251,8 @@ export const invoiceLineSchema = z
     title: z.string().nullish(),
     sellerUsername: z.string().nullish(),
     quantity: z.number().nullish(),
+    /** Sent since GAP-63 landed; the frame's PRICE column reads it directly. */
+    unitPrice: money.nullish(),
     lineTotal: money,
   })
   .passthrough();
@@ -339,7 +341,9 @@ export interface TimelineStep {
 
 const STATUS_ORDER = ["placed", "packed", "shipped", "delivered"] as const;
 
-export function trackingTimeline(shipment: Shipment | undefined): TimelineStep[] {
+export function trackingTimeline(
+  shipment: Shipment | undefined,
+): TimelineStep[] {
   const events = shipment?.events ?? [];
 
   const steps: TimelineStep[] = events.map((event) => ({

@@ -149,7 +149,7 @@ export default async function AuctionsPage({
       </div>
 
       {/* FB — 651:6943 */}
-      <div className="bg-base border-line border-y">
+      <div className="bg-base border-line-200 border-y">
         <div className="mx-auto flex max-w-[1440px] items-start overflow-x-auto px-4 lg:px-20">
           {tabs.map((item) => (
             <Link
@@ -177,14 +177,14 @@ export default async function AuctionsPage({
           </p>
           <div className="flex items-center gap-3">
             <span className="text-ink-500 text-[12px]">{t("sort")}</span>
-            <span className="bg-base border-line flex h-[38px] items-center gap-2 rounded-8 border pe-2.5 ps-3.5 text-[12px] font-medium">
+            <span className="bg-base border-line-200 flex h-[38px] items-center gap-2 rounded-8 border pe-2.5 ps-3.5 text-[12px] font-medium">
               {tab === "just_started" ? t("tabs.justStarted") : t("endingSoonest")}
             </span>
           </div>
         </div>
 
         {result.items.length === 0 ? (
-          <div className="border-line rounded-16 border border-dashed p-14 text-center">
+          <div className="border-line-200 rounded-16 border border-dashed p-14 text-center">
             <p className="text-body-lg mb-2">{t("emptyTitle")}</p>
             <p className="text-body text-ink-secondary">{t("emptyBody")}</p>
           </div>
@@ -206,7 +206,7 @@ export default async function AuctionsPage({
               return (
                 <article
                   key={listing.id}
-                  className="bg-base border-line flex flex-col overflow-hidden rounded-16 border"
+                  className="bg-base border-line-200 flex flex-col overflow-hidden rounded-16 border"
                 >
                   {/* Img — 651:6966 */}
                   <Link

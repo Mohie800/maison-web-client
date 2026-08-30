@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
-import { BadgeCheck, Heart } from "lucide-react";
+import { BadgeCheck, ChevronDown } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getBrandDirectory } from "@/lib/api/endpoints/catalog";
 import {
@@ -96,7 +96,7 @@ export default async function BrandsPage({
       </div>
 
       {/* FB — 651:3090 */}
-      <div className="bg-base border-line border-y">
+      <div className="bg-base border-line-200 border-y">
         <div className="mx-auto flex max-w-[1440px] items-center overflow-x-auto px-4 lg:px-20">
           {BRAND_FILTERS.map((option) => (
             <Link
@@ -122,29 +122,35 @@ export default async function BrandsPage({
           <p className="text-[16px] font-semibold">
             {t("brandCount", { count: brands.length })}
           </p>
-          <div className="flex items-center gap-2">
-            <span className="text-ink-500 text-[12px]">{t("sortLabel")}</span>
-            <div className="flex flex-wrap gap-1.5">
+          {/* Sort — 651:3106 */}
+          <details className="relative">
+            <summary className="bg-base border-line-200 flex h-[38px] cursor-pointer list-none items-center gap-2 rounded-8 border ps-3.5 pe-2.5">
+              <span className="text-ink-900 text-[12px] font-medium">
+                {t(`sorts.${sort}`)}
+              </span>
+              <ChevronDown className="text-ink-500 size-3" aria-hidden />
+            </summary>
+            <div className="bg-base border-line-200 absolute end-0 z-20 mt-1 flex min-w-full flex-col overflow-hidden rounded-8 border shadow-lg">
               {BRAND_SORTS.map((option) => (
                 <Link
                   key={option}
                   href={href({ sort: option })}
-                  aria-pressed={option === sort}
-                  className={`flex h-[30px] items-center rounded-8 border px-3 text-[12px] ${
+                  aria-current={option === sort ? "true" : undefined}
+                  className={`px-3.5 py-2 text-[12px] whitespace-nowrap ${
                     option === sort
-                      ? "border-action bg-action-tint text-action font-semibold"
-                      : "border-line text-ink-500 hover:border-ink-tertiary"
+                      ? "bg-action-tint text-action font-semibold"
+                      : "text-ink-700 hover:bg-surface"
                   }`}
                 >
                   {t(`sorts.${option}`)}
                 </Link>
               ))}
             </div>
-          </div>
+          </details>
         </div>
 
         {brands.length === 0 ? (
-          <p className="border-line text-ink-400 rounded-16 border p-10 text-center text-[14px]">
+          <p className="border-line-200 text-ink-400 rounded-16 border p-10 text-center text-[14px]">
             {t("emptyFilter")}
           </p>
         ) : (
@@ -165,7 +171,7 @@ export default async function BrandsPage({
               return (
                 <article
                   key={brand.id}
-                  className="bg-base border-line flex flex-col overflow-hidden rounded-[14px] border"
+                  className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
                 >
                   {/* Logo — 651:3111 */}
                   <div
@@ -203,19 +209,19 @@ export default async function BrandsPage({
                     </h2>
 
                     {marks.length > 0 && (
-                      <p className="text-ink-400 text-[11px]">{marks.join(" · ")}</p>
+                      <p className="text-ink-500 text-[11px]">{marks.join(" · ")}</p>
                     )}
 
                     <p className="text-ink-400 text-[11px]">
                       {[
-                        brand.listingCount != null
-                          ? t("itemsCount", {
-                              count: formatCount(brand.listingCount, activeLocale),
-                            })
-                          : null,
                         brand.followersCount
                           ? t("followers", {
                               count: formatCount(brand.followersCount, activeLocale),
+                            })
+                          : null,
+                        brand.listingCount != null
+                          ? t("itemsCount", {
+                              count: formatCount(brand.listingCount, activeLocale),
                             })
                           : null,
                       ]
@@ -226,7 +232,7 @@ export default async function BrandsPage({
                     <div className="mt-auto flex items-center gap-2 pt-1">
                       <Link
                         href={`/products?brandId=${brand.id}`}
-                        className="border-line text-ink-700 flex h-[34px] flex-1 items-center justify-center rounded-8 border text-[12px] font-medium"
+                        className="border-line-200 text-ink-700 flex h-[34px] flex-1 items-center justify-center rounded-8 border text-[12px] font-medium"
                       >
                         {t("browse")}
                       </Link>
@@ -238,6 +244,7 @@ export default async function BrandsPage({
                       */}
                       {viewer && (
                         <form
+                          className="flex-1"
                           action={following ? unfollowBrandAction : followBrandAction}
                         >
                           <input type="hidden" name="locale" value={locale} />
@@ -246,16 +253,12 @@ export default async function BrandsPage({
                           <button
                             type="submit"
                             aria-pressed={following}
-                            className={`flex h-[34px] items-center gap-1.5 rounded-8 border px-3 text-[12px] font-medium ${
+                            className={`flex h-[34px] w-full items-center justify-center rounded-8 text-[12px] font-bold ${
                               following
-                                ? "border-action bg-action-tint text-action"
-                                : "border-line text-ink-700"
+                                ? "border-action bg-action-tint text-action border"
+                                : "bg-aqua text-black"
                             }`}
                           >
-                            <Heart
-                              className={`size-3.5 ${following ? "fill-current" : ""}`}
-                              aria-hidden
-                            />
                             {following ? t("following") : t("follow")}
                           </button>
                         </form>

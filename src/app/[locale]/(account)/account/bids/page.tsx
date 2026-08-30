@@ -116,7 +116,7 @@ export default async function MyBidsPage({
             </div>
 
             {/* Tabs — 651:7326 */}
-            <div className="bg-base border-line flex h-12 items-center overflow-x-auto rounded-10 border ps-2">
+            <div className="bg-base border-line-200 flex h-12 items-center overflow-x-auto rounded-10 border ps-2">
               {MY_BID_STATUSES.map((status) => (
                 <Link
                   key={status}
@@ -140,7 +140,7 @@ export default async function MyBidsPage({
 
             {current.items.length === 0 ? (
               /* Web_Empty_Bids — 651:7411 */
-              <div className="bg-base border-line rounded-16 border border-dashed p-14 text-center">
+              <div className="bg-base border-line-200 rounded-16 border border-dashed p-14 text-center">
                 <p className="text-body-lg mb-2">{t("emptyTitle")}</p>
                 <p className="text-body text-ink-secondary mb-6">
                   {t("emptyBody")}
@@ -196,7 +196,7 @@ function BidCard({
   return (
     <article
       className={`bg-base flex items-center gap-4 rounded-[14px] p-4 ${
-        outbid ? "border-error border-[1.5px]" : "border-line border"
+        outbid ? "border-error border-[1.5px]" : "border-line-200 border"
       }`}
     >
       <Link
@@ -220,7 +220,7 @@ function BidCard({
         </Link>
         <div className="flex gap-4">
           <span className="flex flex-col gap-0.5">
-            <span className="text-ink-tertiary text-[10px]">
+            <span className="text-ink-400 text-[10px]">
               {labels.yourBid}
             </span>
             <span className="text-[14px] font-bold" dir="ltr">
@@ -228,7 +228,7 @@ function BidCard({
             </span>
           </span>
           <span className="flex flex-col gap-0.5">
-            <span className="text-ink-tertiary text-[10px]">
+            <span className="text-ink-400 text-[10px]">
               {labels.currentBid}
             </span>
             <span
@@ -263,7 +263,7 @@ function BidCard({
         )}
         <Link
           href={`/products/${bid.listingId}`}
-          className={`flex h-[34px] items-center rounded-[17px] px-3.5 text-[11px] font-bold text-white ${
+          className={`flex h-[34px] items-center rounded-[17px] px-3.5 text-base text-[11px] font-bold ${
             outbid ? "bg-error" : "bg-ink-900"
           }`}
         >

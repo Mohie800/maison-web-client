@@ -21,7 +21,9 @@ import type { Locale } from "@/i18n/routing";
  * by the real saving since GAP-33.
  *
  * Trending Categories runs on `GET /search/trending`, measured from real search
- * events since GAP-54. The design's chip is a growth figure ("+234% searches");
+ * events since GAP-54. The frame puts a photo on each card; the response
+ * carries a term and a count and nothing else, so the card is the frame's
+ * coloured band with no image over it (GAP-93). The design's chip is a growth figure ("+234% searches");
  * it renders when the term has a previous-window baseline, and falls back to
  * the absolute count when it doesn't. A `seed` row — the curated starter list,
  * shown while the current window is still empty — gets no number at all.
@@ -59,6 +61,8 @@ export default async function TrendsPage({
   setRequestLocale(locale);
 
   const t = await getTranslations("Trends");
+  /* `categoryType` is the selling track, so it reuses the wizard's names. */
+  const tTypes = await getTranslations("Sell");
   const activeLocale = (await getLocale()) as Locale;
 
   const [stores, deals, trending] = await Promise.all([
@@ -127,7 +131,7 @@ export default async function TrendsPage({
                 return (
                   <article
                     key={seller.id}
-                    className="bg-base border-line flex flex-col gap-4 rounded-16 border p-6"
+                    className="bg-base border-line-200 flex flex-col gap-4 rounded-16 border p-6"
                   >
                     {/* TR — 651:1802 */}
                     <div className="flex items-center justify-between">
@@ -152,7 +156,11 @@ export default async function TrendsPage({
                       @{name}
                     </p>
                     {store.categoryType && (
-                      <p className="text-ink-500 text-[12px]">{store.categoryType}</p>
+                      <p className="text-ink-500 text-[12px]">
+                        {tTypes.has(`types.${store.categoryType}.name`)
+                          ? tTypes(`types.${store.categoryType}.name`)
+                          : store.categoryType}
+                      </p>
                     )}
 
                     <span className="bg-fill-100 h-px w-full" aria-hidden />
@@ -237,7 +245,7 @@ export default async function TrendsPage({
                 <Link
                   key={row.term}
                   href={`/products?q=${encodeURIComponent(row.term)}`}
-                  className="bg-base border-line flex flex-col overflow-hidden rounded-[14px] border"
+                  className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
                 >
                   <div className={`h-[120px] ${CATEGORY_BANDS[index % CATEGORY_BANDS.length]}`} />
                   <div className="flex flex-col items-start gap-1.5 p-3">
@@ -259,7 +267,7 @@ export default async function TrendsPage({
 
       {/* Sec — Hot Deals This Week — 651:1925 */}
       <section className="bg-surface">
-        <div className="mx-auto flex max-w-[1440px] flex-col gap-7 px-4 pb-16 lg:px-20">
+        <div className="mx-auto flex max-w-[1440px] flex-col gap-7 px-4 py-12 lg:px-20">
           <SectionHead
             title={t("hotDeals")}
             subtitle={t("hotDealsSubtitle")}
@@ -282,7 +290,7 @@ export default async function TrendsPage({
                 return (
                   <article
                     key={listing.id}
-                    className="bg-base border-line flex flex-col overflow-hidden rounded-[14px] border"
+                    className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
                   >
                     {/* Img — 651:1933 */}
                     <div className="bg-fill-100 h-[180px]">
@@ -385,7 +393,7 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 function Unavailable({ message }: { message: string }) {
   return (
-    <p className="border-line text-ink-tertiary rounded-16 border border-dashed p-10 text-center text-[13px]">
+    <p className="border-line-200 text-ink-tertiary rounded-16 border border-dashed p-10 text-center text-[13px]">
       {message}
     </p>
   );

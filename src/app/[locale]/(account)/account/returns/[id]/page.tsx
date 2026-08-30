@@ -24,6 +24,11 @@ import { cancelReturnAction } from "@/features/returns/actions";
  * Deviations, recorded in plans/09 C35: the frame's "Seller notified" is drawn
  * from `approved` — there is no notification status — and `pickup_scheduled`
  * is a real state the frame has no step for, so it is added.
+ *
+ * The frame also puts a thumbnail on the item card and splits the refund into
+ * price minus return shipping. `GET /returns/{id}` has no response schema in
+ * the OpenAPI document and no return has ever existed on dev, so neither field
+ * can be confirmed to exist; both are drawn only when present (GAP-94).
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -81,7 +86,7 @@ export default async function ReturnStatusPage({
           /* Web_Returns_Confirmed — 651:8624 */
           <p className="bg-success-tint text-success mb-6 flex items-center gap-3 rounded-16 px-5 py-4 text-[14px] font-medium">
             <span className="bg-success flex size-7 shrink-0 items-center justify-center rounded-full">
-              <Check className="size-4 text-white" aria-hidden />
+              <Check className="text-base size-4" aria-hidden />
             </span>
             {t("created")}
           </p>
@@ -151,7 +156,7 @@ export default async function ReturnStatusPage({
                       <span
                         className={`flex size-6 items-center justify-center rounded-full text-[12px] font-bold ${
                           step.reached
-                            ? "bg-success text-white"
+                            ? "bg-success text-base"
                             : "bg-fill-100 text-ink-tertiary"
                         }`}
                       >
@@ -210,7 +215,7 @@ export default async function ReturnStatusPage({
           <aside className="flex w-full shrink-0 flex-col gap-4 lg:w-[300px]">
             {/* refund — 651:8609 */}
             {request.refundAmount != null && (
-              <section className="bg-surface border-line flex flex-col gap-3 rounded-16 border p-5">
+              <section className="bg-surface flex flex-col gap-3 rounded-16 p-5">
                 <h2 className="text-[14px] font-semibold">{t("refundTitle")}</h2>
                 <div className="bg-line-subtle h-px w-full" />
                 <div className="flex items-center justify-between gap-3">

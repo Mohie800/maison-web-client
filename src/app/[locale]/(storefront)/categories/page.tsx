@@ -65,7 +65,7 @@ export default async function CategoriesPage({
           return (
             <section
               key={category.id}
-              className="bg-base border-line flex flex-col overflow-hidden rounded-16 border lg:flex-row lg:items-stretch"
+              className="bg-base border-line-200 flex flex-col overflow-hidden rounded-16 border lg:flex-row lg:items-stretch"
             >
               {/* Left — 651:2821 */}
               <div
@@ -104,7 +104,7 @@ export default async function CategoriesPage({
                   <Link
                     key={child.id}
                     href={`/products?categoryId=${child.id}`}
-                    className="bg-fill-50 border-line flex w-full items-center justify-between rounded-10 border px-3.5 py-3 sm:w-[calc(50%-12px)] xl:w-[308px]"
+                    className="bg-fill-50 border-line-200 flex w-full items-center justify-between rounded-10 border px-3.5 py-3 sm:w-[calc(50%-12px)] xl:w-[308px]"
                   >
                     <span className="flex min-w-0 flex-col gap-0.5">
                       <span

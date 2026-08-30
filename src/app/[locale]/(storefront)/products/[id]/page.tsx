@@ -60,8 +60,9 @@ export async function generateMetadata(props: {
 
 /**
  * What the bid panel can know from the ISR'd listing alone. Live numbers
- * arrive from the panel's own `auction-status` poll — that call needs a
- * session (GAP-66) and would opt every PDP out of static generation.
+ * arrive from the panel's own `auction-status` poll, kept client-side so the
+ * PDP stays statically generated. Since GAP-66 landed that poll answers for
+ * signed-out visitors too.
  */
 function bidSnapshot(listing: Listing) {
   const currentBid =
@@ -119,7 +120,10 @@ export default async function ProductPage({
   const brand = listing.brand ?? null;
   const photos = (listing.photos ?? [])
     .slice()
-    .sort((a, b) => Number(b.isCover) - Number(a.isCover) || a.sortOrder - b.sortOrder)
+    .sort(
+      (a, b) =>
+        Number(b.isCover) - Number(a.isCover) || a.sortOrder - b.sortOrder,
+    )
     .map((p) => p.url);
 
   const saving = discountPercent(listing.originalPrice, listing.price);
@@ -127,7 +131,9 @@ export default async function ProductPage({
   const specRows = [
     {
       label: t("specs.condition"),
-      value: listing.condition ? tListing(`conditions.${listing.condition}`) : null,
+      value: listing.condition
+        ? tListing(`conditions.${listing.condition}`)
+        : null,
     },
     { label: t("specs.saleMode"), value: listing.saleMode },
     { label: t("specs.city"), value: listing.city },
@@ -139,7 +145,9 @@ export default async function ProductPage({
           ? `${listing.authenticityScore}%`
           : null,
     },
-  ].filter((row): row is { label: string; value: string } => Boolean(row.value));
+  ].filter((row): row is { label: string; value: string } =>
+    Boolean(row.value),
+  );
   const isAuction = listing.saleMode === "auction" || listing.auctionEnabled;
 
   /**
@@ -154,7 +162,12 @@ export default async function ProductPage({
     name: listing.title,
     ...(listing.description ? { description: listing.description } : {}),
     ...(brand
-      ? { brand: { "@type": "Brand", name: pickLocalized(brand, "name", activeLocale) } }
+      ? {
+          brand: {
+            "@type": "Brand",
+            name: pickLocalized(brand, "name", activeLocale),
+          },
+        }
       : {}),
     ...(photos.length
       ? { image: photos.map((p) => resolveMediaUrl(p)).filter(Boolean) }
@@ -235,7 +248,10 @@ export default async function ProductPage({
             {saving !== null && (
               <>
                 <span className="text-body-lg text-ink-tertiary line-through">
-                  {formatPrice(listing.originalPrice, listing.currency ?? "SAR")}
+                  {formatPrice(
+                    listing.originalPrice,
+                    listing.currency ?? "SAR",
+                  )}
                 </span>
                 <span className="text-label text-action">
                   {t("save", { percent: saving })}
@@ -325,7 +341,9 @@ export default async function ProductPage({
                 {listing.description}
               </p>
             ) : (
-              <p className="text-body text-ink-tertiary">{t("noDescription")}</p>
+              <p className="text-body text-ink-tertiary">
+                {t("noDescription")}
+              </p>
             ),
           },
           {
@@ -341,7 +359,9 @@ export default async function ProductPage({
                       index % 2 === 1 ? "bg-surface" : ""
                     }`}
                   >
-                    <dt className="text-caption text-ink-tertiary">{row.label}</dt>
+                    <dt className="text-caption text-ink-tertiary">
+                      {row.label}
+                    </dt>
                     <dd className="text-caption text-end" dir="auto">
                       {row.value}
                     </dd>
@@ -357,7 +377,10 @@ export default async function ProductPage({
               <ul className="flex max-w-[760px] flex-col gap-4">
                 {shippingOptions.map((option) => (
                   <li key={option.id} className="flex gap-3">
-                    <span className="bg-action mt-1.5 size-2 shrink-0 rounded-full" aria-hidden />
+                    <span
+                      className="bg-action mt-1.5 size-2 shrink-0 rounded-full"
+                      aria-hidden
+                    />
                     <span className="flex flex-col gap-0.5">
                       <span className="text-label">
                         {pickLocalized(option, "name", activeLocale)}
@@ -380,7 +403,10 @@ export default async function ProductPage({
                   </li>
                 ))}
                 <li className="flex gap-3">
-                  <span className="bg-action mt-1.5 size-2 shrink-0 rounded-full" aria-hidden />
+                  <span
+                    className="bg-action mt-1.5 size-2 shrink-0 rounded-full"
+                    aria-hidden
+                  />
                   <span className="flex flex-col gap-0.5">
                     <span className="text-label">{t("buyerProtection")}</span>
                     <span className="text-caption text-ink-secondary">
@@ -451,7 +477,10 @@ async function SellerCard({
         className="border-line hover:border-action flex items-center justify-between gap-4 rounded-12 border p-4"
       >
         <span className="text-label text-ink-secondary">{label}</span>
-        <ChevronRight className="text-ink-tertiary size-4 rtl:rotate-180" aria-hidden />
+        <ChevronRight
+          className="text-ink-tertiary size-4 rtl:rotate-180"
+          aria-hidden
+        />
       </Link>
     );
   }
@@ -465,7 +494,11 @@ async function SellerCard({
    * carries it: "0 sold" under a new seller's name reads as a warning.
    */
   const facts: string[] = [];
-  if (rating !== null && Number.isFinite(rating) && (seller.ratingCount ?? 0) > 0) {
+  if (
+    rating !== null &&
+    Number.isFinite(rating) &&
+    (seller.ratingCount ?? 0) > 0
+  ) {
     facts.push(t("sellerRating", { rating: rating.toFixed(1) }));
   }
   if ((seller.itemsSoldCount ?? 0) > 0) {
@@ -518,7 +551,10 @@ async function SellerCard({
       </span>
 
       <span className="text-caption text-action ms-auto shrink-0">{label}</span>
-      <ChevronRight className="text-ink-tertiary size-4 shrink-0 rtl:rotate-180" aria-hidden />
+      <ChevronRight
+        className="text-ink-tertiary size-4 shrink-0 rtl:rotate-180"
+        aria-hidden
+      />
     </Link>
   );
 }

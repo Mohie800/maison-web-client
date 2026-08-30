@@ -52,13 +52,25 @@ export const auctionStatusSchema = z.object({
       outbidBy: money,
     })
     .nullish(),
+  /**
+   * Null until this viewer has accepted the auction's terms. Arrived with
+   * GAP-67, which is what lets the panel send a first-time bidder to the terms
+   * page on the click rather than on the 403 that follows their first bid.
+   */
+  auctionEntry: z
+    .object({
+      termsAcceptedAt: z.string().nullish(),
+      status: z.string().nullish(),
+      entryFeeAmount: money,
+    })
+    .nullish(),
 });
 
 export type AuctionStatus = z.infer<typeof auctionStatusSchema>;
 
 /**
- * `POST /listings/{id}/auction-entry`. There is no GET — nothing can read back
- * whether a viewer has accepted the terms (GAP-67).
+ * `POST /listings/{id}/auction-entry`. There is still no GET on this path, but
+ * `auction-status` reads the state back on its `auctionEntry` block (GAP-67).
  */
 export const auctionEntrySchema = z.object({
   id: z.string(),

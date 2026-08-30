@@ -1668,7 +1668,8 @@
       "termsRequired": "Accept the auction terms before bidding.",
       "unauthenticated": "Sign in to place a bid.",
       "requestFailed": "We could not place that bid. Try again."
-    }
+    },
+    "acceptTermsToBid": "Accept terms to bid"
   },
   "MyBids": {
     "accountTitle": "My Account",

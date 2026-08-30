@@ -20,9 +20,15 @@ import { placeBidAction } from "../actions";
  * The form still posts to a Server Action, so bidding works with the panel's
  * JavaScript disabled; the amount is re-validated by the API either way.
  *
- * There is no way to read whether the viewer has accepted the auction terms —
- * `auction-entry` is POST-only (GAP-67) — so the button always says Place Bid,
- * as the frame does, and the action redirects to the terms page on the 403.
+ * The poll answers for signed-out visitors too since GAP-66 landed, so their
+ * price and countdown are live rather than frozen at render time.
+ *
+ * `auction-status` also reads back whether this viewer has entered (GAP-67).
+ * The frame draws one Place Bid button, so that is still the only control —
+ * but for someone who has not accepted the terms it goes to the terms page on
+ * the click, instead of converting their first bid into a navigation. The
+ * action keeps its 403 redirect for the moment before the first poll lands and
+ * for JavaScript-off.
  * The result of a bid comes back as `?bid=` and is read here rather than in the
  * page, which would opt every PDP out of static generation.
  */
@@ -87,6 +93,8 @@ export function BidPanel({
   const endsAt = live?.auctionEndsAt ?? snapshot.endsAt;
   const minNextBid = live?.minNextBid ?? snapshot.minNextBid;
   const steps = distinctSteps(live?.quickBidSteps);
+  /* null until the first poll lands — unknown, so the form stays as it is. */
+  const entered = live ? live.auctionEntry != null : null;
   const isLeading = live?.viewer?.isLeading === true;
   const isOutbid = live?.viewer?.isOutbid === true;
   const snipeWindow =
@@ -263,23 +271,29 @@ export function BidPanel({
         )}
 
         {/* PlaceBid — 651:4773 */}
-        <button
-          type="submit"
-          disabled={belowFloor}
-          className="bg-aqua flex h-14 items-center justify-center rounded-[28px] text-[16px] font-bold text-black disabled:opacity-50"
-        >
-          {t("placeBidFor", {
-            amount: formatPrice(bidNumber || minNextBid, snapshot.currency),
-          })}
-        </button>
+        {entered === false ? (
+          <a
+            href={termsHref}
+            className="bg-aqua flex h-14 items-center justify-center rounded-[28px] text-[16px] font-bold text-black"
+          >
+            {t("acceptTermsToBid")}
+          </a>
+        ) : (
+          <button
+            type="submit"
+            disabled={belowFloor}
+            className="bg-aqua flex h-14 items-center justify-center rounded-[28px] text-[16px] font-bold text-black disabled:opacity-50"
+          >
+            {t("placeBidFor", {
+              amount: formatPrice(bidNumber || minNextBid, snapshot.currency),
+            })}
+          </button>
+        )}
 
         <p className="text-ink-tertiary text-[12px]">{t("binding")}</p>
       </form>
 
-      <a
-        href={termsHref}
-        className="text-action text-[12px] font-medium"
-      >
+      <a href={termsHref} className="text-action text-[12px] font-medium">
         {t("readTerms")}
       </a>
     </div>

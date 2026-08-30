@@ -1669,7 +1669,8 @@
       "termsRequired": "وافق على شروط المزاد قبل المزايدة.",
       "unauthenticated": "سجّل الدخول للمزايدة.",
       "requestFailed": "تعذّر تسجيل المزايدة. حاول مرة أخرى."
-    }
+    },
+    "acceptTermsToBid": "اقبل الشروط للمزايدة"
   },
   "MyBids": {
     "accountTitle": "حسابي",

@@ -13,7 +13,7 @@ import {
 
 /**
  * Auction reads. Every one of these needs a session — including
- * `auction-status`, which 401s for a signed-out visitor even though it carries
+ * `auction-status`, which answers anonymously since GAP-66 landed and carries
  * nothing private (GAP-66). Callers fall back to the listing's own snapshot.
  */
 

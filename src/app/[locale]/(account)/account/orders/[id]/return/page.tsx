@@ -26,8 +26,8 @@ import { ReturnReasonPicker } from "@/features/returns/components/return-reason-
  *   enum; four of the frame's five map to it exactly, "Wrong item received"
  *   has no member and folds into "Something else", and `wrong_size` is an
  *   API reason the frame doesn't draw.
- * - The three fault reasons cannot be submitted. The API requires
- *   `evidencePhotos` for them and nothing uploads a photo (GAP-72), so
+ * - The three fault reasons need evidence. `POST /media` turns each picked
+ *   file into a URL (GAP-72), so
  *   choosing one explains that and points at support instead of failing.
  * - "Preferred refund method" is cut: the DTO has no field for it, so the
  *   choice would not reach anyone.
@@ -170,17 +170,14 @@ export default async function ReturnRequestPage({
                 placeholder: t("describePlaceholder"),
                 noteLimit: t("noteLimit", { max: NOTE_MAX }),
                 photosLegend: t("photosLegend"),
-                photosBlocked: t("photosBlocked"),
-                contact: t("contactSupport"),
+                photosRequired: t("photosRequired"),
                 submit: t("submit"),
                 footnote: t("footnote", {
                   days: eligibility.returnWindowDays ?? 7,
                 }),
               }}
-              contactHref={`/${locale}/help/contact`}
               noteMax={NOTE_MAX}
             />
-
           </form>
         )}
       </div>

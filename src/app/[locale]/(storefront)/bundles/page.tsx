@@ -83,8 +83,6 @@ export default async function BundlesPage({
                 key={bundle.id}
                 bundle={bundle}
                 labels={{
-                  save: t("save"),
-                  items: t("itemCount"),
                   view: t("view"),
                   unavailable: t("unavailable"),
                 }}

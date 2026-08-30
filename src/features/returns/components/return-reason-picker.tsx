@@ -5,16 +5,15 @@ import { useState } from "react";
 /**
  * Reason radios, the note, and the photo block — Figma `651:8524`–`651:8556`.
  *
- * Client-side for one reason: three of the six reasons require photo evidence
- * the API gives us no way to upload (GAP-72), so picking one has to swap the
- * upload row for an explanation and disable the submit. Everything else is a
- * plain radio group and a textarea, and works without JavaScript — with the
- * script off, a fault reason is caught by the Server Action instead.
+ * Client-side for one reason: three of the six reasons require photo evidence,
+ * so picking one has to reveal the four upload tiles and hold the submit until
+ * at least one file is chosen. The tiles are plain file inputs posted with the
+ * form, so the flow still works with the script off — the Server Action does
+ * the same check, and `POST /media` turns each file into a URL (GAP-72).
  */
 export function ReturnReasonPicker({
   reasons,
   labels,
-  contactHref,
   noteMax,
 }: {
   reasons: { value: string; label: string; needsPhotos: boolean }[];
@@ -24,18 +23,25 @@ export function ReturnReasonPicker({
     | "placeholder"
     | "noteLimit"
     | "photosLegend"
-    | "photosBlocked"
-    | "contact"
+    | "photosRequired"
     | "submit"
     | "footnote",
     string
   >;
-  contactHref: string;
   noteMax: number;
 }) {
   const [selected, setSelected] = useState<string>("");
+  const [photos, setPhotos] = useState<(File | null)[]>([
+    null,
+    null,
+    null,
+    null,
+  ]);
   const chosen = reasons.find((reason) => reason.value === selected);
-  const blocked = chosen?.needsPhotos === true;
+  const needsPhotos = chosen?.needsPhotos === true;
+  const photoCount = photos.filter(Boolean).length;
+  /* A fault reason with no evidence is the one thing the API will refuse. */
+  const blocked = needsPhotos && photoCount === 0;
 
   return (
     <>
@@ -84,27 +90,46 @@ export function ReturnReasonPicker({
         </span>
       </label>
 
-      {/* PW — 651:8546. Only fault reasons need evidence, and none can be sent. */}
-      {blocked && (
+      {/* PW — 651:8546. Four tiles, as the frame draws; only fault reasons need them. */}
+      {needsPhotos && (
         <div className="flex flex-col gap-2.5">
           <p className="text-[13px] font-semibold">{labels.photosLegend}</p>
           <div className="flex gap-3">
-            {Array.from({ length: 4 }, (_, index) => (
-              <span
+            {photos.map((file, index) => (
+              <label
                 key={index}
-                className="bg-fill-50 border-line text-ink-400 flex h-20 flex-1 items-center justify-center rounded-10 border text-[18px] font-bold opacity-60"
-                aria-hidden
+                className={`flex h-20 flex-1 cursor-pointer items-center justify-center overflow-hidden rounded-10 border px-2 text-center ${
+                  file
+                    ? "bg-success-tint border-action text-action text-[11px] font-medium"
+                    : "bg-fill-50 border-line text-ink-400 text-[18px] font-bold"
+                }`}
               >
-                +
-              </span>
+                {file ? (
+                  <span className="line-clamp-3 break-all">{file.name}</span>
+                ) : (
+                  "+"
+                )}
+                <input
+                  type="file"
+                  name="evidencePhotos"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={(event) =>
+                    setPhotos((current) => {
+                      const next = [...current];
+                      next[index] = event.target.files?.[0] ?? null;
+                      return next;
+                    })
+                  }
+                />
+              </label>
             ))}
           </div>
-          <p className="bg-warn-tint2 border-gold text-amber-text rounded-10 border px-3.5 py-2.5 text-[12px]">
-            {labels.photosBlocked}{" "}
-            <a href={contactHref} className="font-semibold underline">
-              {labels.contact}
-            </a>
-          </p>
+          {blocked && (
+            <p className="text-ink-tertiary text-[12px]">
+              {labels.photosRequired}
+            </p>
+          )}
         </div>
       )}
 

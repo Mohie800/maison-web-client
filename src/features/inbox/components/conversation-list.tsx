@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Search } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { ConversationRow } from "@/lib/api/schemas/conversation";
@@ -17,7 +18,7 @@ const PERSPECTIVE_TONE: Record<string, string> = {
  * The search field is a GET form on the inbox route: `GET /conversations`
  * takes `q`, which searches listing title and participant name.
  */
-export function ConversationList({
+export async function ConversationList({
   rows,
   activeId,
   basePath,
@@ -32,16 +33,18 @@ export function ConversationList({
     search: string;
     searchPlaceholder: string;
     empty: string;
-    age: {
-      now: string;
-      min: string;
-      hr: string;
-      yesterday: string;
-      days: string;
-    };
     perspective: Record<string, string>;
   };
 }) {
+  /*
+    The age messages take an ICU `{n}`, so they are formatted here with the
+    count rather than resolved upstream without one.
+  */
+  const t = await getTranslations("Inbox");
+  const age = (iso: string | null | undefined) => {
+    const parts = shortAge(iso);
+    return parts ? t(`age.${parts.key}`, { n: parts.n }) : "";
+  };
   return (
     <div className="flex w-full shrink-0 flex-col lg:w-[340px]">
       {/* Srch — 651:6803 */}
@@ -90,7 +93,11 @@ export function ConversationList({
                   >
                     {avatar ? (
                       // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                      <img src={avatar} alt="" className="size-full object-cover" />
+                      <img
+                        src={avatar}
+                        alt=""
+                        className="size-full object-cover"
+                      />
                     ) : (
                       initials(name)
                     )}
@@ -128,7 +135,7 @@ export function ConversationList({
                   {/* CR — 651:6812 */}
                   <span className="flex shrink-0 flex-col items-end gap-1.5">
                     <span className="text-ink-400 text-[10px]">
-                      {shortAge(row.lastMessageAt, labels.age)}
+                      {age(row.lastMessageAt)}
                     </span>
                     {unread > 0 && (
                       <span className="bg-error text-base flex size-5 items-center justify-center rounded-10 text-[9px] font-bold">

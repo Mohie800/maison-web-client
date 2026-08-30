@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { Package } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import type { Bundle } from "@/lib/api/schemas/bundle";
@@ -11,19 +12,19 @@ import { formatPrice } from "@/lib/format/money";
  * button that sits beneath the card rather than inside it, as the frame draws
  * it. Fewer than four photos leaves the remaining tiles as flat `bg/tint`.
  */
-export function BundleCard({
+export async function BundleCard({
   bundle,
   labels,
 }: {
   bundle: Bundle;
   labels: {
-    save: string;
-    items: string;
     view: string;
     unavailable: string;
   };
 }) {
   const covers = (bundle.coverPhotoUrls ?? []).slice(0, 4);
+  /* The two count messages carry an ICU `{n}`, so they resolve here. */
+  const t = await getTranslations("Bundles");
   const tiles = [0, 1, 2, 3].map((i) => resolveMediaUrl(covers[i]));
   const currency = "SAR";
   const available = bundle.isAvailable !== false;
@@ -39,7 +40,7 @@ export function BundleCard({
           {bundle.discountPercent ? (
             /* badge — 651:4973 */
             <span className="bg-aqua-tint text-success absolute start-2 top-2 z-10 flex h-[22px] items-center rounded-6 px-2.5 text-[10px] font-bold tracking-[0.4px]">
-              {labels.save.replace("{n}", String(bundle.discountPercent))}
+              {t("save", { n: bundle.discountPercent })}
             </span>
           ) : null}
           {tiles.map((url, index) => (
@@ -86,7 +87,7 @@ export function BundleCard({
           </div>
 
           <span className="text-ink-tertiary mt-1 block text-[12px]">
-            {labels.items.replace("{n}", String(bundle.itemCount ?? 0))}
+            {t("itemCount", { n: bundle.itemCount ?? 0 })}
           </span>
         </div>
       </Link>

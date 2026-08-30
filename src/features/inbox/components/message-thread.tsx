@@ -1,9 +1,6 @@
 import { Package, SendHorizontal } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import type {
-  Conversation,
-  Message,
-} from "@/lib/api/schemas/conversation";
+import type { Conversation, Message } from "@/lib/api/schemas/conversation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { sendMessageAction } from "../actions";
 import { avatarTint, initials, safeAttachmentUrl } from "../helpers";
@@ -76,7 +73,10 @@ export function MessageThread({
 
         {/* HI — 651:6869 */}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-          <span className="text-ink-900 truncate text-[14px] font-semibold" dir="auto">
+          <span
+            className="text-ink-900 truncate text-[14px] font-semibold"
+            dir="auto"
+          >
             {name}
           </span>
           <span

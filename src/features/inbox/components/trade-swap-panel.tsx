@@ -3,7 +3,10 @@ import { Link } from "@/i18n/navigation";
 import type { Conversation } from "@/lib/api/schemas/conversation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
-import { acceptTradeAction, declineTradeAction } from "@/features/trade/actions";
+import {
+  acceptTradeAction,
+  declineTradeAction,
+} from "@/features/trade/actions";
 
 /**
  * The swap summary and its two actions above a trade thread — `651:6766` and
@@ -145,7 +148,10 @@ function SwapSide({
         )}
       </span>
       <div className={`flex min-w-0 flex-col gap-1 ${end ? "items-end" : ""}`}>
-        <span className="text-ink truncate text-[13px] font-semibold" dir="auto">
+        <span
+          className="text-ink truncate text-[13px] font-semibold"
+          dir="auto"
+        >
           {title}
         </span>
         <span className="text-ink-secondary text-[11px]" dir="auto">

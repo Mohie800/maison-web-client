@@ -23,9 +23,10 @@ export type ReturnReason = (typeof RETURN_REASONS)[number];
 
 /**
  * `evidencePhotos` is required for these three — the API rejects them with
- * *"At least one photo is required for this return reason"*. Nothing in the
- * API uploads a photo a buyer took, so these three cannot be submitted from
- * the web client at all (GAP-72).
+ * *"At least one photo is required for this return reason"*. Until GAP-72
+ * landed nothing could turn a picked file into a URL, so they could not be
+ * submitted from the web client at all; `POST /media` now can, and the form
+ * uploads each photo before creating the return.
  */
 export const FAULT_REASONS: ReturnReason[] = [
   "doesnt_match_description",

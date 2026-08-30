@@ -42,30 +42,32 @@ export function initials(name: string | null | undefined): string {
  * frame's shortened forms ("2 min", not "2 minutes ago") have no equivalent
  * numeric style, and next-intl's `relativeTime` returns the long form.
  */
+/**
+ * The unit and count for a row's timestamp — `651:6819`'s "12 min", "3 hr".
+ *
+ * Returns a descriptor rather than a string: three of the five messages carry
+ * an ICU `{n}`, and resolving those through `t()` without the argument throws
+ * a FORMATTING_ERROR. The caller formats, so the count reaches the message.
+ */
+export type AgeKey = "now" | "min" | "hr" | "yesterday" | "days";
+
 export function shortAge(
   iso: string | null | undefined,
-  labels: {
-    now: string;
-    min: string;
-    hr: string;
-    yesterday: string;
-    days: string;
-  },
-): string {
-  if (!iso) return "";
+): { key: AgeKey; n: number } | null {
+  if (!iso) return null;
   const then = new Date(iso).getTime();
-  if (Number.isNaN(then)) return "";
+  if (Number.isNaN(then)) return null;
 
   const minutes = Math.floor((Date.now() - then) / 60000);
-  if (minutes < 1) return labels.now;
-  if (minutes < 60) return labels.min.replace("{n}", String(minutes));
+  if (minutes < 1) return { key: "now", n: 0 };
+  if (minutes < 60) return { key: "min", n: minutes };
 
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return labels.hr.replace("{n}", String(hours));
+  if (hours < 24) return { key: "hr", n: hours };
 
   const days = Math.floor(hours / 24);
-  if (days === 1) return labels.yesterday;
-  return labels.days.replace("{n}", String(days));
+  if (days === 1) return { key: "yesterday", n: 1 };
+  return { key: "days", n: days };
 }
 
 /**

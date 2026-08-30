@@ -65,7 +65,8 @@ export async function InboxShell({
   // Opening a thread is what marks it read; the rail's badge follows.
   if (conversation) await markReadAction(conversation.id, locale);
 
-  const noConversations = list.items.length === 0 && !search && filter === "all";
+  const noConversations =
+    list.items.length === 0 && !search && filter === "all";
 
   return (
     <div className="bg-surface min-h-screen">
@@ -132,13 +133,6 @@ export async function InboxShell({
                 search: t("search"),
                 searchPlaceholder: t("searchPlaceholder"),
                 empty: search ? t("noMatches") : t("noneInFilter"),
-                age: {
-                  now: t("age.now"),
-                  min: t("age.min"),
-                  hr: t("age.hr"),
-                  yesterday: t("age.yesterday"),
-                  days: t("age.days"),
-                },
                 perspective: {
                   trade: t("perspective.trade"),
                   selling: t("perspective.selling"),

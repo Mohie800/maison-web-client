@@ -899,7 +899,6 @@
     "describePlaceholder": "Tell us what happened — the more detail, the faster the review.",
     "noteLimit": "Up to {max} characters.",
     "photosLegend": "Upload photos (required)",
-    "photosBlocked": "This reason needs photo evidence, and photo uploads aren't available yet. Please start this return with us directly —",
     "contactSupport": "contact support",
     "submit": "Submit Return Request",
     "footnote": "Our team will review within 24 hours · {days}-day return window applies",
@@ -947,7 +946,8 @@
       "window_closed": "The return window has closed.",
       "not_delivered": "This item hasn't been delivered yet.",
       "unknown": "This item can no longer be returned."
-    }
+    },
+    "photosRequired": "Add at least one photo of the problem."
   },
   "Wallet": {
     "title": "Wallet",

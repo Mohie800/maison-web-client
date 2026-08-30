@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { uploadAllMedia } from "@/lib/api/endpoints/media";
 import { serverApiFetch } from "@/lib/api/server";
 import { ApiError } from "@/lib/api/errors";
 import {
@@ -41,11 +42,33 @@ export async function requestReturnAction(formData: FormData): Promise<void> {
   const reason = String(formData.get("reason") ?? "");
   if (!isReturnReason(reason)) redirect(`${page}?error=reasonRequired`);
 
-  // The API would reject these anyway; refusing here keeps the message specific.
-  if (requiresPhotos(reason)) redirect(`${page}?error=photosRequired`);
-
   const reasonNote = String(formData.get("reasonNote") ?? "").trim();
   if (reasonNote.length > NOTE_MAX) redirect(`${page}?error=noteTooLong`);
+
+  /*
+    The three fault reasons need evidence. Uploaded here rather than in the
+    browser so the file never needs a token of its own — `POST /media` answers
+    with the URL the return then references (GAP-72).
+  */
+  const chosen = formData
+    .getAll("evidencePhotos")
+    .filter((entry): entry is File => entry instanceof File && entry.size > 0);
+
+  if (requiresPhotos(reason) && chosen.length === 0) {
+    redirect(`${page}?error=photosRequired`);
+  }
+
+  let evidencePhotos: string[] = [];
+  if (chosen.length > 0) {
+    try {
+      evidencePhotos = await uploadAllMedia(chosen);
+    } catch (error) {
+      redirect(`${page}?error=${toErrorCode(error)}`);
+    }
+    if (requiresPhotos(reason) && evidencePhotos.length === 0) {
+      redirect(`${page}?error=uploadFailed`);
+    }
+  }
 
   let created: { id?: string } | null = null;
   try {
@@ -55,6 +78,7 @@ export async function requestReturnAction(formData: FormData): Promise<void> {
         orderItemIds,
         reason,
         ...(reasonNote ? { reasonNote } : {}),
+        ...(evidencePhotos.length > 0 ? { evidencePhotos } : {}),
       },
     });
   } catch (error) {

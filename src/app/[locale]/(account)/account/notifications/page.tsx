@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale, getFormatter } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 import { getNotifications } from "@/lib/api/endpoints/notifications";
 import {
-  CATEGORY_TONE,
   isNotificationCategory,
   NOTIFICATION_CATEGORIES,
-  type Notification,
 } from "@/lib/api/schemas/notification";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
+import {
+  NotificationRow,
+  NotificationTab,
+} from "@/features/notifications/components/notification-row";
 import { markAllReadAction } from "@/features/notifications/actions";
 
 /**
@@ -83,14 +84,14 @@ export default async function NotificationsPage({
 
               {/* Tabs — 651:1574 */}
               <div className="flex h-[42px] items-center overflow-x-auto ps-3">
-                <Tab
+                <NotificationTab
                   href="/account/notifications"
                   label={t("tabs.all")}
                   count={counts.all}
                   active={!tab}
                 />
                 {NOTIFICATION_CATEGORIES.map((category) => (
-                  <Tab
+                  <NotificationTab
                     key={category}
                     href={`/account/notifications?tab=${category}`}
                     label={t(`tabs.${category}`)}
@@ -113,7 +114,7 @@ export default async function NotificationsPage({
                 result.items.map((item, index) => (
                   <div key={item.id}>
                     {index > 0 && <div className="bg-fill-100 h-px w-full" />}
-                    <Row
+                    <NotificationRow
                       item={item}
                       when={(iso) =>
                         format.relativeTime(new Date(iso), new Date())
@@ -132,90 +133,6 @@ export default async function NotificationsPage({
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Tab({
-  href,
-  label,
-  count,
-  active,
-}: {
-  href: string;
-  label: string;
-  count: number | null | undefined;
-  active: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      className={`flex h-[42px] shrink-0 items-center gap-1.5 px-3 text-[12px] ${
-        active ? "text-ink-900 font-semibold" : "text-ink-500"
-      }`}
-    >
-      {label}
-      {count ? <span className="text-ink-tertiary">{count}</span> : null}
-    </Link>
-  );
-}
-
-/** NI — 651:1586. Unread rows carry the surface tint and the aqua dot. */
-function Row({
-  item,
-  when,
-  categoryLabel,
-  viewLabel,
-}: {
-  item: Notification;
-  when: (iso: string) => string;
-  categoryLabel: (key: string) => string;
-  viewLabel: string;
-}) {
-  const unread = item.isRead === false;
-  const category = item.category ?? "orders";
-  const tone = CATEGORY_TONE[category] ?? "bg-fill-100 text-ink-700";
-  const text = item.title ?? item.body ?? item.message ?? "";
-  const href =
-    item.link ??
-    (item.orderId
-      ? `/account/orders/${item.orderId}`
-      : item.listingId
-        ? `/products/${item.listingId}`
-        : null);
-
-  return (
-    <div
-      className={`flex items-start gap-3 px-4 py-3 ${unread ? "bg-surface-cool" : ""}`}
-    >
-      <span
-        className={`flex size-9 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${tone}`}
-      >
-        {categoryLabel(category)}
-      </span>
-
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="text-ink-700 text-[12px]" dir="auto">
-          {text}
-        </p>
-        {item.createdAt && (
-          <p className="text-ink-tertiary text-[10px]">
-            {when(item.createdAt)}
-          </p>
-        )}
-        {href && (
-          <Link
-            href={href}
-            className={`flex h-[26px] w-fit items-center rounded-8 px-2.5 text-[10px] font-bold ${tone}`}
-          >
-            {viewLabel}
-          </Link>
-        )}
-      </div>
-
-      {unread && (
-        <span className="bg-aqua mt-1.5 size-2 shrink-0 rounded-full" aria-hidden />
-      )}
     </div>
   );
 }

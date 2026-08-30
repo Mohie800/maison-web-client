@@ -20,3 +20,21 @@ export async function getNotifications(
   );
   return parseResponse(notificationsSchema, data, "GET /notifications");
 }
+
+/**
+ * Drives the bell's badge before the dropdown has fetched anything.
+ *
+ * Returns `{ total, orders, priceDrops, social, promotions }`; only the total
+ * is needed here. Non-fatal — a failure hides the badge rather than the header.
+ */
+export async function getNotificationUnreadCount(): Promise<number> {
+  try {
+    const data = await serverApiFetch<{ total?: number | null }>(
+      "/notifications/unread-count",
+      { cache: "no-store" },
+    );
+    return data?.total ?? 0;
+  } catch {
+    return 0;
+  }
+}

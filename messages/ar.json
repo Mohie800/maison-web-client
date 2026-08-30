@@ -203,7 +203,13 @@
     "stepTwo": "الخطوة ٢ من ٢ · اختر اهتماماتك",
     "addPhotoUnavailable": "رفع الصور غير متاح بعد",
     "startExploring": "ابدأ التصفح",
-    "skipInterests": "تخطّي الآن"
+    "skipInterests": "تخطّي الآن",
+    "backToSignIn": "العودة لتسجيل الدخول",
+    "forgotHint": "سنرسل رابط إعادة التعيين إلى هذا البريد.",
+    "resetSubtitle": "يجب أن تختلف كلمة المرور الجديدة عن السابقة.",
+    "ruleLength": "٨ أحرف على الأقل",
+    "ruleUppercase": "حرف كبير واحد",
+    "ruleNumber": "رقم أو رمز واحد"
   },
   "Validation": {
     "required": "هذا الحقل مطلوب.",

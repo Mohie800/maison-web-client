@@ -202,7 +202,13 @@
     "stepTwo": "Step 2 of 2 · Pick your interests",
     "addPhotoUnavailable": "Photo uploads aren't wired up yet",
     "startExploring": "Start exploring",
-    "skipInterests": "Skip for now"
+    "skipInterests": "Skip for now",
+    "backToSignIn": "Back to Sign In",
+    "forgotHint": "We'll email a reset link to this address.",
+    "resetSubtitle": "Your new password must be different from your previous password.",
+    "ruleLength": "At least 8 characters",
+    "ruleUppercase": "One uppercase letter",
+    "ruleNumber": "One number or symbol"
   },
   "Validation": {
     "required": "This field is required.",

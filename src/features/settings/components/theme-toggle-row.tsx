@@ -35,7 +35,7 @@ export function ThemeToggleRow({ label }: { label: string }) {
       <span
         aria-hidden
         className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${
-          light ? "bg-action" : "bg-fill-100"
+          light ? "bg-action-deep" : "bg-fill-100"
         }`}
       >
         <span

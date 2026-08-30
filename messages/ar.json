@@ -634,7 +634,9 @@
       "none": "لا يوجد",
       "bankAccount": "حساب بنكي",
       "saved": "{count, plural, =0 {لا يوجد} one {عنوان واحد} two {عنوانان} few {# عناوين} other {# عنوانًا}}",
-      "items": "{count, plural, =0 {فارغة} one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}"
+      "items": "{count, plural, =0 {فارغة} one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}",
+      "language": "اللغة",
+      "privacy": "الخصوصية والأمان"
     },
     "channels": {
       "push": "تنبيهات",
@@ -685,6 +687,12 @@
       "invalid": "تم رفض بعض البيانات. تحقق منها وحاول مجددًا.",
       "unauthenticated": "سجّل الدخول لتغيير الإعدادات.",
       "requestFailed": "تعذّر الحفظ. حاول مرة أخرى."
+    },
+    "completeProfile": "أكمل ملفك الشخصي",
+    "logout": "تسجيل الخروج",
+    "languages": {
+      "en": "الإنجليزية",
+      "ar": "العربية"
     }
   },
   "Notifications": {

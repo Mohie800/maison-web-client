@@ -61,7 +61,7 @@ export default async function ProfileSettingsPage({
     .toUpperCase();
 
   const field =
-    "bg-fill-50 border-line h-11 w-full rounded-10 border px-3.5 text-[13px] outline-none";
+    "bg-fill-50 border-line-200 text-ink-900 h-11 w-full rounded-8 border px-3.5 text-[13px] outline-none";
 
   return (
     <div className="bg-surface min-h-screen">
@@ -72,18 +72,20 @@ export default async function ProfileSettingsPage({
           <AccountSidebar active="settings" />
 
           <div className="flex min-w-0 flex-1 flex-col gap-5">
-            {/* Profile Information — 651:9448 */}
-            <section className="bg-base border-line rounded-12 border p-6">
-              <h2 className="text-[15px] font-semibold">{t("profileTitle")}</h2>
+            {/* Profile Information — 651:9476 */}
+            <section className="bg-base border-line-200 rounded-12 border p-6">
+              <h2 className="text-ink-900 text-[16px] font-semibold">
+                {t("profileTitle")}
+              </h2>
 
               <form
                 action={saveProfileAction}
-                className="mt-5 flex flex-col gap-5"
+                className="mt-4 flex flex-col gap-4"
               >
                 <input type="hidden" name="locale" value={locale} />
 
                 <div className="flex items-center gap-4">
-                  <span className="bg-action-tint text-action flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full text-[15px] font-bold">
+                  <span className="bg-action-tint text-action flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-[32px] text-[20px] font-bold">
                     {avatar ? (
                       // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
                       <img
@@ -99,15 +101,15 @@ export default async function ProfileSettingsPage({
                     type="button"
                     disabled
                     title={t("photoUnavailable")}
-                    className="border-line rounded-8 border px-4 py-2 text-[12px] font-medium opacity-60"
+                    className="border-line-200 text-ink-700 flex h-9 items-center rounded-8 border px-4 text-[12px] font-medium opacity-60"
                   >
                     {t("changePhoto")}
                   </button>
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-2">
-                  <label className="flex flex-col gap-2">
-                    <span className="text-ink-secondary text-[12px]">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-ink-700 text-[12px] font-medium">
                       {t("firstName")}
                     </span>
                     <input
@@ -117,8 +119,8 @@ export default async function ProfileSettingsPage({
                       className={field}
                     />
                   </label>
-                  <label className="flex flex-col gap-2">
-                    <span className="text-ink-secondary text-[12px]">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-ink-700 text-[12px] font-medium">
                       {t("lastName")}
                     </span>
                     <input
@@ -130,8 +132,8 @@ export default async function ProfileSettingsPage({
                   </label>
                 </div>
 
-                <label className="flex flex-col gap-2">
-                  <span className="text-ink-secondary text-[12px]">
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-ink-700 text-[12px] font-medium">
                     {t("email")}
                   </span>
                   {/* Read-only: no endpoint changes an email address. */}
@@ -143,8 +145,8 @@ export default async function ProfileSettingsPage({
                   />
                 </label>
 
-                <label className="flex flex-col gap-2">
-                  <span className="text-ink-secondary text-[12px]">
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-ink-700 text-[12px] font-medium">
                     {t("phone")}
                   </span>
                   <input
@@ -169,7 +171,7 @@ export default async function ProfileSettingsPage({
 
                 <button
                   type="submit"
-                  className="bg-aqua text-on-accent flex h-10 w-fit items-center rounded-20 px-5 text-[13px] font-semibold"
+                  className="bg-aqua text-on-accent flex h-11 w-fit items-center rounded-[22px] px-6 text-[13px] font-bold"
                 >
                   {t("saveChanges")}
                 </button>
@@ -179,32 +181,28 @@ export default async function ProfileSettingsPage({
             {/* Notifications — 651:9448 */}
             <section
               id="notifications"
-              className="bg-base border-line rounded-12 border p-6"
+              className="bg-base border-line-200 rounded-12 border p-6"
             >
-              <h2 className="text-[15px] font-semibold">
+              <h2 className="text-ink-900 text-[16px] font-semibold">
                 {t("notificationsTitle")}
               </h2>
 
               <form action={saveNotificationsAction} className="mt-4 flex flex-col">
                 <input type="hidden" name="locale" value={locale} />
 
-                {NOTIFICATION_GROUPS.map((group, index) => {
+                {NOTIFICATION_GROUPS.map((group) => {
                   const channels = prefs?.[group];
                   const on = Boolean(channels?.push || channels?.email);
                   return (
                     <label
                       key={group}
-                      className={`flex cursor-pointer items-center gap-4 py-3.5 ${
-                        index < NOTIFICATION_GROUPS.length - 1
-                          ? "border-line-subtle border-b"
-                          : ""
-                      }`}
+                      className="border-fill-100 flex cursor-pointer items-center gap-4 border-b py-3.5"
                     >
                       <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                        <span className="text-[13px] font-medium">
+                        <span className="text-ink-900 text-[13px] font-medium">
                           {t(`notifications.${group}.title`)}
                         </span>
-                        <span className="text-ink-tertiary text-[11px]">
+                        <span className="text-ink-500 text-[11px]">
                           {t(`notifications.${group}.body`)}
                         </span>
                       </span>
@@ -216,9 +214,9 @@ export default async function ProfileSettingsPage({
                       />
                       <span
                         aria-hidden
-                        className="bg-fill-100 peer-checked:bg-action flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors"
+                        className="bg-line-200 peer-checked:bg-action-deep flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors peer-checked:[&>span]:translate-x-5 rtl:peer-checked:[&>span]:-translate-x-5"
                       >
-                        <span className="bg-base size-5 rounded-full transition-transform peer-checked:translate-x-5" />
+                        <span className="bg-base size-5 rounded-full transition-transform" />
                       </span>
                     </label>
                   );
@@ -232,7 +230,7 @@ export default async function ProfileSettingsPage({
 
                 <button
                   type="submit"
-                  className="bg-aqua text-on-accent mt-5 flex h-10 w-fit items-center rounded-20 px-5 text-[13px] font-semibold"
+                  className="bg-aqua text-on-accent mt-4 flex h-11 w-fit items-center rounded-[22px] px-6 text-[13px] font-bold"
                 >
                   {t("saveChanges")}
                 </button>

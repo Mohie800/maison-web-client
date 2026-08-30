@@ -633,7 +633,9 @@
       "none": "None yet",
       "bankAccount": "Bank account",
       "saved": "{count, plural, =0 {None saved} one {# saved} other {# saved}}",
-      "items": "{count, plural, =0 {Empty} one {# item} other {# items}}"
+      "items": "{count, plural, =0 {Empty} one {# item} other {# items}}",
+      "language": "Language",
+      "privacy": "Privacy & Security"
     },
     "channels": {
       "push": "Push",
@@ -684,6 +686,12 @@
       "invalid": "Some details were rejected. Check them and try again.",
       "unauthenticated": "Sign in to change your settings.",
       "requestFailed": "We could not save that. Try again."
+    },
+    "completeProfile": "Complete your profile",
+    "logout": "Logout",
+    "languages": {
+      "en": "English",
+      "ar": "Arabic"
     }
   },
   "Notifications": {

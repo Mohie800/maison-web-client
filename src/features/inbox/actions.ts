@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { serverApiFetch } from "@/lib/api/server";
 import { ApiError } from "@/lib/api/errors";
+import { getAccessToken } from "@/lib/auth/session";
 import { MESSAGE_MAX } from "@/lib/api/schemas/conversation";
 
 /**
@@ -80,7 +81,15 @@ export async function deleteConversationAction(
   redirect(`/${locale}/inbox`);
 }
 
-/** "Message seller" from a product page — resumes the thread if one exists. */
+/**
+ * "Message seller" from a product page, a bundle or a seller profile — resumes
+ * the thread if one exists.
+ *
+ * A signed-out visitor is sent to sign-in with a `next` back to the inbox,
+ * matching the quick actions on the product card. Landing them on an error
+ * query for something they could not have known about is worse than asking
+ * them to sign in.
+ */
 export async function startConversationAction(
   formData: FormData,
 ): Promise<void> {
@@ -90,6 +99,12 @@ export async function startConversationAction(
 
   if (!listingId) redirect(`/${locale}/inbox`);
 
+  if (!(await getAccessToken())) {
+    redirect(
+      `/${locale}/sign-in?next=${encodeURIComponent(`/${locale}/inbox`)}`,
+    );
+  }
+
   let created: { id?: string } | null = null;
   try {
     created = await serverApiFetch<{ id?: string }>(
@@ -97,6 +112,11 @@ export async function startConversationAction(
       { method: "POST", body: body ? { body } : {} },
     );
   } catch (error) {
+    if (error instanceof ApiError && error.isUnauthorized) {
+      redirect(
+        `/${locale}/sign-in?next=${encodeURIComponent(`/${locale}/inbox`)}`,
+      );
+    }
     redirect(`/${locale}/products/${listingId}?error=${toErrorCode(error)}`);
   }
 

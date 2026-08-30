@@ -441,7 +441,8 @@
       "shipTimeHours": "{hours, plural, one {ساعة واحدة} two {ساعتان} few {# ساعات} many {# ساعة} other {# ساعة}}"
     },
     "allItems": "كل القطع",
-    "categories": "الفئات"
+    "categories": "الفئات",
+    "message": "مراسلة"
   },
   "Checkout": {
     "cartTitle": "سلتي",
@@ -828,7 +829,8 @@
     "paidWith": "تم الدفع بواسطة {method}",
     "printInvoice": "طباعة / حفظ PDF",
     "invoiceFootnote": "هذه فاتورة ضريبية صادرة آلياً. الأسعار بالريال السعودي وتشمل ضريبة القيمة المضافة حيثما تنطبق.",
-    "writeReview": "اكتب تقييمًا"
+    "writeReview": "اكتب تقييمًا",
+    "chat": "محادثة"
   },
   "Review": {
     "title": "اكتب تقييمًا",

@@ -8,6 +8,7 @@ import { resolveMediaUrl } from "@/lib/api/media";
 import { trackingTimeline } from "@/lib/api/schemas/order";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { OrderStatusBadge } from "@/features/orders/components/order-status-badge";
+import { startConversationAction } from "@/features/inbox/actions";
 import {
   orderItemImage,
   orderItemTitle,
@@ -25,10 +26,9 @@ import type { Locale } from "@/i18n/routing";
  * GPS feed and there is no carrier integration; see plans/09 C1 before putting
  * it back.
  *
- * Two of the frame's controls are omitted because they have nowhere to go:
- * "Chat" (messaging is Phase 6) and "Report an Issue / Return" (the return flow
- * isn't built). Both are recorded in plans/09 — a dead control is worse than an
- * absent one.
+ * Both of the frame's controls that once had nowhere to go now do: "Report an
+ * Issue / Return" since the return flow shipped (plans/09 C15), and "Chat"
+ * since Flow 7 did (C14).
  *
  * The design's "Out for Delivery" and "In Transit" steps come from a carrier
  * feed we don't have, so the timeline renders the events that exist rather than
@@ -99,7 +99,11 @@ export default async function OrderTrackingPage({
   const carrierRows = [
     carrier ? { label: t("carrier"), value: carrier } : null,
     shipment?.trackingNumber
-      ? { label: t("trackingNumber"), value: shipment.trackingNumber, ltr: true }
+      ? {
+          label: t("trackingNumber"),
+          value: shipment.trackingNumber,
+          ltr: true,
+        }
       : null,
     service ? { label: t("service"), value: service } : null,
     weightKg
@@ -111,6 +115,8 @@ export default async function OrderTrackingPage({
   );
 
   const seller = shipment?.seller;
+  /* The listing a "Chat" thread is opened against — the order's first line. */
+  const chatListingId = items.find((item) => item.listingId)?.listingId ?? null;
   const sellerHandle = seller?.username ?? seller?.fullName;
   const sellerAvatar = resolveMediaUrl(seller?.profilePic);
   const sellerInitials = (seller?.fullName ?? seller?.username ?? "")
@@ -216,10 +222,15 @@ export default async function OrderTrackingPage({
                               : "bg-ink-900 text-base"
                         }`}
                       >
-                        {!step.pending && <Check className="size-3" aria-hidden />}
+                        {!step.pending && (
+                          <Check className="size-3" aria-hidden />
+                        )}
                       </span>
                       {!isLast && (
-                        <span className="bg-ink-900 w-[2px] flex-1" aria-hidden />
+                        <span
+                          className="bg-ink-900 w-[2px] flex-1"
+                          aria-hidden
+                        />
                       )}
                     </div>
 
@@ -286,7 +297,9 @@ export default async function OrderTrackingPage({
             {/* Carrier — 651:8417. The Live Map above it in the frame is cut (plans/09 C1). */}
             {carrierRows.length > 0 && (
               <section className="bg-base border-line flex flex-col gap-3 rounded-[14px] border p-4">
-                <h2 className="text-[14px] font-semibold">{t("carrierInfo")}</h2>
+                <h2 className="text-[14px] font-semibold">
+                  {t("carrierInfo")}
+                </h2>
                 <dl className="flex flex-col gap-3">
                   {carrierRows.map((row) => (
                     <div key={row.label} className="flex justify-between gap-4">
@@ -313,7 +326,7 @@ export default async function OrderTrackingPage({
               </section>
             )}
 
-            {/* Seller — 651:8433. The frame's Chat button is omitted (plans/09 C14). */}
+            {/* Seller — 651:8433 */}
             {seller && (
               <section className="bg-base border-line flex items-center gap-3 rounded-[14px] border px-4 py-3.5">
                 <span className="bg-action-tint text-action flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full text-[12px] font-bold">
@@ -344,6 +357,27 @@ export default async function OrderTrackingPage({
                       : t("sellerRole")}
                   </p>
                 </div>
+
+                {/*
+                  Chat — 651:8439. Conversations open against a listing, never a
+                  person, so the thread hangs off the first line in the order.
+                */}
+                {chatListingId && (
+                  <form action={startConversationAction}>
+                    <input type="hidden" name="locale" value={locale} />
+                    <input
+                      type="hidden"
+                      name="listingId"
+                      value={chatListingId}
+                    />
+                    <button
+                      type="submit"
+                      className="bg-ink-900 text-base flex h-[34px] shrink-0 items-center rounded-[17px] px-3.5 text-[12px] font-medium"
+                    >
+                      {t("chat")}
+                    </button>
+                  </form>
+                )}
               </section>
             )}
 

@@ -181,6 +181,8 @@ export default async function SellerPage({
           rating: reviews.summary?.average ?? null,
           reviews: reviews.summary?.total ?? reviews.total,
         }}
+        /* Conversations open against a listing, never a person — see the banner. */
+        messageListingId={listings.items[0]?.id}
       />
 
       {/* Tab bar — links, so each tab is its own URL. */}

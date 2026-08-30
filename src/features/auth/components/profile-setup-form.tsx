@@ -27,10 +27,10 @@ const FIELDS = ["fullName", "username", "city"] as const;
  * other screen does either, so it is no longer asked for — checkout collects
  * the country that actually matters, on the address.
  *
- * The avatar circle is drawn and disabled. `PUT /users/me/profile` is multipart
- * and takes an image, but the field name is not in the OpenAPI document, so
- * uploading blind would risk clearing the avatar (GAP-77) — the same reason
- * Change Photo is disabled in settings.
+ * The avatar circle uploads since GAP-77 was answered: the multipart field is
+ * `profilePic`. The whole circle is the control, with the frame's + badge on
+ * its corner, and it previews nothing before submit — the server's stored path
+ * is what the next screen reads.
  */
 export function ProfileSetupForm({
   defaultName = "",
@@ -40,6 +40,8 @@ export function ProfileSetupForm({
   const t = useTranslations("Auth");
   const router = useRouter();
   const [formError, setFormError] = useState<string | null>(null);
+  /* react-hook-form doesn't own the file input; the submit reads it from here. */
+  const [photo, setPhoto] = useState<File | null>(null);
 
   const {
     register,
@@ -102,6 +104,7 @@ export function ProfileSetupForm({
       if (values.dob) body.set("dob", values.dob);
       if (values.gender) body.set("gender", values.gender);
       if (values.city) body.set("city", values.city);
+      if (photo) body.set("profilePic", photo);
 
       await browserApiFetch("/users/me/profile", { method: "PUT", body });
 
@@ -139,7 +142,7 @@ export function ProfileSetupForm({
 
         {/* Ellipse + badge — 651:16711 */}
         <div className="flex flex-col items-center gap-2">
-          <span className="relative">
+          <label className="relative cursor-pointer">
             <span className="bg-tint block size-22 rounded-full" aria-hidden />
             <span
               className="bg-aqua text-on-accent absolute end-0 bottom-0 flex size-[30px] items-center justify-center rounded-full"
@@ -147,9 +150,17 @@ export function ProfileSetupForm({
             >
               <Plus className="size-4" />
             </span>
-          </span>
+            <input
+              type="file"
+              name="profilePic"
+              accept="image/*"
+              className="sr-only"
+              onChange={(event) => setPhoto(event.target.files?.[0] ?? null)}
+            />
+            <span className="sr-only">{t("addPhoto")}</span>
+          </label>
           <p className="text-ink-tertiary text-[12px] font-medium">
-            {t("addPhotoUnavailable")}
+            {photo ? photo.name : t("addPhoto")}
           </p>
         </div>
 

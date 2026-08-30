@@ -38,6 +38,14 @@ export async function saveProfileAction(formData: FormData): Promise<void> {
   const phone = String(formData.get("phone") ?? "").trim();
   if (phone) body.set("phone", phone);
 
+  /*
+    The multipart field is `profilePic` — confirmed against the live API on
+    2026-08-30, which answers GAP-77. Only forwarded when a file was actually
+    chosen: an empty part would ask the server to interpret a zero-byte image.
+  */
+  const photo = formData.get("profilePic");
+  if (photo instanceof File && photo.size > 0) body.set("profilePic", photo);
+
   try {
     await serverApiFetch("/users/me/profile", { method: "PUT", body });
   } catch (error) {

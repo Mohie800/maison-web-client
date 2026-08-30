@@ -200,7 +200,6 @@
     "wordmark": "Maison Sale",
     "stepOne": "Step 1 of 2 · Set up your profile",
     "stepTwo": "Step 2 of 2 · Pick your interests",
-    "addPhotoUnavailable": "Photo uploads aren't wired up yet",
     "startExploring": "Start exploring",
     "skipInterests": "Skip for now",
     "backToSignIn": "Back to Sign In",
@@ -208,7 +207,8 @@
     "resetSubtitle": "Your new password must be different from your previous password.",
     "ruleLength": "At least 8 characters",
     "ruleUppercase": "One uppercase letter",
-    "ruleNumber": "One number or symbol"
+    "ruleNumber": "One number or symbol",
+    "addPhoto": "Add a profile photo"
   },
   "Validation": {
     "required": "This field is required.",
@@ -659,7 +659,6 @@
     },
     "profileTitle": "Profile Information",
     "changePhoto": "Change Photo",
-    "photoUnavailable": "Photo uploads aren't wired up yet — the API's field name isn't published.",
     "firstName": "First name",
     "lastName": "Last name",
     "email": "Email address",
@@ -717,6 +716,9 @@
     "tabs": {
       "all": "All",
       "orders": "Orders",
+      "messages": "Messages",
+      "auctions": "Auctions",
+      "trade": "Trade",
       "priceDrops": "Price drops",
       "social": "Social",
       "promotions": "Promotions"

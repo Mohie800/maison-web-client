@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale, getFormatter } from "next-intl/server";
+import {
+  getTranslations,
+  setRequestLocale,
+  getFormatter,
+} from "next-intl/server";
 import { getNotifications } from "@/lib/api/endpoints/notifications";
 import {
   isNotificationCategory,
@@ -17,11 +21,11 @@ import { markAllReadAction } from "@/features/notifications/actions";
  * (Web_NotificationsDropdown), which is the only frame for this content. The
  * header's bell has always linked here.
  *
- * The frame's tabs are All / Orders / Messages / Auctions / Trade. The API's
- * categories are `ORDERS`, `PRICE_DROPS`, `SOCIAL`, `PROMOTIONS` — three of the
- * frame's five do not exist, and two that do are not drawn. The tabs are the
- * API's, since a tab that filters on nothing is worse than one the design did
- * not anticipate. Recorded in plans/09 C38.
+ * The frame's tabs are All / Orders / Messages / Auctions / Trade, and since
+ * GAP-79 landed all five filter on something. They come first, in the frame's
+ * order, followed by Price drops / Social / Promotions — three the API also
+ * serves and the design never drew. Dropping them would leave a user able to
+ * switch on price-drop alerts they can never filter for (plans/09 C38).
  *
  * ⚠️ No account on dev has a notification and no response schema is published,
  * so the row's fields are inferred and each renders only when present

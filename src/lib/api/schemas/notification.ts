@@ -7,8 +7,15 @@ import { z } from "zod";
  * OpenAPI document publishes no response schema (GAP-79). Every field is
  * optional and the row renders only what is present.
  */
+/**
+ * The frame's tabs first, in its order, then the three the API filters on that
+ * the design never drew. All seven answer since GAP-79 landed.
+ */
 export const NOTIFICATION_CATEGORIES = [
   "orders",
+  "messages",
+  "auctions",
+  "trade",
   "priceDrops",
   "social",
   "promotions",
@@ -19,6 +26,9 @@ export type NotificationCategory = (typeof NOTIFICATION_CATEGORIES)[number];
 /** The API takes the category in upper snake case. */
 export const CATEGORY_PARAM: Record<NotificationCategory, string> = {
   orders: "ORDERS",
+  messages: "MESSAGES",
+  auctions: "AUCTIONS",
+  trade: "TRADE",
   priceDrops: "PRICE_DROPS",
   social: "SOCIAL",
   promotions: "PROMOTIONS",
@@ -50,6 +60,9 @@ export const notificationsSchema = z.object({
     .object({
       all: z.number().nullish(),
       orders: z.number().nullish(),
+      messages: z.number().nullish(),
+      auctions: z.number().nullish(),
+      trade: z.number().nullish(),
       priceDrops: z.number().nullish(),
       social: z.number().nullish(),
       promotions: z.number().nullish(),

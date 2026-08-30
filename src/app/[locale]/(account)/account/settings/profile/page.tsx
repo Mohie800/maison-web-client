@@ -21,10 +21,9 @@ import {
  * switch over three stored channels — see features/settings/actions.ts and
  * plans/09 C37.
  *
- * "Change Photo" is present but disabled: `PUT /users/me/profile` is multipart
- * and accepts one, but the field name isn't in the OpenAPI document and no
- * response shape is published, so uploading blind would risk clearing the
- * avatar (GAP-77).
+ * "Change Photo" works since GAP-77 was answered: the multipart field is
+ * `profilePic`, and the response returns the stored path back. It is a plain
+ * file input styled as the frame's button, so it needs no JavaScript.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -97,14 +96,16 @@ export default async function ProfileSettingsPage({
                       initials
                     )}
                   </span>
-                  <button
-                    type="button"
-                    disabled
-                    title={t("photoUnavailable")}
-                    className="border-line-200 text-ink-700 flex h-9 items-center rounded-8 border px-4 text-[12px] font-medium opacity-60"
-                  >
+                  {/* Change — 651:9481. A label over a file input: no JS needed. */}
+                  <label className="border-line-200 text-ink-700 flex h-9 cursor-pointer items-center rounded-8 border px-4 text-[12px] font-medium">
                     {t("changePhoto")}
-                  </button>
+                    <input
+                      type="file"
+                      name="profilePic"
+                      accept="image/*"
+                      className="sr-only"
+                    />
+                  </label>
                 </div>
 
                 <div className="grid gap-4 sm:grid-cols-2">
@@ -159,7 +160,10 @@ export default async function ProfileSettingsPage({
                 </label>
 
                 {error && (
-                  <p className="text-error text-[13px] font-medium" role="alert">
+                  <p
+                    className="text-error text-[13px] font-medium"
+                    role="alert"
+                  >
                     {t(`errors.${error}` as "errors.requestFailed")}
                   </p>
                 )}
@@ -187,7 +191,10 @@ export default async function ProfileSettingsPage({
                 {t("notificationsTitle")}
               </h2>
 
-              <form action={saveNotificationsAction} className="mt-4 flex flex-col">
+              <form
+                action={saveNotificationsAction}
+                className="mt-4 flex flex-col"
+              >
                 <input type="hidden" name="locale" value={locale} />
 
                 {NOTIFICATION_GROUPS.map((group) => {

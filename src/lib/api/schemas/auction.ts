@@ -130,23 +130,45 @@ export const myBidsSchema = z.object({
  * `GET /listings/{id}/auction-payment` — 404s with a message when nothing is
  * due, which is how a non-winner and a live auction both read.
  *
- * ⚠️ Every field here is inferred. No auction on dev has settled, and the
- * OpenAPI document at `/docs-json` describes request bodies but not responses,
- * so this shape is unverified (GAP-68). Each row on the payment screen renders
- * only when its field is actually present, so a wrong guess shows less rather
- * than a fabricated SAR 0.
+ * `AuctionPaymentResponseDto`, published with the Round 5 reply — this is no
+ * longer a guess. Three things it corrected:
+ *
+ * - **The money comes twice.** `winningBid`, `buyerPremiumAmount` and `total`
+ *   are numbers; `winningBidAmount`, `feesAmount` and `totalAmount` are the
+ *   Prisma decimal columns behind them and arrive as strings. Use the named
+ *   ones for arithmetic.
+ * - **`shippingAmount` and `vatAmount` are always `null`** and always will be:
+ *   shipping is arranged with the seller after the win and VAT applies at order
+ *   checkout, not to a winning bid. They are returned rather than omitted so a
+ *   card prints an em-dash instead of a fabricated SAR 0.
+ * - **The buyer's premium is the only fee on this path.** It is also the
+ *   `auctionFeeAmount` that checkout's preview returns as null (GAP-62).
  */
 export const auctionPaymentSchema = z.object({
+  id: z.string().nullish(),
   listingId: z.string().nullish(),
-  winningBid: money,
-  buyerPremiumPercent: z.number().nullish(),
-  buyerPremiumAmount: money,
-  shippingAmount: money,
-  vatAmount: money,
-  totalAmount: money,
-  dueAt: z.string().nullish(),
-  status: z.string().nullish(),
+  winnerId: z.string().nullish(),
   currency: z.string().nullish(),
+  /** Numbers. The `*Amount` twins below are the decimal strings. */
+  winningBid: money,
+  buyerPremiumAmount: money,
+  buyerPremiumPercent: z.number().nullish(),
+  total: money,
+  winningBidAmount: money,
+  feesAmount: money,
+  totalAmount: money,
+  /** Both documented as permanently null — see the note above. */
+  shippingAmount: money.nullish(),
+  vatAmount: money.nullish(),
+  /** A high-value win is held for authentication before it ships. */
+  requiresAuthenticationHold: z.boolean().nullish(),
+  status: z.string().nullish(),
+  dueAt: z.string().nullish(),
+  paidAt: z.string().nullish(),
+  /** Charged when the window passes unpaid. */
+  penaltyAmount: money.nullish(),
+  forfeitedAt: z.string().nullish(),
+  createdAt: z.string().nullish(),
 });
 
 export type AuctionPayment = z.infer<typeof auctionPaymentSchema>;

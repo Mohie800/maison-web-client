@@ -385,7 +385,8 @@
     "shippingPrice": "{price}",
     "shippingEta": "{min}–{max} أيام عمل",
     "buyerProtection": "حماية المشتري",
-    "buyerProtectionBody": "يُحتفظ بمبلغ الدفع بشكل آمن حتى يوثّق مركز ميزون القطعة ويتم التوصيل."
+    "buyerProtectionBody": "يُحتفظ بمبلغ الدفع بشكل آمن حتى يوثّق مركز ميزون القطعة ويتم التوصيل.",
+    "reviewsEmpty": "لا توجد تقييمات على هذا العنصر بعد."
   },
   "Seller": {
     "tabs": {

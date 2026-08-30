@@ -20,9 +20,17 @@ import { payAuctionAction } from "@/features/auctions/actions";
  * that call 404s for everyone else, which is what sends a non-winner to a 404
  * rather than a page of blanks.
  *
- * The breakdown rows are driven by the fields the response actually carries.
- * That shape is unverified — no auction on dev has settled yet (GAP-68) — so a
- * row whose field is absent is dropped rather than printed as SAR 0.
+ * Built on the published `AuctionPaymentResponseDto` since the Round 5 reply,
+ * which corrected three of our six guessed field names (GAP-68).
+ *
+ * Shipping and VAT are **documented as permanently null** on this path —
+ * shipping is arranged with the seller after the win, VAT applies at order
+ * checkout — so those two rows print an em-dash rather than being dropped. A
+ * missing row invites the reader to wonder; a stated nothing does not.
+ *
+ * Arithmetic reads `total`, `winningBid` and `buyerPremiumAmount`, which are
+ * numbers. The `*Amount` twins beside them are Prisma decimals and arrive as
+ * strings.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -55,14 +63,23 @@ export default async function AuctionPaymentPage({
   const address = addresses.find((a) => a.isDefault) ?? addresses[0] ?? null;
   const card = cards.find((c) => c.isDefault) ?? cards[0] ?? null;
   const photo = resolveMediaUrl(listing.photos?.[0]?.url ?? null);
-  const total = amountOf(payment.totalAmount);
+  /* `total` is the number; `totalAmount` is the decimal string behind it. */
+  const total = amountOf(payment.total ?? payment.totalAmount);
 
   const rows = [
     { key: "winningBid", value: payment.winningBid },
     { key: "shipping", value: payment.shippingAmount },
     { key: "vat", value: payment.vatAmount },
-    { key: "buyerPremium", value: payment.buyerPremiumAmount },
-  ].filter((row) => row.value !== null && row.value !== undefined);
+    {
+      key: "buyerPremium",
+      value: payment.buyerPremiumAmount,
+      /* The frame labels the fee; the percent it was struck at is real data. */
+      note:
+        payment.buyerPremiumPercent != null
+          ? `${payment.buyerPremiumPercent}%`
+          : null,
+    },
+  ];
 
   return (
     <div className="bg-surface">
@@ -228,9 +245,20 @@ export default async function AuctionPaymentPage({
                   key={row.key}
                   className="flex items-start justify-between gap-3 py-0.5 text-[12px]"
                 >
-                  <span className="text-ink-500">{t(`rows.${row.key}`)}</span>
-                  <span dir="ltr">
-                    {formatPrice(amountOf(row.value), currency)}
+                  <span className="text-ink-500">
+                    {t(`rows.${row.key}`)}
+                    {row.note ? ` (${row.note})` : ""}
+                  </span>
+                  {/* Null is stated, not hidden — see the note at the top. */}
+                  <span
+                    dir="ltr"
+                    className={
+                      row.value == null ? "text-ink-tertiary" : undefined
+                    }
+                  >
+                    {row.value == null
+                      ? "—"
+                      : formatPrice(amountOf(row.value), currency)}
                   </span>
                 </div>
               ))}

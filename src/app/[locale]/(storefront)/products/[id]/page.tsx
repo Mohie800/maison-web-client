@@ -23,6 +23,8 @@ import { ProductCard } from "@/components/commerce/product-card";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ProductGallery } from "@/features/catalog/components/product-gallery";
 import { ProductTabs } from "@/features/catalog/components/product-tabs";
+import { ProductReviews } from "@/features/catalog/components/product-reviews";
+import { getListingReviews } from "@/lib/api/endpoints/reviews";
 import { ProductAttributes } from "@/features/catalog/components/product-attributes";
 import { getShippingOptions } from "@/lib/api/endpoints/checkout";
 import { amountOf } from "@/lib/api/schemas/auction";
@@ -104,10 +106,12 @@ export default async function ProductPage({
   const tListing = await getTranslations("Listing");
   const activeLocale = (await getLocale()) as Locale;
 
-  const [related, shippingOptions] = await Promise.all([
+  const [related, shippingOptions, reviews] = await Promise.all([
     getRelatedListings(listing, 4),
     // Real delivery options rather than the design's hardcoded examples.
     getShippingOptions().catch(() => []),
+    /* Public since GAP-71. A failure here must not take the product page down. */
+    getListingReviews(id).catch(() => ({ items: [], total: 0 })),
   ]);
 
   /*
@@ -415,6 +419,14 @@ export default async function ProductPage({
                   </span>
                 </li>
               </ul>
+            ),
+          },
+          {
+            key: "reviews",
+            label: t("tabs.reviews"),
+            /* 651:4420's fourth tab. Public since GAP-71 — it had no source before. */
+            panel: (
+              <ProductReviews reviews={reviews.items} total={reviews.total} />
             ),
           },
         ]}

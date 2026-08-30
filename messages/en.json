@@ -384,7 +384,8 @@
     "shippingPrice": "{price}",
     "shippingEta": "{min}–{max} business days",
     "buyerProtection": "Buyer protection",
-    "buyerProtectionBody": "Your payment is held securely until the Maison Hub authenticates the item and it's delivered."
+    "buyerProtectionBody": "Your payment is held securely until the Maison Hub authenticates the item and it's delivered.",
+    "reviewsEmpty": "No reviews on this item yet."
   },
   "Seller": {
     "tabs": {

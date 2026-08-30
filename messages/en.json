@@ -1092,7 +1092,12 @@
     "sendReview": "You'll confirm before anything moves.",
     "sendFinal": "This moves the money straight away.",
     "sentConfirm": "{amount} sent to {recipient}.",
-    "accountTitle": "My Account"
+    "accountTitle": "My Account",
+    "enterAmount": "Enter Amount",
+    "addAmount": "Add amount",
+    "newBalance": "New balance",
+    "addToWalletAmount": "Add {amount} to Wallet",
+    "walletCrumb": "Wallet"
   },
   "Wishlist": {
     "title": "My Wishlist",

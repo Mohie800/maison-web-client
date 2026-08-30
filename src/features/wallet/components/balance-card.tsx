@@ -5,8 +5,8 @@ import { formatPrice } from "@/lib/format/money";
 import type { WalletBalance } from "@/lib/api/schemas/wallet";
 
 /**
- * Balance card — Figma `651:10208`, repeated at the top of Add Funds
- * (`651:10318`) and Withdraw (`651:10418`).
+ * Balance card — Figma `651:10208`, repeated smaller at the top of Add Funds
+ * (`651:10318`) and Withdraw (`651:10418`): 28px amount, 24/20 padding.
  *
  * The design's sub-line reads "Pending: SAR 120 from recent sale". The API
  * returns `pendingBalance` but nothing about where it came from, so the line
@@ -19,24 +19,44 @@ import type { WalletBalance } from "@/lib/api/schemas/wallet";
 export async function BalanceCard({
   wallet,
   actions = false,
+  compact = false,
 }: {
   wallet: WalletBalance;
   actions?: boolean;
+  /** The shorter card the Add Funds and Withdraw frames put above the form. */
+  compact?: boolean;
 }) {
   const t = await getTranslations("Wallet");
   const currency = wallet.currency ?? "SAR";
   const pending = wallet.pendingBalance ?? 0;
 
   return (
-    <section className="bg-ink-900 flex flex-wrap items-center justify-between gap-6 rounded-16 p-7">
-      <div className="flex flex-col gap-1.5">
-        <p className="text-ink-400 text-[13px]">{t("availableBalance")}</p>
+    <section
+      className={`bg-ink-900 flex flex-wrap items-center justify-between gap-6 rounded-16 ${
+        compact ? "px-6 py-5" : "p-7"
+      }`}
+    >
+      <div className={`flex flex-col ${compact ? "gap-1" : "gap-1.5"}`}>
+        <p
+          className={
+            compact ? "text-ink-500 text-[12px]" : "text-ink-400 text-[13px]"
+          }
+        >
+          {t("availableBalance")}
+        </p>
         {/* dir="ltr": a currency amount must not be reordered in Arabic. */}
-        <p className="text-base text-[36px] leading-none font-bold" dir="ltr">
+        <p
+          className={`text-base leading-none font-bold ${
+            compact ? "text-[28px]" : "text-[36px]"
+          }`}
+          dir="ltr"
+        >
           {formatPrice(wallet.balance, currency)}
         </p>
         {pending > 0 && (
-          <p className="text-ink-500 text-[12px]">
+          <p
+            className={`text-ink-500 ${compact ? "text-[11px]" : "text-[12px]"}`}
+          >
             {t("pendingAmount", { amount: formatPrice(pending, currency) })}
           </p>
         )}

@@ -1093,7 +1093,12 @@
     "sendReview": "ستؤكّد قبل تحويل أي مبلغ.",
     "sendFinal": "سيتم تحويل المبلغ فوراً.",
     "sentConfirm": "تم إرسال {amount} إلى {recipient}.",
-    "accountTitle": "حسابي"
+    "accountTitle": "حسابي",
+    "enterAmount": "أدخل المبلغ",
+    "addAmount": "المبلغ المضاف",
+    "newBalance": "الرصيد الجديد",
+    "addToWalletAmount": "أضف {amount} إلى المحفظة",
+    "walletCrumb": "المحفظة"
   },
   "Wishlist": {
     "title": "قائمة رغباتي",

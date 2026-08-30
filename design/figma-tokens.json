@@ -298,6 +298,12 @@
       "tw": "success-tint3",
       "_note": "t/success-tint3 in Figma — the \"They pay you\" tag on Web_Trade_CounterOffer (651:6415). Dark INFERRED. Confirm with design."
     },
+    "t-aqua-tint": {
+      "light": "#E4FBEF",
+      "dark": "#052E1B",
+      "tw": "aqua-tint",
+      "_note": "t/aqua-tint in Figma — the SELLING badge on Web_Inbox_TradeChat (651:6755). Dark INFERRED."
+    },
     "t-ink-550": {
       "light": "#8B949E",
       "dark": "#6B7280",

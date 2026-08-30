@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Landmark, BadgeCheck } from "lucide-react";
+import { Landmark } from "lucide-react";
 import { getBankAccounts } from "@/lib/api/endpoints/wallet";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
 import { WalletNav } from "@/features/wallet/components/wallet-nav";
@@ -43,35 +43,46 @@ export default async function BanksPage({
   const banks = await getBankAccounts();
 
   return (
-    <div className="mx-auto flex max-w-[1440px] flex-col gap-8 px-4 py-8 lg:flex-row lg:px-20">
-      <AccountSidebar active="wallet" />
+    <div className="mx-auto flex max-w-[1440px] flex-col px-4 pt-8 pb-14 lg:px-20">
+      <h1 className="text-ink-900 pb-6 text-[28px] font-bold">
+        {t("accountTitle")}
+      </h1>
 
-      <div className="flex min-w-0 flex-1 flex-col gap-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-h1">{t("banksTitle")}</h1>
-          <p className="text-body text-ink-secondary">{t("banksSubtitle")}</p>
-        </div>
+      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+        <AccountSidebar active="wallet" />
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="flex min-w-0 flex-1 flex-col gap-6 lg:flex-row lg:items-start">
           <WalletNav active="banks" />
 
-          <div className="flex min-w-0 flex-1 flex-col gap-6">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
             <WalletError code={error} />
 
-            <section className="border-line bg-base overflow-hidden rounded-16 border">
+            {/* card — 651:10707 */}
+            <section className="border-line bg-base flex flex-col gap-4 rounded-16 border p-6">
+              <div className="flex flex-col gap-1">
+                <h2 className="text-[16px] font-semibold">{t("banksTitle")}</h2>
+                <p className="text-caption text-ink-tertiary">
+                  {t("banksSubtitle")}
+                </p>
+              </div>
+
               {banks.length === 0 ? (
-                <div className="p-10 text-center">
-                  <Landmark className="text-ink-tertiary mx-auto size-8" aria-hidden />
+                <div className="py-8 text-center">
+                  <Landmark
+                    className="text-ink-tertiary mx-auto size-8"
+                    aria-hidden
+                  />
                   <p className="text-body text-ink-tertiary mt-3">
                     {t("noBanksBody")}
                   </p>
                 </div>
               ) : (
-                <ul className="divide-line divide-y">
+                <ul className="flex flex-col gap-4">
                   {banks.map((bank) => (
+                    /* bank — 651:10710 */
                     <li
                       key={bank.id}
-                      className="flex flex-wrap items-center gap-3 px-4 py-4"
+                      className="border-line flex flex-wrap items-center gap-3 rounded-12 border px-3.5 py-4"
                     >
                       <span
                         className="bg-tint text-ink-secondary flex size-9 shrink-0 items-center justify-center rounded-full"
@@ -81,29 +92,42 @@ export default async function BanksPage({
                       </span>
 
                       <span className="flex min-w-0 flex-1 flex-col">
-                        <span className="text-label flex items-center gap-1.5" dir="auto">
+                        <span
+                          className="truncate text-[14px] font-semibold"
+                          dir="auto"
+                        >
                           {bank.bankName}
-                          {bank.isVerified && (
-                            <BadgeCheck className="text-action size-4" aria-hidden />
-                          )}
                         </span>
-                        <span className="text-caption text-ink-tertiary" dir="ltr">
+                        <span
+                          className="text-ink-tertiary truncate text-[12px]"
+                          dir="ltr"
+                        >
                           {bankIbanLabel(bank)}
                         </span>
                       </span>
 
+                      {/* badge — 651:10715 / 651:10721 */}
                       {bank.isDefault ? (
-                        <span className="bg-action-tint text-action text-caption rounded-[11px] px-2.5 py-1 font-semibold">
+                        <span className="bg-aqua-tint text-success flex h-[22px] shrink-0 items-center rounded-[6px] px-2.5 text-[10px] font-bold tracking-[0.4px] uppercase">
                           {t("default")}
                         </span>
                       ) : (
                         <form action={setDefaultBankAction}>
                           <input type="hidden" name="locale" value={locale} />
                           <input type="hidden" name="id" value={bank.id} />
-                          <button type="submit" className="text-caption text-action">
+                          <button
+                            type="submit"
+                            className="text-action text-[12px] font-semibold"
+                          >
                             {t("makeDefault")}
                           </button>
                         </form>
+                      )}
+
+                      {bank.isVerified && !bank.isDefault && (
+                        <span className="bg-aqua-tint2 text-azure flex h-[22px] shrink-0 items-center rounded-[6px] px-2.5 text-[10px] font-bold tracking-[0.4px] uppercase">
+                          {t("verified")}
+                        </span>
                       )}
 
                       <form action={removeBankAction}>
@@ -111,7 +135,7 @@ export default async function BanksPage({
                         <input type="hidden" name="id" value={bank.id} />
                         <button
                           type="submit"
-                          className="text-caption text-ink-tertiary hover:text-ink"
+                          className="text-error text-[12px] font-semibold"
                         >
                           {t("remove")}
                         </button>
@@ -120,73 +144,87 @@ export default async function BanksPage({
                   ))}
                 </ul>
               )}
-            </section>
 
-            <form
-              action={addBankAction}
-              className="border-line bg-base flex flex-col gap-4 rounded-16 border p-6"
-            >
-              <input type="hidden" name="locale" value={locale} />
-              <h2 className="text-label">{t("addBank")}</h2>
+              {/* btn/secondary — 651:10723 */}
+              <details className="group">
+                <summary className="border-line bg-base flex h-12 cursor-pointer list-none items-center justify-center rounded-12 border text-[14px] font-semibold">
+                  + {t("addBank")}
+                </summary>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="flex flex-col gap-2 sm:col-span-2">
-                  <label htmlFor="iban" className="text-caption text-ink-secondary">
-                    {t("iban")}
-                  </label>
-                  <input
-                    id="iban"
-                    name="iban"
-                    required
-                    minLength={15}
-                    maxLength={34}
-                    dir="ltr"
-                    placeholder="SA0380000000608010167519"
-                    className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
-                  />
-                </div>
+                <form
+                  action={addBankAction}
+                  className="mt-4 flex flex-col gap-4"
+                >
+                  <input type="hidden" name="locale" value={locale} />
 
-                <div className="flex flex-col gap-2">
-                  <label
-                    htmlFor="accountHolder"
-                    className="text-caption text-ink-secondary"
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="flex flex-col gap-2 sm:col-span-2">
+                      <label
+                        htmlFor="iban"
+                        className="text-caption text-ink-secondary"
+                      >
+                        {t("iban")}
+                      </label>
+                      <input
+                        id="iban"
+                        name="iban"
+                        required
+                        minLength={15}
+                        maxLength={34}
+                        dir="ltr"
+                        placeholder="SA0380000000608010167519"
+                        className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label
+                        htmlFor="accountHolder"
+                        className="text-caption text-ink-secondary"
+                      >
+                        {t("accountHolder")}
+                      </label>
+                      <input
+                        id="accountHolder"
+                        name="accountHolder"
+                        required
+                        minLength={2}
+                        maxLength={120}
+                        className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
+                      />
+                    </div>
+
+                    <div className="flex flex-col gap-2">
+                      <label
+                        htmlFor="bankName"
+                        className="text-caption text-ink-secondary"
+                      >
+                        {t("bankName")}
+                      </label>
+                      <input
+                        id="bankName"
+                        name="bankName"
+                        required
+                        minLength={2}
+                        maxLength={80}
+                        className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="bg-aqua text-on-accent h-11 w-fit rounded-[22px] px-5 text-[13px] font-semibold"
                   >
-                    {t("accountHolder")}
-                  </label>
-                  <input
-                    id="accountHolder"
-                    name="accountHolder"
-                    required
-                    minLength={2}
-                    maxLength={120}
-                    className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
-                  />
-                </div>
+                    {t("save")}
+                  </button>
+                </form>
+              </details>
 
-                <div className="flex flex-col gap-2">
-                  <label htmlFor="bankName" className="text-caption text-ink-secondary">
-                    {t("bankName")}
-                  </label>
-                  <input
-                    id="bankName"
-                    name="bankName"
-                    required
-                    minLength={2}
-                    maxLength={80}
-                    className="border-line bg-fill-50 text-body focus:border-focus h-11 rounded-10 border px-3 outline-none"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                className="border-ink text-label h-11 w-fit rounded-[22px] border px-5 font-semibold"
-              >
-                {t("save")}
-              </button>
-
-              <p className="text-caption text-ink-tertiary">{t("withdrawalNote")}</p>
-            </form>
+              <p className="text-ink-tertiary text-[11px]">
+                {t("withdrawalNote")}
+              </p>
+            </section>
           </div>
         </div>
       </div>

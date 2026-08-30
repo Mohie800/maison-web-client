@@ -1112,7 +1112,8 @@
     "transferFeeLine": "Transfer fee {amount}",
     "sendSubmitAmount": "Send {amount}",
     "soldLine": "Sold {date} · net of fees",
-    "soldLineNoDate": "Net of fees"
+    "soldLineNoDate": "Net of fees",
+    "verified": "Verified"
   },
   "Wishlist": {
     "title": "My Wishlist",

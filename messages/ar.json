@@ -1113,7 +1113,8 @@
     "transferFeeLine": "رسوم التحويل {amount}",
     "sendSubmitAmount": "إرسال {amount}",
     "soldLine": "بيع في {date} · بعد خصم الرسوم",
-    "soldLineNoDate": "بعد خصم الرسوم"
+    "soldLineNoDate": "بعد خصم الرسوم",
+    "verified": "موثّق"
   },
   "Wishlist": {
     "title": "قائمة رغباتي",

@@ -59,6 +59,7 @@
   --t-success-deep: #1A5C38;
   --t-success-tint3: #DEF7EC;
   --t-aqua-tint: #E4FBEF;
+  --t-aqua-tint2: #DCEEFF;
   --t-ink-550: #8B949E;
 }
 
@@ -117,6 +118,7 @@
   --t-success-deep: #1A5C38;
   --t-success-tint3: #053E2E;
   --t-aqua-tint: #052E1B;
+  --t-aqua-tint2: #052A3B;
   --t-ink-550: #6B7280;
 }
 
@@ -175,6 +177,7 @@
   --color-success-deep: var(--t-success-deep);
   --color-success-tint3: var(--t-success-tint3);
   --color-aqua-tint: var(--t-aqua-tint);
+  --color-aqua-tint2: var(--t-aqua-tint2);
   --color-ink-550: var(--t-ink-550);
 
   --text-display: 2rem;

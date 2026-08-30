@@ -304,6 +304,12 @@
       "tw": "aqua-tint",
       "_note": "t/aqua-tint in Figma — the SELLING badge on Web_Inbox_TradeChat (651:6755). Dark INFERRED."
     },
+    "t-aqua-tint2": {
+      "light": "#DCEEFF",
+      "dark": "#052A3B",
+      "tw": "aqua-tint2",
+      "_note": "t/aqua-tint2 in Figma — the VERIFIED badge on Web_Wallet_Banks (651:10721), confirmed via get_variable_defs. Dark INFERRED."
+    },
     "t-ink-550": {
       "light": "#8B949E",
       "dark": "#6B7280",

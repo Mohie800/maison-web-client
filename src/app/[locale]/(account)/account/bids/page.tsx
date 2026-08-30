@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Gavel } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { getMyBids } from "@/lib/api/endpoints/auctions";
 import {
@@ -139,18 +140,33 @@ export default async function MyBidsPage({
             </div>
 
             {current.items.length === 0 ? (
-              /* Web_Empty_Bids — 651:7411 */
-              <div className="bg-base border-line-200 rounded-16 border border-dashed p-14 text-center">
-                <p className="text-body-lg mb-2">{t("emptyTitle")}</p>
-                <p className="text-body text-ink-secondary mb-6">
+              /* Web_Empty_Bids — 651:7411. Centred on the tint, not a card. */
+              <div className="flex flex-col items-center gap-5 py-20 text-center">
+                <span className="bg-warn-tint text-amber-deep flex size-20 items-center justify-center rounded-full">
+                  <Gavel className="size-8" aria-hidden />
+                </span>
+                <p className="text-ink-900 text-[28px] font-bold">
+                  {t("emptyTitle")}
+                </p>
+                <p className="text-ink-500 max-w-[480px] text-[15px]">
                   {t("emptyBody")}
                 </p>
-                <Link
-                  href="/auctions"
-                  className="bg-aqua text-on-accent inline-flex h-11 items-center rounded-[22px] px-6 text-[13px] font-bold"
-                >
-                  {t("emptyCta")}
-                </Link>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  <Link
+                    href="/auctions"
+                    className="bg-action text-base flex h-12 items-center rounded-[24px] px-7 text-[14px] font-bold"
+                  >
+                    {t("emptyCta")}
+                  </Link>
+                  {/* The frame's Watchlist; the wishlist is the nearest real
+                      thing — same substitution as the tab (plans/09 C33). */}
+                  <Link
+                    href="/account/wishlist"
+                    className="border-line-200 text-ink-900 flex h-12 items-center rounded-[24px] border px-7 text-[14px] font-medium"
+                  >
+                    {t("emptyWatchlist")}
+                  </Link>
+                </div>
               </div>
             ) : (
               current.items.map((bid) => (

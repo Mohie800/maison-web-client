@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getListing } from "@/lib/api/endpoints/listings";
+import { coverPhotoUrl } from "@/lib/api/schemas/listing";
 import { getAuctionStatus } from "@/lib/api/endpoints/auctions";
 import { amountOf } from "@/lib/api/schemas/auction";
 import { requireUser } from "@/lib/auth/current-user";
@@ -63,7 +64,7 @@ export default async function AuctionTermsPage({
   const bidCount = status?.bidCount ?? listing.bidCount ?? 0;
   const endsAt = status?.auctionEndsAt ?? listing.auctionEndsAt ?? null;
   const currency = listing.currency ?? "SAR";
-  const photo = resolveMediaUrl(listing.photos?.[0]?.url ?? null);
+  const photo = resolveMediaUrl(coverPhotoUrl(listing));
 
   return (
     <div className="bg-surface pb-14">

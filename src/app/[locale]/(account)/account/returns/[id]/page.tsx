@@ -13,8 +13,13 @@ import { formatPrice } from "@/lib/format/money";
 import { cancelReturnAction } from "@/features/returns/actions";
 
 /**
- * Return status — Figma `651:8569` (Web_Returns_StatusTimeline), with
- * `651:8624` (Web_Returns_Confirmed) as the just-created banner.
+ * Return status — Figma `651:8569` (Web_Returns_StatusTimeline).
+ *
+ * `651:8624` (Web_Returns_Confirmed) is the *refunded* end of the same route,
+ * not a "request received" banner: it says "Refund issued" and names the
+ * amount, the method and the date. It replaces the timeline once `refundedAt`
+ * is set, which is what the frame draws. The thinner banner above the timeline
+ * is ours, for the moment just after a request is created — no frame draws it.
  *
  * The timeline is driven by the API's own status ladder rather than a fixed
  * list of five, for the same reason the order tracking timeline is (GAP-46):
@@ -79,11 +84,88 @@ export default async function ReturnStatusPage({
   const when = (iso: string | null) =>
     iso ? format.dateTime(new Date(iso), { dateStyle: "medium", timeStyle: "short" }) : null;
 
+  if (status === "refunded") {
+    /* Web_Returns_Confirmed — 651:8631 */
+    const amount =
+      request.refundAmount != null
+        ? formatPrice(request.refundAmount, currency)
+        : null;
+    const rows = [
+      { key: "summaryItem", value: item?.titleSnapshot ?? null, tone: "" },
+      { key: "refundAmount", value: amount, tone: "text-success" },
+      { key: "summaryMethod", value: request.refundMethodSnapshot ?? null, tone: "" },
+      {
+        key: "summaryProcessed",
+        value: request.refundedAt
+          ? format.dateTime(new Date(request.refundedAt), { dateStyle: "medium" })
+          : null,
+        tone: "",
+      },
+    ].filter((row) => row.value);
+
+    return (
+      <div className="bg-surface flex justify-center px-4 pt-14 pb-14">
+        <div className="bg-elevated border-line-subtle flex w-full max-w-[600px] flex-col items-center gap-4 rounded-20 border p-10 text-center shadow-[0_16px_20px_rgba(0,0,0,0.08)]">
+          <span className="bg-success-tint text-success flex size-18 items-center justify-center rounded-full">
+            <Check className="size-8" aria-hidden />
+          </span>
+          <h1 className="text-[24px] font-bold">{t("refundIssuedTitle")}</h1>
+          {amount && (
+            <p className="text-ink-secondary max-w-[480px] text-[14px]">
+              {t("refundIssuedBody", { amount })}
+            </p>
+          )}
+
+          {/* summary — 651:8636 */}
+          <dl className="bg-surface mt-2 flex w-full flex-col gap-4 rounded-[14px] p-6 text-start">
+            <p className="text-[14px] font-semibold" dir="ltr">
+              {t("returnRef", {
+                id: request.returnNumber ?? id.slice(0, 8).toUpperCase(),
+              })}
+            </p>
+            {rows.map((row) => (
+              <div key={row.key} className="flex items-center justify-between gap-4">
+                <dt className="text-ink-secondary text-[14px]">
+                  {t(row.key as "refundAmount")}
+                </dt>
+                <dd
+                  className={`truncate text-[14px] font-medium ${row.tone}`}
+                  dir="auto"
+                >
+                  {row.value}
+                </dd>
+              </div>
+            ))}
+          </dl>
+
+          <p className="text-ink-tertiary max-w-[480px] text-[12px]">
+            {t("refundDelay")}
+          </p>
+
+          {request.orderId && (
+            <Link
+              href={`/account/orders/${request.orderId}`}
+              className="bg-aqua text-on-accent flex h-[50px] w-full items-center justify-center rounded-12 text-[15px] font-semibold"
+            >
+              {t("viewOrder")}
+            </Link>
+          )}
+          <Link
+            href="/account/orders"
+            className="bg-base border-line flex h-12 w-full items-center justify-center rounded-12 border text-[15px] font-semibold"
+          >
+            {t("backToPurchases")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-surface pb-14">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col px-4 pt-12 lg:px-20">
         {created && (
-          /* Web_Returns_Confirmed — 651:8624 */
+          /* Ours — the moment after a request is created. No frame. */
           <p className="bg-success-tint text-success mb-6 flex items-center gap-3 rounded-16 px-5 py-4 text-[14px] font-medium">
             <span className="bg-success flex size-7 shrink-0 items-center justify-center rounded-full">
               <Check className="text-base size-4" aria-hidden />

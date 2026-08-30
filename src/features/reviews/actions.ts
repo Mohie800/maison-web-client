@@ -86,5 +86,16 @@ export async function submitReviewAction(formData: FormData): Promise<void> {
   }
 
   revalidatePath(`/${locale}/account/orders/${orderId}`);
-  redirect(`${page}?submitted=${rating}&item=${orderItemId}`);
+
+  /*
+    The item drops out of `reviewable` the moment this succeeds, so the
+    confirmation card (651:8764) cannot re-fetch it. Its three fields ride the
+    redirect instead; `photo` is a raw `/uploads/` path, re-checked on render.
+  */
+  const carry = new URLSearchParams({ submitted: String(rating), item: orderItemId });
+  for (const key of ["title", "seller", "photo"] as const) {
+    const value = String(formData.get(key) ?? "").trim();
+    if (value) carry.set(key, value);
+  }
+  redirect(`${page}?${carry}`);
 }

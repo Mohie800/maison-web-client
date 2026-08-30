@@ -32,10 +32,13 @@ import { submitReviewAction } from "@/features/reviews/actions";
  *   a closed set of six `tags`, two of which are those exact dimensions, so we
  *   render the tags. Sub-rating stars would post nowhere.
  * - The four photo tiles upload through `POST /media`, which turns each file
- *   into the path `photos` takes (GAP-72).
- *   removed, so the missing capability is obvious.
+ *   into the path `photos` takes (GAP-72). Four tiles, as the frame draws,
+ *   each taking more than one file — `photos` accepts ten.
  */
 export const metadata: Metadata = { robots: { index: false } };
+
+/** 651:8740 draws four; each takes more than one file, capped at PHOTOS_MAX. */
+const PHOTO_TILES = 4;
 
 export default async function WriteReviewPage({
   params,
@@ -54,23 +57,24 @@ export default async function WriteReviewPage({
   const error = one(query.error);
   const submitted = Number(one(query.submitted) ?? NaN);
 
-  const [reviewable, order] = await Promise.all([
-    getReviewableItems(id),
-    getOrder(id).catch(() => null),
-  ]);
-
+  // Before the fetches: the reviewed item has already dropped out of
+  // `reviewable`, so the confirmation reads the redirect and nothing else.
   if (submitted >= 1 && submitted <= RATING_MAX) {
-    // The reviewed item has already dropped out of `reviewable`, so the
-    // confirmation names it from the id the redirect carried.
     return (
       <Submitted
         rating={submitted}
-        locale={locale}
         title={one(query.title)}
+        seller={one(query.seller)}
+        photo={one(query.photo)}
         t={t}
       />
     );
   }
+
+  const [reviewable, order] = await Promise.all([
+    getReviewableItems(id),
+    getOrder(id).catch(() => null),
+  ]);
 
   const item = reviewable.items[0];
   if (!item) notFound();
@@ -86,9 +90,8 @@ export default async function WriteReviewPage({
   const listing = item.listingId
     ? await getListing(item.listingId).catch(() => null)
     : null;
-  const photo = resolveMediaUrl(
-    item.coverPhotoUrl ?? (listing ? coverPhotoUrl(listing) : null),
-  );
+  const photoPath = item.coverPhotoUrl ?? (listing ? coverPhotoUrl(listing) : null);
+  const photo = resolveMediaUrl(photoPath);
   const reference = order?.orderNumber ?? null;
 
   return (
@@ -107,6 +110,12 @@ export default async function WriteReviewPage({
           <input type="hidden" name="locale" value={locale} />
           <input type="hidden" name="orderId" value={id} />
           <input type="hidden" name="orderItemId" value={item.orderItemId} />
+          {/* Carried into the confirmation card — see submitReviewAction. */}
+          <input type="hidden" name="title" value={item.title ?? ""} />
+          <input type="hidden" name="seller" value={sellerName} />
+          {photoPath && (
+            <input type="hidden" name="photo" value={photoPath} />
+          )}
 
           {/* strip — 651:8714 */}
           <div className="bg-surface flex items-center gap-4 rounded-12 p-4">
@@ -192,7 +201,7 @@ export default async function WriteReviewPage({
               {t("addPhotos")}
             </legend>
             <div className="flex flex-wrap gap-3">
-              {Array.from({ length: PHOTOS_MAX }, (_, index) => (
+              {Array.from({ length: PHOTO_TILES }, (_, index) => (
                 <label
                   key={index}
                   className="bg-surface border-line text-ink-tertiary flex size-24 cursor-pointer items-center justify-center rounded-12 border-[1.5px] border-dashed text-[20px] font-bold"
@@ -202,6 +211,7 @@ export default async function WriteReviewPage({
                     type="file"
                     name="photos"
                     accept="image/*"
+                    multiple
                     className="sr-only"
                   />
                 </label>
@@ -233,19 +243,26 @@ export default async function WriteReviewPage({
 /** Web_Review_Submitted — 651:8751. */
 function Submitted({
   rating,
-  locale,
   title,
+  seller,
+  photo,
   t,
 }: {
   rating: number;
-  locale: string;
   title: string | null;
+  seller: string | null;
+  photo: string | null;
   t: Awaited<ReturnType<typeof getTranslations<"Review">>>;
 }) {
-  void locale;
+  /* Same rule as a message attachment: an `/uploads/` path or nothing. */
+  const thumb =
+    photo && photo.startsWith("/uploads/") && !photo.includes("..")
+      ? resolveMediaUrl(photo)
+      : null;
+
   return (
     <div className="bg-surface flex justify-center px-4 pt-16 pb-14">
-      <div className="bg-base border-line-subtle flex w-full max-w-[560px] flex-col items-center gap-4 rounded-20 border p-10 text-center shadow-[0_16px_20px_rgba(0,0,0,0.08)]">
+      <div className="bg-elevated border-line-subtle flex w-full max-w-[560px] flex-col items-center gap-4 rounded-20 border p-10 text-center shadow-[0_16px_20px_rgba(0,0,0,0.08)]">
         <span className="bg-success-tint text-success flex size-18 items-center justify-center rounded-full">
           <Check className="size-8" aria-hidden />
         </span>
@@ -257,10 +274,31 @@ function Submitted({
           {"★ ".repeat(rating).trim()}
         </p>
         <p className="sr-only">{t("ratingOf", { rating, max: RATING_MAX })}</p>
-        {title && (
-          <p className="bg-surface w-full truncate rounded-12 p-4 text-[13px] font-semibold">
-            {title}
-          </p>
+        {(title || seller) && (
+          /* mini — 651:8764 */
+          <div className="bg-surface flex w-full items-center gap-3.5 rounded-12 p-3.5 text-start">
+            <span className="bg-tint size-11 shrink-0 overflow-hidden rounded-8">
+              {thumb && (
+                // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+                <img src={thumb} alt="" className="size-full object-cover" />
+              )}
+            </span>
+            <span className="flex min-w-0 flex-col gap-0.5">
+              {seller && (
+                <span className="truncate text-[13px] font-semibold" dir="auto">
+                  {t("reviewedSeller", { seller })}
+                </span>
+              )}
+              {title && (
+                <span
+                  className="text-ink-secondary truncate text-[12px]"
+                  dir="auto"
+                >
+                  {title}
+                </span>
+              )}
+            </span>
+          </div>
         )}
         <Link
           href="/account/orders"

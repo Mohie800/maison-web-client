@@ -22,7 +22,8 @@ import {
   acceptTradeAction,
 } from "@/features/trade/actions";
 import {
-  isDecidable,
+  canCounter,
+  canDecide,
   TRADE_BADGE_TONE,
   tradeCash,
   tradeSides,
@@ -251,7 +252,7 @@ export default async function TradesPage({
 
                     {/* ActRow — 651:6642 */}
                     <div className="flex flex-wrap items-start gap-2.5 px-4 py-3">
-                      {isDecidable(request.status) && !sides.isRequester ? (
+                      {canDecide(request.status, sides.isRequester) ? (
                         <>
                           <form action={acceptTradeAction}>
                             <input type="hidden" name="locale" value={locale} />
@@ -263,12 +264,14 @@ export default async function TradesPage({
                               {t("accept")}
                             </button>
                           </form>
-                          <Link
-                            href={`/account/trades/${request.id}/counter`}
-                            className="bg-base border-line-200 text-ink-700 flex h-9 items-center justify-center rounded-8 border px-4 text-[12px] font-bold"
-                          >
-                            {t("counter")}
-                          </Link>
+                          {canCounter(request.status, sides.isRequester) && (
+                            <Link
+                              href={`/account/trades/${request.id}/counter`}
+                              className="bg-base border-line-200 text-ink-700 flex h-9 items-center justify-center rounded-8 border px-4 text-[12px] font-bold"
+                            >
+                              {t("counter")}
+                            </Link>
+                          )}
                           <form action={declineTradeAction}>
                             <input type="hidden" name="locale" value={locale} />
                             <input type="hidden" name="id" value={request.id} />

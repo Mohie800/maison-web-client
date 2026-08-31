@@ -21,7 +21,9 @@ import {
   TradeSideCard,
 } from "@/features/trade/components/trade-item";
 import {
-  isDecidable,
+  canCounter,
+  canDecide,
+  isOpen,
   TRADE_BADGE_TONE,
   tradeCash,
   tradeSides,
@@ -94,10 +96,14 @@ export default async function TradeDetailPage({
   const theirs = sides.theirs[0] ?? null;
   const currency = request.currency ?? "SAR";
 
-  const decide =
-    isDecidable(request.status) &&
-    (sides.isRequester ? request.status === "countered" : true);
-  const canCounter = isDecidable(request.status) && !sides.isRequester;
+  /*
+    The layout follows the trade, the buttons follow the viewer. Both parties
+    need the comparison and the cash while a trade is open; only one of them can
+    act on it, and which one changes with the state (see `canDecide`).
+  */
+  const decide = isOpen(request.status);
+  const canAnswer = canDecide(request.status, sides.isRequester);
+  const offerCounter = canCounter(request.status, sides.isRequester);
   const canCancel = request.status === "pending" && sides.isRequester;
 
   const myLeg = (request.shipments ?? []).find((s) =>
@@ -288,38 +294,47 @@ export default async function TradeDetailPage({
                 </div>
 
                 {/* Actions — 651:6378 */}
-                <div className="flex flex-col gap-4 sm:flex-row">
-                  <form action={acceptTradeAction} className="flex-1">
-                    <input type="hidden" name="locale" value={locale} />
-                    <input type="hidden" name="id" value={request.id} />
-                    <button
-                      type="submit"
-                      className="bg-aqua text-on-accent h-13 w-full rounded-12 text-[15px] font-semibold"
-                    >
-                      {t("acceptTrade")}
-                    </button>
-                  </form>
+                {canAnswer ? (
+                  <div className="flex flex-col gap-4 sm:flex-row">
+                    <form action={acceptTradeAction} className="flex-1">
+                      <input type="hidden" name="locale" value={locale} />
+                      <input type="hidden" name="id" value={request.id} />
+                      <button
+                        type="submit"
+                        className="bg-aqua text-on-accent h-13 w-full rounded-12 text-[15px] font-semibold"
+                      >
+                        {t("acceptTrade")}
+                      </button>
+                    </form>
 
-                  {canCounter && (
-                    <Link
-                      href={`/account/trades/${request.id}/counter`}
-                      className="bg-base border-line text-ink flex h-13 flex-1 items-center justify-center rounded-12 border text-[15px] font-semibold"
-                    >
-                      {t("counterOffer")}
-                    </Link>
-                  )}
+                    {offerCounter && (
+                      <Link
+                        href={`/account/trades/${request.id}/counter`}
+                        className="bg-base border-line text-ink flex h-13 flex-1 items-center justify-center rounded-12 border text-[15px] font-semibold"
+                      >
+                        {t("counterOffer")}
+                      </Link>
+                    )}
 
-                  <form action={declineTradeAction} className="flex-1">
-                    <input type="hidden" name="locale" value={locale} />
-                    <input type="hidden" name="id" value={request.id} />
-                    <button
-                      type="submit"
-                      className="bg-error-tint2 text-error h-13 w-full rounded-12 text-[15px] font-semibold"
-                    >
-                      {t("decline")}
-                    </button>
-                  </form>
-                </div>
+                    <form action={declineTradeAction} className="flex-1">
+                      <input type="hidden" name="locale" value={locale} />
+                      <input type="hidden" name="id" value={request.id} />
+                      <button
+                        type="submit"
+                        className="bg-error-tint2 text-error h-13 w-full rounded-12 text-[15px] font-semibold"
+                      >
+                        {t("decline")}
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  /* Countered and waiting on them — the frame draws no state for this. */
+                  <p className="bg-surface text-ink-secondary rounded-12 p-4 text-[13px]">
+                    {t("awaitingTheirAnswer", {
+                      handle: handle ?? t("theSeller"),
+                    })}
+                  </p>
+                )}
 
                 <p className="text-ink-tertiary text-[12px]">
                   {t("escrowNotice")}

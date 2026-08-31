@@ -155,9 +155,27 @@ export function isHistoryStatus(status: string): boolean {
   return HISTORY_STATUSES.includes(status as TradeStatus);
 }
 
-/** Only these two states accept accept / counter / decline. */
-export function isDecidable(status: string): boolean {
+/** Still being negotiated, so the compare-and-decide layout is the right one. */
+export function isOpen(status: string): boolean {
   return status === "pending" || status === "countered";
+}
+
+/**
+ * Who may answer a trade, which is a matter of role as well as state.
+ *
+ * `pending` is the responder's to accept, counter or decline; `countered` is
+ * the requester's to accept or decline, and the responder can do nothing more
+ * until they do. The API enforces both — a responder accepting their own
+ * counter is *"Only the requester can accept a counter-offer"*, and countering
+ * a countered trade is *"Trade request is not pending"*.
+ */
+export function canDecide(status: string, isRequester: boolean): boolean {
+  return status === "pending" ? !isRequester : status === "countered" && isRequester;
+}
+
+/** A counter answers a pending offer, and only the target listing's owner sends one. */
+export function canCounter(status: string, isRequester: boolean): boolean {
+  return status === "pending" && !isRequester;
 }
 
 /**

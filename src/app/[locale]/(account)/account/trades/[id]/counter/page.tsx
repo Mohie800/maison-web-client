@@ -11,7 +11,7 @@ import { CashBreakdown } from "@/features/trade/components/cash-breakdown";
 import { CounterAmount } from "@/features/trade/components/counter-amount";
 import { TradeThumb } from "@/features/trade/components/trade-item";
 import {
-  isDecidable,
+  canCounter,
   toNumber,
   tradeCash,
   tradeSides,
@@ -51,8 +51,9 @@ export default async function CounterOfferPage({
   if (!request) notFound();
 
   const sides = tradeSides(request, user.id);
-  // Only the target listing's owner can counter, and only while it is open.
-  if (sides.isRequester || !isDecidable(request.status)) {
+  // The target listing's owner answers a pending offer; a countered one is the
+  // requester's to answer, and countering it again is a 400.
+  if (!canCounter(request.status, sides.isRequester)) {
     redirect(`/${locale}/account/trades/${id}`);
   }
 

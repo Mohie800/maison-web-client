@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import {
   apiGet,
   apiToken,
+  ensureCounteredTrade,
   expectNoErrorBoundary,
   FIXTURES,
   signIn,
@@ -17,100 +18,76 @@ test.describe("trade cash breakdown", () => {
   /**
    * Round 6 made the two totals one signed measurement and added `viewerTotal`
    * (GAP-87) — but they are stored when a trade is priced, not recomputed on
-   * read, so a trade priced before that deploy still carries the old
-   * asymmetric figures. TRD-6396 is one: `responderTotal` is 15 where the fix
-   * would make it −80. This pins the fallback that catches it — when the
-   * stated total disagrees with the rows the frame prints, the rows win.
+   * read, so a trade priced before that deploy still carries the old asymmetric
+   * figures (GAP-95). The breakdown therefore falls back to summing the rows
+   * the frame prints whenever the stated total disagrees with them.
    *
-   * TRD-6396 is countered at SAR 95, and A is the commission payer, so A owes
-   * 95 + 5.20 + 15 = 115.20 and B receives 95 − 15 = 80.
+   * The fixture is found or created rather than hard-coded: a trade expires 24
+   * hours after it opens, and the row this used to name is now `expired`.
    */
-  test("the payer's total is the sum of the printed rows, not requesterTotal", async ({
+  test("the total is the sum of the printed rows on either side", async ({
     page,
     request,
   }) => {
+    const trade = await ensureCounteredTrade(request);
+    test.skip(!trade, "no countered trade could be found or created");
+
     const token = await apiToken(request, "a");
-    test.skip(!token, "could not sign in as the trade requester");
-
-    const trade = await apiGet(
-      request,
-      `/trade-requests/${FIXTURES.counteredTradeId}`,
-      token!,
-    );
-    test.skip(!trade.ok, `fixture trade is gone (${trade.status})`);
-
-    const row = trade.body as {
-      status?: string;
+    const detail = await apiGet(request, `/trade-requests/${trade!.id}`, token!);
+    const row = detail.body as {
       counterAmount?: string;
       commissionAmount?: string;
       commissionPayerId?: string;
       shippingTotal?: string;
       requesterId?: string;
+      payerId?: string;
     };
-    test.skip(
-      row.status !== "countered",
-      `fixture trade is "${row.status}", not "countered" — someone answered it`,
-    );
 
-    await signIn(page, "a");
-    await page.goto(`/en/account/trades/${FIXTURES.counteredTradeId}`);
-    await expectNoErrorBoundary(page);
-
-    const body = page.locator("body");
-    // The requester pays, so the difference is negative and the label says so.
-    await expect(body).toContainText("Cash difference (you pay them)");
-
-    /*
-      The total must be the three printed rows summed. Reading `viewerTotal`
-      off this pre-Round-6 row gives 115.20 for A and 15 for B — right on one
-      side and a whole difference short on the other.
-    */
     const difference = Number(row.counterAmount ?? 0);
     const commission =
       row.commissionPayerId === row.requesterId
         ? Number(row.commissionAmount ?? 0)
         : 0;
     const shippingShare = Number(row.shippingTotal ?? 0) / 2;
-    const expected = difference + commission + shippingShare;
+    // The counter runs towards the requester, so they are owed the difference.
+    const expected = difference - commission - shippingShare;
 
-    const totalRow = page
-      .locator("div", { hasText: /^You’ll pay/ })
-      .last();
-    const printed = await totalRow.innerText();
+    await signIn(page, "a");
+    await page.goto(`/en/account/trades/${trade!.id}`);
+    await expectNoErrorBoundary(page);
+
+    const body = page.locator("body");
+    await expect(body).toContainText("Cash difference (they pay you)");
+
+    const label = expected >= 0 ? "You’ll receive" : "You’ll pay";
+    const printed = await page
+      .locator("div", { hasText: new RegExp(`^${label}`) })
+      .last()
+      .innerText();
     const amount = Number(
       (printed.match(/SAR\s*([\d,]+(?:\.\d+)?)/) ?? [])[1]?.replace(/,/g, ""),
     );
 
     expect(
       amount,
-      `the total should be ${difference} + ${commission} + ${shippingShare}`,
-    ).toBeCloseTo(expected, 2);
+      `the total should be ${difference} − ${commission} − ${shippingShare}`,
+    ).toBeCloseTo(Math.abs(expected), 2);
   });
 
   test("the receiving side is never shown paying", async ({
     page,
     request,
   }) => {
-    const token = await apiToken(request, "b");
-    test.skip(!token, "could not sign in as the trade responder");
+    const trade = await ensureCounteredTrade(request);
+    test.skip(!trade, "no countered trade could be found or created");
 
-    const trade = await apiGet(
-      request,
-      `/trade-requests/${FIXTURES.counteredTradeId}`,
-      token!,
-    );
-    test.skip(!trade.ok, `fixture trade is gone (${trade.status})`);
-    test.skip(
-      (trade.body as { status?: string }).status !== "countered",
-      "fixture trade has moved on",
-    );
-
+    // The responder countered towards the requester, so the responder settles.
     await signIn(page, "b");
-    await page.goto(`/en/account/trades/${FIXTURES.counteredTradeId}`);
+    await page.goto(`/en/account/trades/${trade!.id}`);
     await expectNoErrorBoundary(page);
-
-    // B countered asking to be paid, so B receives.
-    await expect(page.locator("body")).toContainText("Cash difference (they pay you)");
+    await expect(page.locator("body")).toContainText(
+      "Cash difference (you pay them)",
+    );
   });
 });
 

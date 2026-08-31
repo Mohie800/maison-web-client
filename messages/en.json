@@ -2238,6 +2238,7 @@
     "expiresOn": "Expires {date}",
     "acceptTrade": "Accept trade",
     "counterOffer": "Counter offer",
+    "awaitingTheirAnswer": "Countered — waiting for {handle} to accept or decline.",
     "escrowNotice": "Accepting moves both items into Hub escrow. Funds settle once both parties confirm delivery.",
     "timelineTitle": "Trade Timeline",
     "timeline": {

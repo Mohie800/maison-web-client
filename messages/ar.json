@@ -2239,6 +2239,7 @@
     "expiresOn": "ينتهي في {date}",
     "acceptTrade": "قبول المبادلة",
     "counterOffer": "عرض مقابل",
+    "awaitingTheirAnswer": "تم تقديم عرض مقابل — بانتظار رد {handle} بالقبول أو الرفض.",
     "escrowNotice": "القبول ينقل القطعتين إلى ضمان المركز. تُسوّى المبالغ بعد تأكيد الطرفين للاستلام.",
     "timelineTitle": "مسار المبادلة",
     "timeline": {

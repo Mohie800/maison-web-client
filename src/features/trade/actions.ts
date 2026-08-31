@@ -7,6 +7,7 @@ import { ApiError } from "@/lib/api/errors";
 import {
   CARRIER_MAX,
   COUNTER_NOTE_MAX,
+  TRADE_MESSAGE_MAX,
   TRACKING_MAX,
 } from "@/lib/api/schemas/trade";
 
@@ -57,6 +58,11 @@ export async function createTradeRequestAction(
 
   const addressId = String(formData.get("addressId") ?? "").trim();
 
+  const message = String(formData.get("note") ?? "").trim();
+  if (message.length > TRADE_MESSAGE_MAX) {
+    redirect(`${page}?error=noteTooLong`);
+  }
+
   let created: { id?: string } | null = null;
   try {
     created = await serverApiFetch<{ id?: string }>(
@@ -66,6 +72,7 @@ export async function createTradeRequestAction(
         body: {
           offeredListingIds,
           ...(addressId ? { addressId } : {}),
+          ...(message ? { message } : {}),
         },
       },
     );
@@ -90,9 +97,10 @@ export async function counterTradeAction(formData: FormData): Promise<void> {
 
   if (!id) redirect(`/${locale}/account/trades`);
 
+  // Signed since Round 6: positive is the requester paying, negative is us.
   const raw = String(formData.get("amount") ?? "").trim();
   const amount = raw === "" ? null : Number(raw);
-  if (amount !== null && (!Number.isFinite(amount) || amount < 0)) {
+  if (amount !== null && !Number.isFinite(amount)) {
     redirect(`${page}?error=amountInvalid`);
   }
 

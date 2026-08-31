@@ -11,6 +11,7 @@ import {
 import { formatPrice } from "@/lib/format/money";
 import { formatDate, formatDateTime } from "@/lib/format/date";
 import { isCredit } from "@/lib/api/schemas/wallet";
+import { TX_STATUS_TONE, txStatus } from "@/features/wallet/labels";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -31,10 +32,10 @@ import type { Locale } from "@/i18n/routing";
  * rather than printing a bare 0 — the buyer paid it, which the seller can't
  * tell from the number alone.
  *
- * The frame's "Completed" badge has no field behind it (GAP-91). It is true by
- * construction — the ledger only holds settled movements, and money that has
- * not cleared sits in `pendingBalance` instead of as a row — so the badge is
- * rendered rather than dropped.
+ * The frame's status badge reads the transaction's own `status` (GAP-91).
+ * Every row is `completed` today — the ledger holds only settled movements —
+ * and the three other states have no frame, so they follow the same pill on
+ * their own tone.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -57,6 +58,7 @@ export default async function TransactionDetailPage({
   ]);
 
   const credit = isCredit(transaction);
+  const status = txStatus(transaction);
   const currency = transaction.currency ?? wallet.currency ?? "SAR";
   const Icon = credit ? ArrowDownLeft : ArrowUpRight;
   const reasonKey = transaction.reason ?? "";
@@ -208,8 +210,12 @@ export default async function TransactionDetailPage({
                   {transaction.note ?? typeLabel}
                 </p>
                 {/* StatusBdg — 651:10763 */}
-                <span className="bg-action-tint text-action flex h-7 items-center rounded-[14px] px-3.5 text-[12px] font-bold">
-                  {t("detail.completed")}
+                <span
+                  className={`flex h-7 items-center rounded-[14px] px-3.5 text-[12px] font-bold ${
+                    TX_STATUS_TONE[status] ?? "bg-fill-100 text-ink-500"
+                  }`}
+                >
+                  {t(`detail.status.${status}`)}
                 </span>
               </div>
 

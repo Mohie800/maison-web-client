@@ -3,9 +3,8 @@ import { z } from "zod";
 /**
  * `GET /notifications`.
  *
- * ⚠️ The item shape is inferred — no account on dev has a notification, and the
- * OpenAPI document publishes no response schema (GAP-79). Every field is
- * optional and the row renders only what is present.
+ * `NotificationDto` is published, and every event on the platform emits since
+ * Round 6 (GAP-89). Fields stay optional so an unlisted type still renders.
  */
 /**
  * The frame's tabs first, in its order, then the three the API filters on that
@@ -35,11 +34,27 @@ export const CATEGORY_PARAM: Record<NotificationCategory, string> = {
 };
 
 /**
- * `NotificationDto`, published with the Round 5 reply. Two things the earlier
- * guess got wrong: there is no `link` and no `message`. The destination is
- * `payload`, which carries the id of whatever the row is about, and unread is
- * `readAt === null` rather than an `isRead` flag.
+ * `NotificationDto`. There is no `link` and no `message`: `title` is the bold
+ * first line, `body` the second, and the destination is an id on `payload`.
+ * Unread is `readAt === null` rather than an `isRead` flag.
  */
+
+/** Every type the API emits. `PRICE_DROP` and `FLASH_SALE` have no trigger yet. */
+export const NOTIFICATION_TYPES = [
+  "ORDER_PLACED",
+  "ORDER_SHIPPED",
+  "ORDER_DELIVERED",
+  "LISTING_SOLD",
+  "AUCTION_OUTBID",
+  "AUCTION_WON",
+  "TRADE_RECEIVED",
+  "TRADE_ACCEPTED",
+  "NEW_MESSAGE",
+  "NEW_FOLLOWER",
+  "NEW_REVIEW",
+  "PRICE_DROP",
+  "FLASH_SALE",
+] as const;
 export const notificationSchema = z.object({
   id: z.string(),
   type: z.string().nullish(),
@@ -47,14 +62,25 @@ export const notificationSchema = z.object({
   title: z.string().nullish(),
   body: z.string().nullish(),
   imageUrl: z.string().nullish(),
-  /** `{ orderId }`, `{ listingId }`, `{ conversationId }`, `{ tradeId }`, `{ userId }`. */
+  /**
+   * One entity id per type, plus its display number where there is one. The
+   * trade key is `tradeRequestId`; `/docs-json` still documents it as `tradeId`,
+   * so both are read (GAP-96).
+   */
   payload: z
     .object({
       orderId: z.string().nullish(),
+      orderNumber: z.string().nullish(),
+      shipmentId: z.string().nullish(),
       listingId: z.string().nullish(),
       conversationId: z.string().nullish(),
+      messageId: z.string().nullish(),
+      tradeRequestId: z.string().nullish(),
       tradeId: z.string().nullish(),
+      tradeNumber: z.string().nullish(),
+      reviewId: z.string().nullish(),
       userId: z.string().nullish(),
+      dueAt: z.string().nullish(),
     })
     .nullish(),
   /** Null while unread. */
@@ -82,6 +108,17 @@ export const notificationsSchema = z.object({
     .nullish(),
 });
 
+/**
+ * `category` comes back in the API's upper snake case (`PRICE_DROPS`) while the
+ * tabs, tones and badges are keyed by the frame's camel case.
+ */
+export function toCategory(value: unknown): NotificationCategory {
+  const match = NOTIFICATION_CATEGORIES.find(
+    (key) => CATEGORY_PARAM[key] === value,
+  );
+  return match ?? "orders";
+}
+
 export function isNotificationCategory(
   value: unknown,
 ): value is NotificationCategory {
@@ -91,6 +128,9 @@ export function isNotificationCategory(
 /** The frame's coloured badge — `ORDER`, `MSG`, `BID` — keyed by category. */
 export const CATEGORY_TONE: Record<string, string> = {
   orders: "bg-info-tint text-info",
+  messages: "bg-action-tint text-action",
+  auctions: "bg-warn-tint text-amber-deep",
+  trade: "bg-success-tint text-success",
   priceDrops: "bg-error-tint text-error",
   social: "bg-action-tint text-action",
   promotions: "bg-purple-tint text-purple-text",

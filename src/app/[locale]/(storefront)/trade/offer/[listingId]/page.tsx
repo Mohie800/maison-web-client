@@ -7,6 +7,7 @@ import { getListing } from "@/lib/api/endpoints/listings";
 import { getTradeCloset } from "@/lib/api/endpoints/trade";
 import { requireUser } from "@/lib/auth/current-user";
 import { coverPhotoUrl, type Listing } from "@/lib/api/schemas/listing";
+import { TRADE_MESSAGE_MAX } from "@/lib/api/schemas/trade";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
 import { createTradeRequestAction } from "@/features/trade/actions";
@@ -19,12 +20,9 @@ import { OfferPicker } from "@/features/trade/components/offer-picker";
  * refreshed link lands on the same step rather than an empty overlay. Step 1
  * hands its choice to step 2 through the query string.
  *
- * ⚠️ **The note is drawn but cannot be sent.** Both frames collect one, and the
- * field and its preview are built here exactly as designed — but
- * `POST /listings/{id}/trade-requests` accepts only `offeredListingIds` and
- * `addressId`. The row has a `message` column the DTO will not fill, and the
- * API rejects unknown body properties outright, so the note is not transmitted.
- * Raised as GAP-84; see plans/09.
+ * The note is carried on the query string between the steps and sent as
+ * `message` on the create call, which also posts it as the opening line of the
+ * trade conversation (GAP-84).
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -182,6 +180,7 @@ export default async function TradeOfferPage({
                     id="trade-note"
                     name="note"
                     defaultValue={note}
+                    maxLength={TRADE_MESSAGE_MAX}
                     placeholder={t("notePlaceholder")}
                     className="bg-fill-50 border-line-200 text-ink-900 placeholder:text-ink-400 h-[60px] w-full resize-none rounded-10 border pt-2.5 ps-3 text-[12px] outline-none"
                   />
@@ -215,6 +214,7 @@ export default async function TradeOfferPage({
             <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="listingId" value={listingId} />
             <input type="hidden" name="offeredListingIds" value={chosen!.id} />
+            {note && <input type="hidden" name="note" value={note} />}
 
             {/* Row — 651:6217 */}
             <div className="flex w-full items-center gap-3">

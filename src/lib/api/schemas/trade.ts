@@ -82,11 +82,12 @@ export const tradeInspectionSchema = z.object({
 
 export type TradeInspection = z.infer<typeof tradeInspectionSchema>;
 
-/** Ids and a value only — the offered listings are not joined (GAP-83). */
+/** Each offered item carries the same card `GET /listings` returns (GAP-83). */
 export const tradeOfferItemSchema = z.object({
   id: z.string(),
   listingId: z.string(),
   valueSnapshot: money,
+  listing: listingSchema.nullish(),
 });
 
 export type TradeOfferItem = z.infer<typeof tradeOfferItemSchema>;
@@ -108,6 +109,8 @@ export const tradeRequestSchema = z.object({
   tradeNumber: z.string().nullish(),
   listingId: z.string(),
   requesterId: z.string(),
+  /** The target listing's owner. Stated since Round 6 rather than inferred. */
+  responderId: z.string().nullish(),
   status: z.string(),
   message: z.string().nullish(),
   counterNote: z.string().nullish(),
@@ -127,8 +130,14 @@ export const tradeRequestSchema = z.object({
   shippingTotal: money,
   commissionAmount: money,
   commissionPayerId: z.string().nullish(),
+  /**
+   * Signed, and one measurement on both sides since Round 6: positive means
+   * that party settles it, negative means they are owed it net of their fees.
+   */
   requesterTotal: money,
   responderTotal: money,
+  /** Whichever of the two belongs to the caller. Null on the hub routes. */
+  viewerTotal: money,
   currency: z.string().nullish(),
 
   requesterAddressId: z.string().nullish(),
@@ -148,13 +157,14 @@ export const tradeRequestSchema = z.object({
   escrowReleasedAt: z.string().nullish(),
 
   offerItems: z.array(tradeOfferItemSchema).nullish(),
+  /** The target listing, on the list rows and every mutation response too. */
+  listing: listingSchema.nullish(),
 });
 
 export type TradeRequest = z.infer<typeof tradeRequestSchema>;
 
-/** `GET /trade-requests/{id}` joins the target listing and the hub legs. */
+/** `GET /trade-requests/{id}` adds the hub legs on top of the shared shape. */
 export const tradeRequestDetailSchema = tradeRequestSchema.extend({
-  listing: listingSchema.nullish(),
   shipments: z.array(tradeShipmentSchema).nullish(),
   inspections: z.array(tradeInspectionSchema).nullish(),
 });
@@ -176,7 +186,7 @@ export const tradeCountsSchema = z.object({
 
 export type TradeCounts = z.infer<typeof tradeCountsSchema>;
 
-/** `GET /trade/closet` — a bare array of listing rows, without photos (GAP-83). */
+/** `GET /trade/closet` — a bare array of listing cards, photos and all. */
 export const tradeClosetSchema = z.array(listingSchema);
 
 /** `GET /trade/suggestions?filter=`. */
@@ -194,7 +204,11 @@ export function isSuggestionFilter(
   return (TRADE_SUGGESTION_FILTERS as readonly string[]).includes(value);
 }
 
-/** Both sides of a suggestion are id-only stubs — no title, no photo (GAP-83). */
+/**
+ * Both sides of a suggestion. The ranking fields stayed when Round 6 added
+ * `listing`, so nothing built against them moved; `listing` is null only if a
+ * listing disappears between ranking and serialisation.
+ */
 const suggestionSideSchema = z.object({
   id: z.string(),
   sellerId: z.string().nullish(),
@@ -202,6 +216,7 @@ const suggestionSideSchema = z.object({
   brandId: z.string().nullish(),
   value: z.number().nullish(),
   city: z.string().nullish(),
+  listing: listingSchema.nullish(),
 });
 
 export const tradeSuggestionSchema = z.object({
@@ -221,5 +236,7 @@ export const tradeSuggestionListSchema = z.object({
 });
 
 export const COUNTER_NOTE_MAX = 200;
+/** `CreateTradeRequestDto.message` — the offer note, same limit as the counter's. */
+export const TRADE_MESSAGE_MAX = 200;
 export const CARRIER_MAX = 60;
 export const TRACKING_MAX = 80;

@@ -732,9 +732,27 @@
     },
     "badges": {
       "orders": "ORDER",
+      "messages": "MSG",
+      "auctions": "BID",
+      "trade": "SWAP",
       "priceDrops": "PRICE",
       "social": "SOCIAL",
       "promotions": "OFFER"
+    },
+    "actions": {
+      "ORDER_PLACED": "View order",
+      "ORDER_SHIPPED": "Track order",
+      "ORDER_DELIVERED": "View order",
+      "LISTING_SOLD": "View sale",
+      "AUCTION_OUTBID": "Bid again",
+      "AUCTION_WON": "Pay now",
+      "TRADE_RECEIVED": "View offer",
+      "TRADE_ACCEPTED": "View trade",
+      "NEW_MESSAGE": "Reply",
+      "NEW_FOLLOWER": "View profile",
+      "NEW_REVIEW": "View review",
+      "PRICE_DROP": "View item",
+      "FLASH_SALE": "View item"
     },
     "view": "View",
     "emptyTitle": "Nothing here yet",
@@ -1091,7 +1109,12 @@
       "lineItems": "Items in this order",
       "shippingDeducted": "Shipping deducted",
       "shippingBuyerPaid": "Shipping paid by the buyer",
-      "completed": "Completed",
+      "status": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed",
+        "reversed": "Reversed"
+      },
       "backToWallet": "Back to Wallet",
       "walletBalance": "Wallet Balance",
       "afterThisTransaction": "After this transaction",
@@ -1502,7 +1525,54 @@
     "hubTitle": "Stories",
     "hubBody": "Fresh drops and looks from sellers you follow.",
     "latestTitle": "Latest stories",
-    "hubEmpty": "No stories have been posted yet."
+    "hubEmpty": "No stories have been posted yet.",
+    "compose": {
+      "title1": "Add to Your Story",
+      "title2": "Edit Your Story",
+      "title3": "Preview & Post",
+      "steps": {
+        "choose": "Choose",
+        "edit": "Edit",
+        "preview": "Preview"
+      },
+      "close": "Close",
+      "question": "What would you like to share?",
+      "upload": {
+        "title": "Photo",
+        "body": "Upload an image from your device",
+        "cta": "Upload File"
+      },
+      "fromListing": {
+        "title": "Your Listing",
+        "body": "Feature one of your active listings with price + CTA",
+        "cta": "Choose Listing"
+      },
+      "caption": "Promo text (shown on story)",
+      "captionPlaceholder": "e.g. 50% OFF today only!",
+      "linkProduct": "Link to product (optional)",
+      "linkNone": "Select from your listings…",
+      "duration": "Story duration",
+      "durationOption": "{hours} hours",
+      "audience": "Audience",
+      "audienceOption": {
+        "everyone": "Everyone",
+        "followers": "Followers only"
+      },
+      "next": "Preview Story  >",
+      "ready": "Your story is ready to post!",
+      "summary": "Duration: {hours} hours  ·  Audience: {audience}",
+      "edit": "Edit",
+      "back": "< Back to Edit",
+      "post": "Post Story Now",
+      "posting": "Posting…",
+      "addToBag": "Add to Bag",
+      "noListings": "You have no live listings to feature yet.",
+      "errors": {
+        "badImage": "That file could not be used. Pick a JPEG or PNG image.",
+        "unauthenticated": "Sign in to post a story.",
+        "requestFailed": "Something went wrong. Please try again."
+      }
+    }
   },
   "Categories": {
     "title": "All Categories",
@@ -2227,8 +2297,10 @@
     "theirItemValueInline": "Their item · {amount}",
     "yourItemValueInline": "Your item · {amount}",
     "theyPayYou": "They pay you",
+    "youPayThem": "You pay them",
+    "evenSwap": "Even swap",
     "setToZero": "Set to 0",
-    "counterHelp": "The amount the other side pays you on top of the swap.",
+    "counterHelp": "Positive means they pay you. Negative means you pay them.",
     "updatedBreakdown": "Updated breakdown",
     "addNote": "Add a note (optional)",
     "counterNotePlaceholder": "e.g. Deal! Can you ship by Thursday?",
@@ -2249,7 +2321,7 @@
       "ownListing": "You cannot trade for your own listing.",
       "expired": "This offer has expired.",
       "alreadyResponded": "This offer has already been answered.",
-      "amountInvalid": "Enter a cash amount of zero or more.",
+      "amountInvalid": "Enter a cash amount, positive or negative.",
       "noteTooLong": "That note is too long.",
       "trackingTooLong": "Those tracking details are too long.",
       "notFound": "That trade could not be found.",

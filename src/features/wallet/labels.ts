@@ -1,4 +1,8 @@
-import type { BankAccount, PaymentMethod } from "@/lib/api/schemas/wallet";
+import type {
+  BankAccount,
+  PaymentMethod,
+  WalletTransaction,
+} from "@/lib/api/schemas/wallet";
 
 /**
  * Display labels for saved payment methods and banks.
@@ -44,4 +48,28 @@ export function bankIbanLabel(bank: BankAccount): string {
   if (!bank.iban) return "";
   const iban = bank.iban.replace(/\s+/g, "");
   return `${iban.slice(0, 4)}••••${iban.slice(-4)}`;
+}
+
+/** `status` on a wallet transaction. Unknown values fall back to `completed`. */
+export const TX_STATUSES = [
+  "completed",
+  "pending",
+  "failed",
+  "reversed",
+] as const;
+
+export const TX_STATUS_TONE: Record<string, string> = {
+  completed: "bg-action-tint text-action",
+  pending: "bg-warn-tint text-amber-deep",
+  failed: "bg-error-tint text-error",
+  reversed: "bg-fill-100 text-ink-500",
+};
+
+export function txStatus(
+  transaction: Pick<WalletTransaction, "status">,
+): (typeof TX_STATUSES)[number] {
+  const value = transaction.status ?? "completed";
+  return (TX_STATUSES as readonly string[]).includes(value)
+    ? (value as (typeof TX_STATUSES)[number])
+    : "completed";
 }

@@ -40,10 +40,8 @@ export async function StoriesBar({ groups }: { groups: StoryGroup[] }) {
     });
 
   /**
-   * "Your story" opens your own stories when you have some. The design's `+`
-   * leads to the add-story composer (`651:2162`), which isn't built, and the
-   * stories hub (`651:2045`) isn't either — so with nothing posted the ring is
-   * a label rather than a link to a 404.
+   * "Your story" opens your own stories when you have some, and the composer
+   * (`651:2162`) when you have none — which is what the design's `+` promises.
    */
   const ownGroup = groups.find(
     (group) => group.isSelf || group.userId === viewer?.id,
@@ -53,7 +51,7 @@ export async function StoriesBar({ groups }: { groups: StoryGroup[] }) {
         label: t("yourStory"),
         avatarUrl: resolveMediaUrl(viewer.profilePic),
         initials: initialsOf(viewer.fullName),
-        href: ownGroup ? `/stories/${ownGroup.userId}` : null,
+        href: ownGroup ? `/stories/${ownGroup.userId}` : "/stories/new",
       }
     : null;
 

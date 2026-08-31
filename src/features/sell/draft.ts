@@ -219,15 +219,11 @@ export function stepPatchBody(
   const auction = draft.saleMode === "auction";
   switch (step) {
     case "type":
-      /*
-        `tradeEnabled` is left out: `PATCH /listings/{id}` 500s on it, with
-        either value, while every other field on this body patches cleanly
-        (GAP-92). Sending it would fail the whole step, so the flag is dropped
-        until that is fixed — a listing made here cannot be marked tradeable.
-      */
+      // `tradeEnabled` resolves `saleMode` on the server, as it does on create.
       return {
         isNegotiable: draft.saleMode === "negotiable",
         auctionEnabled: auction,
+        tradeEnabled: draft.tradeEnabled,
       };
     case "details":
       return {
@@ -304,7 +300,8 @@ export function fromListing(
       : listing.isNegotiable
         ? "negotiable"
         : "fixed",
-    tradeEnabled: listing.tradeEnabled === true,
+    // Input only — the server folds it into `saleMode` and stores no column.
+    tradeEnabled: str(listing.saleMode) === "trade",
     price: money(listing.price),
     originalPrice: money(listing.originalPrice),
     quantity: money(listing.quantity),

@@ -28,9 +28,9 @@ interface Payload {
  * nobody opens the bell on pays nothing. The initial unread count comes from
  * the server so the badge is right before any of this runs.
  *
- * The frame's tabs are All / Orders / Messages / Auctions / Trade; the API's
- * categories are ORDERS / PRICE_DROPS / SOCIAL / PROMOTIONS. The tabs are the
- * API's, for the reason recorded in plans/09 C38.
+ * The frame's tabs are All / Orders / Messages / Auctions / Trade; the API
+ * filters on three more. The tabs are the API's, for the reason recorded in
+ * plans/09 C38.
  */
 export function NotificationsMenu({
   initialUnread,
@@ -102,9 +102,11 @@ export function NotificationsMenu({
     try {
       await fetch("/api/proxy/notifications/read-all", { method: "POST" });
       setUnread(0);
+      // Unread is `readAt === null`; there is no `isRead` flag on the row.
+      const readAt = new Date().toISOString();
       setData((prev) =>
         prev
-          ? { ...prev, items: prev.items.map((i) => ({ ...i, isRead: true })) }
+          ? { ...prev, items: prev.items.map((i) => ({ ...i, readAt })) }
           : prev,
       );
     } catch {
@@ -230,7 +232,11 @@ export function NotificationsMenu({
                         ? t(`badges.${key}` as never)
                         : key.toUpperCase()
                     }
-                    viewLabel={t("view")}
+                    actionLabel={(type) =>
+                      t.has(`actions.${type}` as never)
+                        ? t(`actions.${type}` as never)
+                        : t("view")
+                    }
                     onNavigate={() => setOpen(false)}
                   />
                 </div>

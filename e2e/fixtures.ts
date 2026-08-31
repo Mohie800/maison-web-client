@@ -13,6 +13,8 @@ export const ACCOUNTS = {
   a: { email: "trade0830a@demo.maison", password: "Maison@2026" },
   /** Responder on TRD-6396; the one who countered. */
   b: { email: "trade0830b@demo.maison", password: "Maison@2026" },
+  /** Carries the only wallet with settled transactions on it. */
+  wallet: { email: "ord0830d@demo.maison", password: "Maison@2026" },
 } as const;
 
 export const FIXTURES = {

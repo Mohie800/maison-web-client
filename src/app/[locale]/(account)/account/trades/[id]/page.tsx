@@ -3,10 +3,7 @@ import { getTranslations, setRequestLocale, getFormatter } from "next-intl/serve
 import { notFound } from "next/navigation";
 import { Check, ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import {
-  getTradeListingIndex,
-  getTradeRequest,
-} from "@/lib/api/endpoints/trade";
+import { getTradeRequest } from "@/lib/api/endpoints/trade";
 import { requireUser } from "@/lib/auth/current-user";
 import type { Listing } from "@/lib/api/schemas/listing";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
@@ -25,7 +22,6 @@ import {
 } from "@/features/trade/components/trade-item";
 import {
   isDecidable,
-  pickListings,
   TRADE_BADGE_TONE,
   tradeCash,
   tradeSides,
@@ -43,10 +39,10 @@ import {
  *
  * Deviations, recorded in plans/09:
  *
- * - The received-offer frame prints the requester's note and a "Verified swapper
- *   · 4.9 rating · 38 trades" line. There is no note (GAP-84), and the payload
- *   names the counterparty by id only — no rating, no trade count (GAP-83). The
- *   panel renders what the listing's `seller` carries and drops the rest.
+ * - The received-offer frame prints a "Verified swapper · 4.9 rating · 38
+ *   trades" line under the requester. The note is real since Round 6, but no
+ *   rating and no trade count are carried anywhere. The panel renders what the
+ *   listing's `seller` has and drops the rest.
  * - "Est. Delivery" has no field behind it and is omitted; the ship-by deadline,
  *   which is real, takes its row. "Hub Location" is translated copy.
  */
@@ -92,22 +88,10 @@ export default async function TradeDetailPage({
   const request = await getTradeRequest(id);
   if (!request) notFound();
 
-  const index = await getTradeListingIndex().catch(
-    () => new Map<string, Listing>(),
-  );
-  /*
-    The detail endpoint joins the target listing, but that copy carries no
-    `seller` and no `photos` — so it is only a fallback for an id the trade
-    catalogue no longer lists, never a replacement for the richer row.
-  */
-  if (request.listing && !index.has(request.listing.id)) {
-    index.set(request.listing.id, request.listing);
-  }
-
   const sides = tradeSides(request, user.id);
   const cash = tradeCash(request, sides, user.id);
-  const mine = pickListings(sides.myListingIds, index)[0] ?? null;
-  const theirs = pickListings(sides.theirListingIds, index)[0] ?? null;
+  const mine = sides.mine[0] ?? null;
+  const theirs = sides.theirs[0] ?? null;
   const currency = request.currency ?? "SAR";
 
   const decide =
@@ -128,6 +112,11 @@ export default async function TradeDetailPage({
   const steps = tradeTimeline(request, request.shipments ?? []);
   const counterparty = theirs?.seller ?? null;
   const handle = counterparty?.handle ? `@${counterparty.handle}` : null;
+  // The panel is about the other party, so it prints their note: the offer note
+  // for a requester, the counter note for a responder.
+  const counterpartyNote = sides.isRequester
+    ? request.counterNote
+    : request.message;
 
   const condition = (listing: Listing | null) =>
     listing?.condition ? tListing(`conditions.${listing.condition}`) : null;
@@ -265,12 +254,12 @@ export default async function TradeDetailPage({
                       </div>
                     </div>
 
-                    {request.counterNote ? (
+                    {counterpartyNote ? (
                       <p
                         className="text-ink-secondary mt-6 text-[15px]"
                         dir="auto"
                       >
-                        “{request.counterNote}”
+                        “{counterpartyNote}”
                       </p>
                     ) : (
                       <p className="text-ink-tertiary mt-6 text-[15px]">

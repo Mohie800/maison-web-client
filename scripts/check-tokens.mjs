@@ -56,6 +56,8 @@ const BUILTIN_RADII = new Set(["none", "full", "sm", "md", "lg", "xl", "2xl", "3
 const HEX_ALLOWED = new Set([
   "src/features/home/components/ai-search-banner.tsx",
   "src/features/stories/components/story-viewer.tsx",
+  // The composer's phone preview is the viewer's own fixed chrome.
+  "src/features/stories/components/story-composer.tsx",
 ]);
 
 /**

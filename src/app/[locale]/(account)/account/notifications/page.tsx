@@ -128,7 +128,11 @@ export default async function NotificationsPage({
                           ? t(`badges.${key}` as never)
                           : key.toUpperCase()
                       }
-                      viewLabel={t("view")}
+                      actionLabel={(type) =>
+                      t.has(`actions.${type}` as never)
+                        ? t(`actions.${type}` as never)
+                        : t("view")
+                    }
                     />
                   </div>
                 ))

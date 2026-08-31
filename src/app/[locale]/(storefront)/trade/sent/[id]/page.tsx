@@ -2,15 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import {
-  getTradeListingIndex,
-  getTradeRequest,
-} from "@/lib/api/endpoints/trade";
+import { getTradeRequest } from "@/lib/api/endpoints/trade";
 import { requireUser } from "@/lib/auth/current-user";
-import type { Listing } from "@/lib/api/schemas/listing";
 import { formatPrice } from "@/lib/format/money";
 import { TradeThumb } from "@/features/trade/components/trade-item";
-import { pickListings, tradeCash, tradeSides } from "@/features/trade/helpers";
+import { tradeCash, tradeSides } from "@/features/trade/helpers";
 
 /**
  * Trade offer sent — Figma `651:6269` (Web_Trade_OfferSent).
@@ -37,22 +33,10 @@ export default async function TradeOfferSentPage({
   const request = await getTradeRequest(id);
   if (!request) notFound();
 
-  const index = await getTradeListingIndex().catch(
-    () => new Map<string, Listing>(),
-  );
-  /*
-    The detail endpoint joins the target listing, but that copy carries no
-    `seller` and no `photos` — so it is only a fallback for an id the trade
-    catalogue no longer lists, never a replacement for the richer row.
-  */
-  if (request.listing && !index.has(request.listing.id)) {
-    index.set(request.listing.id, request.listing);
-  }
-
   const sides = tradeSides(request, user.id);
   const cash = tradeCash(request, sides, user.id);
-  const mine = pickListings(sides.myListingIds, index)[0] ?? null;
-  const theirs = pickListings(sides.theirListingIds, index)[0] ?? null;
+  const mine = sides.mine[0] ?? null;
+  const theirs = sides.theirs[0] ?? null;
   const currency = request.currency ?? "SAR";
   const handle = theirs?.seller?.handle ? `@${theirs.seller.handle}` : null;
 

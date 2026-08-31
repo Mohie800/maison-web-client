@@ -1,9 +1,6 @@
 import "server-only";
-import { apiFetch } from "../client";
 import { serverApiFetch } from "../server";
 import { parseResponse } from "../parse";
-import type { Listing } from "../schemas/listing";
-import { paginatedListingsSchema } from "../schemas/listing";
 import {
   tradeClosetSchema,
   tradeCountsSchema,
@@ -75,44 +72,4 @@ export async function getTradeSuggestions(
     data,
     "GET /trade/suggestions",
   );
-}
-
-/**
- * Photos and titles for listings the trade payloads name by id only (GAP-83).
- *
- * `/trade/suggestions` returns `{id, sellerId, categoryId, brandId, value, city}`
- * per side, `/trade/closet` returns listing columns with no `photos`, and the
- * `offerItems` on a trade request carry an id and a value. None of them can fill
- * an item card. `GET /listings` does return `photos`, `seller` and `brand`, so
- * one call over the trade-mode catalogue backfills every id the page needs.
- *
- * Two calls, because a listing leaves `live` for `traded` once a swap completes
- * and history still has to render it. Both are capped at the API's own limit of
- * 100, which covers the current catalogue several times over — this stops being
- * enough long before it stops being correct, hence the gap.
- *
- * Uncached, unlike the catalogue reads it borrows. This resolves specific ids
- * rather than filling a grid, and one of them is often seconds old: with the
- * usual `revalidate: 60` the confirmation page for an offer you just sent
- * renders its own item as "unavailable" from a stale page.
- */
-export async function getTradeListingIndex(): Promise<Map<string, Listing>> {
-  const fetchPage = async (status: string) => {
-    const data = await apiFetch<unknown>("/listings", {
-      params: { saleMode: "trade", status, limit: 100 },
-      cache: "no-store",
-    });
-    return parseResponse(
-      paginatedListingsSchema,
-      data,
-      `GET /listings?saleMode=trade&status=${status}`,
-    ).items;
-  };
-
-  const [live, traded] = await Promise.all([
-    fetchPage("live"),
-    fetchPage("traded"),
-  ]);
-
-  return new Map([...live, ...traded].map((row) => [row.id, row]));
 }

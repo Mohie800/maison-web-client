@@ -101,6 +101,12 @@ export const walletTransactionSchema = z.object({
   id: z.string(),
   /** `credit` adds to the balance, `debit` removes from it. */
   type: z.string(),
+  /**
+   * `completed | pending | failed | reversed`. Every row reads `completed`
+   * today — the ledger only holds settled movements — but the badge is the
+   * field rather than a constant, so it is right on the day that changes.
+   */
+  status: z.string().nullish(),
   reason: z.string().nullish(),
   /** Always the net. `breakdown` explains it rather than replacing it. */
   amount: z.number(),

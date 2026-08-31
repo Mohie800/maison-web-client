@@ -2,10 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale, getFormatter } from "next-intl/server";
 import { Package } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import {
-  getTradeListingIndex,
-  getTradeRequests,
-} from "@/lib/api/endpoints/trade";
+import { getTradeRequests } from "@/lib/api/endpoints/trade";
 import { requireUser } from "@/lib/auth/current-user";
 import {
   HISTORY_STATUSES,
@@ -26,7 +23,6 @@ import {
 } from "@/features/trade/actions";
 import {
   isDecidable,
-  pickListings,
   TRADE_BADGE_TONE,
   tradeCash,
   tradeSides,
@@ -65,10 +61,7 @@ export default async function TradesPage({
       : "received";
   const sent = query.sent === "1";
 
-  const [buckets, index] = await Promise.all([
-    loadTrades(),
-    getTradeListingIndex().catch(() => new Map<string, Listing>()),
-  ]);
+  const buckets = await loadTrades();
 
   const counts = {
     received: buckets.received.length,
@@ -164,9 +157,8 @@ export default async function TradesPage({
               rows.map((request) => {
                 const sides = tradeSides(request, user.id);
                 const cash = tradeCash(request, sides, user.id);
-                const mine = pickListings(sides.myListingIds, index)[0] ?? null;
-                const theirs =
-                  pickListings(sides.theirListingIds, index)[0] ?? null;
+                const mine = sides.mine[0] ?? null;
+                const theirs = sides.theirs[0] ?? null;
                 const currency = request.currency ?? "SAR";
                 const handle = theirs?.seller?.handle
                   ? `@${theirs.seller.handle}`

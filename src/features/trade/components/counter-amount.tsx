@@ -6,33 +6,34 @@ import { useState } from "react";
  * The cash-difference control on Web_Trade_CounterOffer — `651:6412`, with the
  * quick chips at `651:6418`–`651:6427`.
  *
- * The frame takes a signed amount ("Positive = they pay you. Negative = you pay
- * them"), but the API's `amount` is `minimum: 0` and only the target listing's
- * owner may counter — so the cash can only run towards whoever is countering.
- * The chips still nudge in both directions; the value clamps at zero and the
- * tag states the direction rather than offering it as a choice (GAP-85).
+ * Signed the way the frame captions it: you are the target listing's owner, the
+ * only party who can counter, so positive means they pay you and negative means
+ * you pay them. `amount` carries the sign; the API answers with a positive
+ * `counterAmount` and the direction in `payerId` (GAP-85).
  */
 export function CounterAmount({
   name,
   defaultValue,
   currencyLabel,
-  directionLabel,
+  labels,
   resetLabel,
   helpText,
 }: {
   name: string;
   defaultValue: number;
   currencyLabel: string;
-  directionLabel: string;
+  labels: { theyPay: string; youPay: string; even: string };
   resetLabel: string;
   helpText: string;
 }) {
   const [amount, setAmount] = useState(String(defaultValue));
 
+  const value = Number(amount) || 0;
+  const direction =
+    value > 0 ? labels.theyPay : value < 0 ? labels.youPay : labels.even;
+
   const nudge = (by: number) =>
-    setAmount(
-      String(Number(Math.max(0, (Number(amount) || 0) + by).toFixed(2))),
-    );
+    setAmount(String(Number((value + by).toFixed(2))));
 
   return (
     <>
@@ -45,15 +46,21 @@ export function CounterAmount({
           name={name}
           value={amount}
           onChange={(event) =>
-            setAmount(event.target.value.replace(/[^\d.]/g, ""))
+            setAmount(event.target.value.replace(/[^\d.-]/g, ""))
           }
           inputMode="decimal"
           dir="ltr"
           aria-label={helpText}
           className="text-ink ms-4 min-w-0 flex-1 bg-transparent text-[18px] font-semibold outline-none"
         />
-        <span className="bg-success-tint3 text-success flex h-[30px] shrink-0 items-center rounded-8 px-3.5 text-[12px] font-semibold">
-          {directionLabel}
+        <span
+          className={`flex h-[30px] shrink-0 items-center rounded-8 px-3.5 text-[12px] font-semibold ${
+            value < 0
+              ? "bg-warn-tint text-amber-deep"
+              : "bg-success-tint3 text-success"
+          }`}
+        >
+          {direction}
         </span>
       </div>
 

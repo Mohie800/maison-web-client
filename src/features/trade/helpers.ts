@@ -11,13 +11,13 @@ export function toNumber(value: string | number | null | undefined): number {
 
 export interface TradeSides {
   isRequester: boolean;
-  /** Listing ids the viewer is giving up. */
-  myListingIds: string[];
-  /** Listing ids the viewer is receiving. */
-  theirListingIds: string[];
+  /** Cards for what the viewer is giving up. */
+  mine: Listing[];
+  /** Cards for what the viewer is receiving. */
+  theirs: Listing[];
   myValue: number;
   theirValue: number;
-  /** The other party's user id, when the payload names them. */
+  /** The other party's user id. */
   counterpartyId: string | null;
 }
 
@@ -33,17 +33,22 @@ export function tradeSides(
   viewerId: string | null,
 ): TradeSides {
   const isRequester = Boolean(viewerId) && request.requesterId === viewerId;
-  const offered = (request.offerItems ?? []).map((item) => item.listingId);
+  const offered = (request.offerItems ?? [])
+    .map((item) => item.listing)
+    .filter((listing): listing is Listing => Boolean(listing));
+  const target = request.listing ? [request.listing] : [];
 
   return {
     isRequester,
-    myListingIds: isRequester ? offered : [request.listingId],
-    theirListingIds: isRequester ? [request.listingId] : offered,
+    mine: isRequester ? offered : target,
+    theirs: isRequester ? target : offered,
     myValue: toNumber(isRequester ? request.offeredValue : request.targetValue),
     theirValue: toNumber(
       isRequester ? request.targetValue : request.offeredValue,
     ),
-    counterpartyId: isRequester ? null : request.requesterId,
+    counterpartyId: isRequester
+      ? (request.responderId ?? request.listing?.sellerId ?? null)
+      : request.requesterId,
   };
 }
 
@@ -65,16 +70,14 @@ export interface TradeCash {
 /**
  * The Cash breakdown panel — `651:6356`.
  *
- * `counterAmount` replaces `autoDifference` once someone counters. Direction
- * comes from `payerId`; when a counter leaves it null the counter's own
- * semantics decide, since only the target listing's owner can counter and the
- * amount is what they are asking for (GAP-86).
+ * `counterAmount` replaces `autoDifference` once someone counters, and
+ * `payerId` carries the direction — never re-derive it from the item values.
  *
- * The net is summed from the three rows the frame prints rather than read from
- * `requesterTotal` / `responderTotal`. Those two are not symmetric: the payer's
- * total folds the cash difference in (140 + 5.20 + 15 = 160.20) while the
- * receiver's carries only their fees (15), so using them directly would count
- * the difference twice on one side and drop it on the other.
+ * The net is `viewerTotal`, negated: the API signs it positive when the viewer
+ * settles the trade, the panel signs it positive when they are paid. Totals are
+ * stored when a trade is priced, so a row priced before the Round 6 deploy
+ * still carries the old asymmetric figures — hence the fallback to the sum of
+ * the rows the frame prints when the two disagree (GAP-95).
  */
 export function tradeCash(
   request: TradeRequest,
@@ -98,7 +101,7 @@ export function tradeCash(
       difference: 0,
       commission,
       shippingShare,
-      net: -(commission + shippingShare),
+      net: settle(request, -(commission + shippingShare)),
       isEven: true,
       directionUnknown: false,
     };
@@ -118,10 +121,19 @@ export function tradeCash(
     difference,
     commission,
     shippingShare,
-    net: difference - commission - shippingShare,
+    net: settle(request, difference - commission - shippingShare),
     isEven: false,
     directionUnknown,
   };
+}
+
+/** `viewerTotal` when it agrees with the rows above it, the rows when it does not. */
+function settle(request: TradeRequest, rowSum: number): number {
+  if (request.viewerTotal === null || request.viewerTotal === undefined) {
+    return rowSum;
+  }
+  const stated = -toNumber(request.viewerTotal);
+  return Math.abs(stated - rowSum) < 0.01 ? stated : rowSum;
 }
 
 /**
@@ -201,14 +213,4 @@ export function tradeTimeline(
     reached: Boolean(when),
     current: index === lastReached,
   }));
-}
-
-/** Resolves the ids trade payloads carry into renderable cards (GAP-83). */
-export function pickListings(
-  ids: string[],
-  index: Map<string, Listing>,
-): Listing[] {
-  return ids
-    .map((id) => index.get(id))
-    .filter((listing): listing is Listing => Boolean(listing));
 }

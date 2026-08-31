@@ -2,12 +2,8 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import {
-  getTradeListingIndex,
-  getTradeRequest,
-} from "@/lib/api/endpoints/trade";
+import { getTradeRequest } from "@/lib/api/endpoints/trade";
 import { requireUser } from "@/lib/auth/current-user";
-import type { Listing } from "@/lib/api/schemas/listing";
 import { COUNTER_NOTE_MAX } from "@/lib/api/schemas/trade";
 import { formatPrice } from "@/lib/format/money";
 import { counterTradeAction } from "@/features/trade/actions";
@@ -16,7 +12,6 @@ import { CounterAmount } from "@/features/trade/components/counter-amount";
 import { TradeThumb } from "@/features/trade/components/trade-item";
 import {
   isDecidable,
-  pickListings,
   toNumber,
   tradeCash,
   tradeSides,
@@ -31,9 +26,9 @@ import { breakdownLabels } from "../page";
  * counter. Unlike the offer note (GAP-84), this one is real: `note` is on the
  * counter DTO and is sent.
  *
- * The frame's signed input ("Negative = you pay them") is one-directional here,
- * because `amount` is `minimum: 0` and a counter is always the responder asking
- * to be paid — see the CounterAmount component and GAP-85.
+ * The frame's signed input runs both ways since Round 6: `amount` may be
+ * negative, and the responder can counter by offering to pay the difference
+ * down rather than only by asking for more (GAP-85).
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -61,27 +56,16 @@ export default async function CounterOfferPage({
     redirect(`/${locale}/account/trades/${id}`);
   }
 
-  const index = await getTradeListingIndex().catch(
-    () => new Map<string, Listing>(),
-  );
-  /*
-    The detail endpoint joins the target listing, but that copy carries no
-    `seller` and no `photos` — so it is only a fallback for an id the trade
-    catalogue no longer lists, never a replacement for the richer row.
-  */
-  if (request.listing && !index.has(request.listing.id)) {
-    index.set(request.listing.id, request.listing);
-  }
-
   const cash = tradeCash(request, sides, user.id);
-  const mine = pickListings(sides.myListingIds, index)[0] ?? null;
-  const theirs = pickListings(sides.theirListingIds, index)[0] ?? null;
+  const mine = sides.mine[0] ?? null;
+  const theirs = sides.theirs[0] ?? null;
   const currency = request.currency ?? "SAR";
   const handle = theirs?.seller?.handle ? `@${theirs.seller.handle}` : null;
 
-  const startingAmount = Math.abs(
-    toNumber(request.counterAmount ?? request.autoDifference),
-  );
+  // Signed the way the frame reads it: positive is the requester paying us.
+  const settled = toNumber(request.counterAmount ?? request.autoDifference);
+  const startingAmount =
+    request.payerId && request.payerId === user.id ? -settled : settled;
 
   return (
     <div className="bg-surface min-h-screen pb-14">
@@ -150,7 +134,11 @@ export default async function CounterOfferPage({
             name="amount"
             defaultValue={startingAmount}
             currencyLabel={currency}
-            directionLabel={t("theyPayYou")}
+            labels={{
+              theyPay: t("theyPayYou"),
+              youPay: t("youPayThem"),
+              even: t("evenSwap"),
+            }}
             resetLabel={t("setToZero")}
             helpText={t("counterHelp")}
           />

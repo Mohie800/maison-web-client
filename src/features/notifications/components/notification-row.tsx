@@ -1,15 +1,18 @@
 import { Link } from "@/i18n/navigation";
 import {
   CATEGORY_TONE,
+  toCategory,
   type Notification,
 } from "@/lib/api/schemas/notification";
 
 /**
  * The two pieces of `651:1567` that both the dropdown and the full page draw.
  *
- * Kept here rather than in either caller so the row has one definition: the
- * notification payload is inferred (GAP-79), and when it is finally pinned down
- * there should be a single place to correct.
+ * Kept here rather than in either caller so the row has one definition.
+ *
+ * The frame draws a single line of copy; the API sends two, and both carry
+ * information — `title` is "New trade offer", `body` names who and what — so
+ * the row prints both and grows by one line (plans/09).
  */
 
 /** T — `651:1575`. */
@@ -43,31 +46,32 @@ export function NotificationRow({
   item,
   when,
   categoryLabel,
-  viewLabel,
+  actionLabel,
   onNavigate,
 }: {
   item: Notification;
   when: (iso: string) => string;
   categoryLabel: (key: string) => string;
-  viewLabel: string;
+  /** The action button's words, which the frame varies by type ("Track Order"). */
+  actionLabel: (type: string) => string;
   /** Lets the dropdown close itself when a row is followed. */
   onNavigate?: () => void;
 }) {
   const unread = !item.readAt;
-  const category = item.category ?? "orders";
+  const category = toCategory(item.category);
   const tone = CATEGORY_TONE[category] ?? "bg-fill-100 text-ink-700";
-  const text = item.title ?? item.body ?? "";
   /*
-    `payload` is type-specific and carries only an id — the API deliberately
-    keeps the routing ours. Ordered so the most specific destination wins.
+    `payload` carries one entity id per type, so the first that is present is
+    the destination. The API deliberately keeps the routing ours.
   */
   const p = item.payload;
+  const trade = p?.tradeRequestId ?? p?.tradeId;
   const href = p?.orderId
     ? `/account/orders/${p.orderId}`
     : p?.conversationId
       ? `/inbox/${p.conversationId}`
-      : p?.tradeId
-        ? `/account/trades/${p.tradeId}`
+      : trade
+        ? `/account/trades/${trade}`
         : p?.listingId
           ? `/products/${p.listingId}`
           : p?.userId
@@ -85,9 +89,16 @@ export function NotificationRow({
       </span>
 
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <p className="text-ink-700 text-[12px]" dir="auto">
-          {text}
-        </p>
+        {item.title && (
+          <p className="text-ink-900 text-[12px] font-semibold" dir="auto">
+            {item.title}
+          </p>
+        )}
+        {item.body && (
+          <p className="text-ink-700 text-[12px]" dir="auto">
+            {item.body}
+          </p>
+        )}
         {item.createdAt && (
           <p className="text-ink-tertiary text-[10px]">
             {when(item.createdAt)}
@@ -99,7 +110,7 @@ export function NotificationRow({
             onClick={onNavigate}
             className={`flex h-[26px] w-fit items-center rounded-8 px-2.5 text-[10px] font-bold ${tone}`}
           >
-            {viewLabel}
+            {actionLabel(item.type ?? "")}
           </Link>
         )}
       </div>

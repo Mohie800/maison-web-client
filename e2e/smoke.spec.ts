@@ -40,6 +40,7 @@ const PRIVATE_ROUTES = [
   "/account/trades?tab=history",
   "/account/bids",
   "/account/notifications",
+  "/stories/new",
   "/account/settings",
   "/inbox",
   "/inbox?filter=trade",

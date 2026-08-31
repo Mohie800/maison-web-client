@@ -61,7 +61,7 @@ export default async function StoriesHubPage({
         <div className="scrollbar-none mt-8 flex items-start gap-6 overflow-x-auto">
           {viewer && (
             <Link
-              href={own ? `/stories/${own.userId}` : "/stories/new"}
+              href="/stories/new"
               className="flex w-24 shrink-0 flex-col items-center gap-2"
             >
               <span className="border-azure relative flex size-24 items-center justify-center rounded-full border-2 border-dashed">

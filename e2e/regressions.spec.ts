@@ -15,9 +15,12 @@ import {
 
 test.describe("trade cash breakdown", () => {
   /**
-   * `requesterTotal` folds the cash difference in; `responderTotal` does not
-   * (GAP-87). Reading either directly double-counted the difference for the
-   * payer. The net is summed from the three rows the frame prints instead.
+   * Round 6 made the two totals one signed measurement and added `viewerTotal`
+   * (GAP-87) — but they are stored when a trade is priced, not recomputed on
+   * read, so a trade priced before that deploy still carries the old
+   * asymmetric figures. TRD-6396 is one: `responderTotal` is 15 where the fix
+   * would make it −80. This pins the fallback that catches it — when the
+   * stated total disagrees with the rows the frame prints, the rows win.
    *
    * TRD-6396 is countered at SAR 95, and A is the commission payer, so A owes
    * 95 + 5.20 + 15 = 115.20 and B receives 95 − 15 = 80.
@@ -58,10 +61,9 @@ test.describe("trade cash breakdown", () => {
     await expect(body).toContainText("Cash difference (you pay them)");
 
     /*
-      The total must be the three printed rows summed. Reading `requesterTotal`
-      instead happened to give the same number here, but the bug this guards
-      against — counting the difference twice — showed up as a total roughly
-      one difference too large.
+      The total must be the three printed rows summed. Reading `viewerTotal`
+      off this pre-Round-6 row gives 115.20 for A and 15 for B — right on one
+      side and a whole difference short on the other.
     */
     const difference = Number(row.counterAmount ?? 0);
     const commission =
@@ -114,10 +116,11 @@ test.describe("trade cash breakdown", () => {
 
 test.describe("inbox attachments", () => {
   /**
-   * `attachmentUrl` is stored unvalidated — `https://example.com/tracker.png`,
-   * `javascript:alert(1)` and `../../etc/passwd` are all accepted (GAP-88).
-   * Rendering one directly makes the recipient's browser fetch a host the
-   * sender chose. Only `/uploads/` paths may reach an `<img>`.
+   * `POST /conversations/{id}/messages` now rejects anything but a path this
+   * API issued (GAP-88), so no new hostile row can be written. The four probe
+   * rows written before that fix are still in this conversation, and the
+   * client-side guard that keeps them out of an `<img>` stays: only `/uploads/`
+   * paths are rendered, and this pins that.
    */
   test("a hostile attachmentUrl is never rendered", async ({
     page,

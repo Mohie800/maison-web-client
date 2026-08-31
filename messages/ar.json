@@ -733,9 +733,27 @@
     },
     "badges": {
       "orders": "طلب",
+      "messages": "رسالة",
+      "auctions": "مزاد",
+      "trade": "مبادلة",
       "priceDrops": "سعر",
-      "social": "متابعة",
+      "social": "اجتماعي",
       "promotions": "عرض"
+    },
+    "actions": {
+      "ORDER_PLACED": "عرض الطلب",
+      "ORDER_SHIPPED": "تتبّع الطلب",
+      "ORDER_DELIVERED": "عرض الطلب",
+      "LISTING_SOLD": "عرض البيع",
+      "AUCTION_OUTBID": "زايد مرة أخرى",
+      "AUCTION_WON": "ادفع الآن",
+      "TRADE_RECEIVED": "عرض العرض",
+      "TRADE_ACCEPTED": "عرض المبادلة",
+      "NEW_MESSAGE": "رد",
+      "NEW_FOLLOWER": "عرض الملف",
+      "NEW_REVIEW": "عرض التقييم",
+      "PRICE_DROP": "عرض القطعة",
+      "FLASH_SALE": "عرض القطعة"
     },
     "view": "عرض",
     "emptyTitle": "لا شيء بعد",
@@ -1092,7 +1110,12 @@
       "lineItems": "عناصر هذا الطلب",
       "shippingDeducted": "الشحن المخصوم",
       "shippingBuyerPaid": "الشحن يدفعه المشتري",
-      "completed": "مكتملة",
+      "status": {
+        "completed": "مكتملة",
+        "pending": "قيد المعالجة",
+        "failed": "فشلت",
+        "reversed": "معكوسة"
+      },
       "backToWallet": "العودة إلى المحفظة",
       "walletBalance": "رصيد المحفظة",
       "afterThisTransaction": "بعد هذه العملية",
@@ -1503,7 +1526,54 @@
     "hubTitle": "القصص",
     "hubBody": "أحدث القطع والإطلالات من البائعين الذين تتابعهم.",
     "latestTitle": "أحدث القصص",
-    "hubEmpty": "لم تُنشر أي قصص بعد."
+    "hubEmpty": "لم تُنشر أي قصص بعد.",
+    "compose": {
+      "title1": "أضف إلى قصتك",
+      "title2": "حرّر قصتك",
+      "title3": "معاينة ونشر",
+      "steps": {
+        "choose": "اختيار",
+        "edit": "تحرير",
+        "preview": "معاينة"
+      },
+      "close": "إغلاق",
+      "question": "ما الذي تودّ مشاركته؟",
+      "upload": {
+        "title": "صورة",
+        "body": "ارفع صورة من جهازك",
+        "cta": "رفع ملف"
+      },
+      "fromListing": {
+        "title": "إحدى قطعك",
+        "body": "أبرِز إحدى قطعك المعروضة مع السعر وزر الشراء",
+        "cta": "اختر قطعة"
+      },
+      "caption": "نص العرض (يظهر على القصة)",
+      "captionPlaceholder": "مثال: خصم ٥٠٪ اليوم فقط!",
+      "linkProduct": "رابط لقطعة (اختياري)",
+      "linkNone": "اختر من قطعك…",
+      "duration": "مدة القصة",
+      "durationOption": "{hours} ساعة",
+      "audience": "الجمهور",
+      "audienceOption": {
+        "everyone": "الجميع",
+        "followers": "المتابعون فقط"
+      },
+      "next": "معاينة القصة  >",
+      "ready": "قصتك جاهزة للنشر!",
+      "summary": "المدة: {hours} ساعة  ·  الجمهور: {audience}",
+      "edit": "تحرير",
+      "back": "< العودة للتحرير",
+      "post": "انشر القصة الآن",
+      "posting": "جارٍ النشر…",
+      "addToBag": "أضف إلى الحقيبة",
+      "noListings": "لا توجد لديك قطع معروضة بعد.",
+      "errors": {
+        "badImage": "تعذّر استخدام هذا الملف. اختر صورة JPEG أو PNG.",
+        "unauthenticated": "سجّل الدخول لنشر قصة.",
+        "requestFailed": "حدث خطأ ما. حاول مرة أخرى."
+      }
+    }
   },
   "Categories": {
     "title": "كل الفئات",
@@ -2228,8 +2298,10 @@
     "theirItemValueInline": "قطعتهم · {amount}",
     "yourItemValueInline": "قطعتك · {amount}",
     "theyPayYou": "يدفعون لك",
+    "youPayThem": "تدفع لهم",
+    "evenSwap": "مبادلة متعادلة",
     "setToZero": "اجعله ٠",
-    "counterHelp": "المبلغ الذي يدفعه الطرف الآخر لك إضافةً إلى المبادلة.",
+    "counterHelp": "الموجب يعني أنهم يدفعون لك. السالب يعني أنك تدفع لهم.",
     "updatedBreakdown": "التفصيل المحدّث",
     "addNote": "أضف ملاحظة (اختياري)",
     "counterNotePlaceholder": "مثال: اتفقنا! هل يمكن الشحن الخميس؟",
@@ -2250,7 +2322,7 @@
       "ownListing": "لا يمكنك المبادلة على إعلانك الخاص.",
       "expired": "انتهت صلاحية هذا العرض.",
       "alreadyResponded": "تم الرد على هذا العرض مسبقًا.",
-      "amountInvalid": "أدخل مبلغًا يساوي صفرًا أو أكثر.",
+      "amountInvalid": "أدخل مبلغًا نقديًا، موجبًا أو سالبًا.",
       "noteTooLong": "الملاحظة طويلة جدًا.",
       "trackingTooLong": "بيانات التتبّع طويلة جدًا.",
       "notFound": "تعذّر العثور على هذه المبادلة.",

@@ -169,9 +169,26 @@ export const storySchema = z.object({
     .nullish(),
   listingPhotoUrl: z.string().nullish(),
   expiresAt: z.string().nullish(),
+  /** `everyone` on every story written before the column existed (GAP-90). */
+  visibility: z.string().nullish(),
 });
 
 export type Story = z.infer<typeof storySchema>;
+
+/**
+ * `POST /stories` — the composer's two Round 6 fields.
+ *
+ * `durationHours` is a segmented picker of three values, not a timestamp; omit
+ * it and the story lives 30 days, which no frame draws, so the composer always
+ * sends one. `visibility` is enforced on read, not merely recorded.
+ */
+export const STORY_DURATIONS = [12, 24, 48] as const;
+export type StoryDuration = (typeof STORY_DURATIONS)[number];
+
+export const STORY_VISIBILITIES = ["everyone", "followers"] as const;
+export type StoryVisibility = (typeof STORY_VISIBILITIES)[number];
+
+export const STORY_CAPTION_MAX = 200;
 
 /**
  * `GET /stories?groupBy=user` — one row per author, which is the unit the

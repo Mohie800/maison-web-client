@@ -6,14 +6,12 @@ import { getBag } from "@/lib/api/endpoints/checkout";
 import { getUnreadCount } from "@/lib/api/endpoints/conversations";
 import { getNotificationUnreadCount } from "@/lib/api/endpoints/notifications";
 import { resolveMediaUrl } from "@/lib/api/media";
-import {
-  CartFilled,
-  HeartFilled,
-  VisualSearchIcon,
-} from "@/components/icons/header-icons";
+import { CartFilled, HeartFilled } from "@/components/icons/header-icons";
 import { MessagesSquare } from "lucide-react";
 import { BellFilled } from "@/components/icons/header-icons";
 import { NotificationsMenu } from "@/features/notifications/components/notifications-menu";
+import { SearchOverlay } from "@/features/search/components/search-overlay";
+import { getTrendingSearches } from "@/lib/api/endpoints/discovery";
 
 /**
  * Site header — Figma node 651:544.
@@ -48,6 +46,10 @@ export async function SiteHeader() {
   */
   const unreadMessages = user ? await getUnreadCount() : 0;
   const unreadNotifications = user ? await getNotificationUnreadCount() : 0;
+
+  // The search panel's resting state. Cached and public, so it costs the header
+  // nothing per request and degrades to an empty chip row.
+  const trending = await getTrendingSearches().catch(() => []);
 
   return (
     <header className="bg-base border-line-200 sticky top-0 z-40 h-[72px] border-b">
@@ -94,28 +96,35 @@ export async function SiteHeader() {
         <div className="flex-1" />
 
         {/*
-          A GET form so search works without JavaScript and the query lands in
-          the URL, which is what makes results server-rendered and shareable.
+          01_Search (`651:2352`). Still a GET form to /search underneath, so
+          search works with no JavaScript; the panel is an enhancement on top.
         */}
-        <form
-          action="/search"
-          className="bg-surface border-line-200 hidden h-[42px] w-[284px] items-center gap-2 rounded-[21px] border px-4 md:flex"
-        >
-          <input
-            type="search"
-            name="q"
-            placeholder={t("searchPlaceholder")}
-            aria-label={t("searchPlaceholder")}
-            className="text-ink placeholder:text-ink-550 h-full min-w-0 flex-1 bg-transparent text-[14px] outline-none"
-          />
-          <Link
-            href="/search/visual"
-            aria-label={t("visualSearch")}
-            className="text-ink-550 hover:text-action shrink-0"
-          >
-            <VisualSearchIcon className="h-[19px] w-[18px]" />
-          </Link>
-        </form>
+        <SearchOverlay
+          signedIn={Boolean(user)}
+          trending={trending.map((row) => ({
+            term: row.term,
+            formattedCount: row.formattedCount ?? null,
+          }))}
+          labels={{
+            placeholder: t("searchPlaceholder"),
+            visualSearch: t("visualSearch"),
+            search: t("search"),
+            tabs: {
+              products: t("searchTabs.products"),
+              people: t("searchTabs.people"),
+              brands: t("searchTabs.brands"),
+            },
+            recent: t("recentSearches"),
+            clearAll: t("clearAll"),
+            remove: t("removeSearch"),
+            trending: t("trendingNow"),
+            seeAll: t("seeAllResults"),
+            noResults: t("noSearchResults"),
+            official: t("officialStore"),
+            followers: t("followersLabel"),
+            items: t("itemsLabel"),
+          }}
+        />
 
         <Link
           href="/sell"

@@ -237,7 +237,22 @@
     "live": "Live",
     "trendHub": "Trend Hub",
     "sell": "+ Sell",
-    "messages": "Messages"
+    "messages": "Messages",
+    "searchTabs": {
+      "products": "Products",
+      "people": "People",
+      "brands": "Brands"
+    },
+    "recentSearches": "RECENT SEARCHES",
+    "clearAll": "Clear All",
+    "removeSearch": "Remove",
+    "trendingNow": "TRENDING NOW",
+    "seeAllResults": "See all {count} results for “{term}” ›",
+    "noSearchResults": "Nothing matched that.",
+    "officialStore": "Official Store",
+    "followersLabel": "followers",
+    "itemsLabel": "items",
+    "search": "Search"
   },
   "Footer": {
     "tagline": "Saudi Arabia's premier second-hand marketplace.",

@@ -238,7 +238,22 @@
     "live": "مباشر",
     "trendHub": "الأكثر رواجاً",
     "sell": "+ بيع",
-    "messages": "الرسائل"
+    "messages": "الرسائل",
+    "searchTabs": {
+      "products": "المنتجات",
+      "people": "الأشخاص",
+      "brands": "الماركات"
+    },
+    "recentSearches": "عمليات البحث الأخيرة",
+    "clearAll": "مسح الكل",
+    "removeSearch": "إزالة",
+    "trendingNow": "الرائج الآن",
+    "seeAllResults": "عرض كل النتائج ({count}) لـ «{term}» ›",
+    "noSearchResults": "لا توجد نتائج مطابقة.",
+    "officialStore": "متجر رسمي",
+    "followersLabel": "متابع",
+    "itemsLabel": "قطعة",
+    "search": "بحث"
   },
   "Footer": {
     "tagline": "المنصة الرائدة للسلع المستعملة في السعودية.",

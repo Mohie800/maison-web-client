@@ -417,7 +417,11 @@
       "trusted": "HIGHLY TRUSTED",
       "shippingTitle": "Trade shipping",
       "shippingBody": "Shipping cost is split 50/50 between both traders via Maison Sale Hub escrow."
-    }
+    },
+    "bidHistory": "Bid History ({count} bids)",
+    "bidHistoryYou": "You",
+    "bidHistoryBidder": "Bidder {n}",
+    "bidHistoryEmpty": "No bids yet. Be the first."
   },
   "Seller": {
     "tabs": {
@@ -1791,7 +1795,9 @@
       "unauthenticated": "Sign in to place a bid.",
       "requestFailed": "We could not place that bid. Try again."
     },
-    "acceptTermsToBid": "Accept terms to bid"
+    "acceptTermsToBid": "Accept terms to bid",
+    "leadingTitle": "You’re the highest bidder!",
+    "leadingBody": "Your bid of {amount} is currently leading"
   },
   "MyBids": {
     "accountTitle": "My Account",

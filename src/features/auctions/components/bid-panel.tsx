@@ -51,10 +51,13 @@ export function BidPanel({
   snapshot,
   locale,
   termsHref,
+  viewerId,
 }: {
   snapshot: BidPanelSnapshot;
   locale: string;
   termsHref: string;
+  /** Signed-in viewer, so their own bid can be named in the leading banner. */
+  viewerId?: string | null;
 }) {
   const t = useTranslations("AuctionBid");
   const tAuctions = useTranslations("Auctions");
@@ -97,6 +100,10 @@ export function BidPanel({
   const entered = live ? live.auctionEntry != null : null;
   const isLeading = live?.viewer?.isLeading === true;
   const isOutbid = live?.viewer?.isOutbid === true;
+  /* The viewer's own standing bid, for the leading banner — `651:4841`. */
+  const myBid = live?.recentBids?.find(
+    (bid) => bid.bidderId && bid.bidderId === viewerId,
+  );
   const snipeWindow =
     live?.antiSnipeWindowSeconds ?? snapshot.antiSnipeWindowSeconds;
   const snipeExtension =
@@ -108,7 +115,35 @@ export function BidPanel({
   const belowFloor = Number.isFinite(bidNumber) && bidNumber < minNextBid;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div
+      className={`flex flex-col gap-4 ${
+        isLeading
+          ? "bg-success-tint border-action rounded-16 border-[1.5px] p-5"
+          : ""
+      }`}
+    >
+      {/* Banner — 651:4837. PDP_Auction_HighestBidder (`651:4802`) turns the
+          leading chip into a banner and tints the whole panel. */}
+      {isLeading && (
+        <div className="bg-action flex items-center gap-3 rounded-12 px-4 py-3">
+          <span className="bg-base text-action flex size-7 shrink-0 items-center justify-center rounded-[14px] text-[12px] font-bold">
+            ✓
+          </span>
+          <span className="flex min-w-0 flex-col gap-0.5">
+            <span className="text-base text-[15px] font-bold">
+              {t("leadingTitle")}
+            </span>
+            {myBid && (
+              <span className="text-base text-[12px]">
+                {t("leadingBody", {
+                  amount: formatPrice(num(myBid.amount), snapshot.currency),
+                })}
+              </span>
+            )}
+          </span>
+        </div>
+      )}
+
       {/* Timer — 651:4738 */}
       {endsAt && (
         <div className="bg-warn-tint4 border-gold flex items-center gap-4 rounded-[14px] border p-4">

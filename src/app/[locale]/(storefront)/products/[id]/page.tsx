@@ -25,9 +25,11 @@ import { ProductTabs } from "@/features/catalog/components/product-tabs";
 import { ProductReviews } from "@/features/catalog/components/product-reviews";
 import { getListingReviews } from "@/lib/api/endpoints/reviews";
 import { ProductAttributes } from "@/features/catalog/components/product-attributes";
+import { getCurrentUser } from "@/lib/auth/current-user";
 import { getShippingOptions } from "@/lib/api/endpoints/checkout";
 import { amountOf } from "@/lib/api/schemas/auction";
 import { BidPanel } from "@/features/auctions/components/bid-panel";
+import { BidHistory } from "@/features/auctions/components/bid-history";
 import { TradePanel } from "@/features/trade/components/trade-panel";
 import type { Locale } from "@/i18n/routing";
 
@@ -106,12 +108,14 @@ export default async function ProductPage({
   const tListing = await getTranslations("Listing");
   const activeLocale = (await getLocale()) as Locale;
 
-  const [related, shippingOptions, reviews] = await Promise.all([
+  const [related, shippingOptions, reviews, currentUser] = await Promise.all([
     getRelatedListings(listing, 4),
     // Real delivery options rather than the design's hardcoded examples.
     getShippingOptions().catch(() => []),
     /* Public since GAP-71. A failure here must not take the product page down. */
     getListingReviews(id).catch(() => ({ items: [], total: 0 })),
+    /* Only to name the viewer's own bid in the auction panel's banner. */
+    getCurrentUser(),
   ]);
 
   /*
@@ -274,6 +278,7 @@ export default async function ProductPage({
             <BidPanel
               snapshot={bidSnapshot(listing)}
               locale={locale}
+              viewerId={currentUser?.id ?? null}
               termsHref={`/${locale}/auctions/${listing.id}/terms`}
             />
           )}
@@ -454,6 +459,23 @@ export default async function ProductPage({
           },
         ]}
       />
+
+      {/* Bid History — 651:4903, drawn under PDP_Auction_HighestBidder. */}
+      {isAuction && (
+        <BidHistory
+          listingId={listing.id}
+          currency={listing.currency ?? "SAR"}
+          viewerId={currentUser?.id ?? null}
+          viewerName={currentUser?.fullName ?? null}
+          locale={activeLocale}
+          labels={{
+            title: t("bidHistory"),
+            you: t("bidHistoryYou"),
+            bidder: t("bidHistoryBidder"),
+            empty: t("bidHistoryEmpty"),
+          }}
+        />
+      )}
 
       {related.length > 0 && (
         <section className="mt-14">

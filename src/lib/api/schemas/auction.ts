@@ -21,6 +21,13 @@ export const auctionBidSchema = z.object({
   id: z.string().nullish(),
   amount: money,
   createdAt: z.string().nullish(),
+  /**
+   * Who bid, by id alone — a bid carries no joined bidder. That is the right
+   * call for an auction and it is what the frame draws: everyone but the viewer
+   * is an anonymous "Bidder NN" (`651:4918`).
+   */
+  bidderId: z.string().nullish(),
+  isAutoBid: z.boolean().nullish(),
   bidder: z
     .object({
       id: z.string().nullish(),

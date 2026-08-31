@@ -418,7 +418,11 @@
       "trusted": "موثوق جدًا",
       "shippingTitle": "شحن المبادلة",
       "shippingBody": "تُقسم تكلفة الشحن مناصفةً بين الطرفين عبر مركز ميزون سيل بضمان الوسيط."
-    }
+    },
+    "bidHistory": "سجل المزايدات ({count} مزايدة)",
+    "bidHistoryYou": "أنت",
+    "bidHistoryBidder": "مزايد {n}",
+    "bidHistoryEmpty": "لا مزايدات بعد. كن الأول."
   },
   "Seller": {
     "tabs": {
@@ -1792,7 +1796,9 @@
       "unauthenticated": "سجّل الدخول للمزايدة.",
       "requestFailed": "تعذّر تسجيل المزايدة. حاول مرة أخرى."
     },
-    "acceptTermsToBid": "اقبل الشروط للمزايدة"
+    "acceptTermsToBid": "اقبل الشروط للمزايدة",
+    "leadingTitle": "أنت صاحب أعلى مزايدة!",
+    "leadingBody": "مزايدتك البالغة {amount} هي الأعلى حاليًا"
   },
   "MyBids": {
     "accountTitle": "حسابي",

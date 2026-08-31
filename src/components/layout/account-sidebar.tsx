@@ -19,6 +19,7 @@ import { signOutAction } from "@/features/auth/sign-out";
  */
 const NAV = [
   { key: "dashboard", href: "/account" },
+  { key: "profile", href: "/account/profile" },
   { key: "orders", href: "/account/orders" },
   { key: "wishlist", href: "/account/wishlist" },
   { key: "wallet", href: "/account/wallet" },

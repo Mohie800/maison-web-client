@@ -16,6 +16,8 @@ const money = z.union([z.string(), z.number()]).nullish();
 /** Denormalised counters that ride along on the profile. See the caveat below. */
 export const sellerStatsSchema = z.object({
   items: z.number().nullish(),
+  /** Live only — `items` is everything the seller has ever listed. */
+  itemsLive: z.number().nullish(),
   followers: z.number().nullish(),
   following: z.number().nullish(),
   rating: z.union([z.string(), z.number()]).nullish(),

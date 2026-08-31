@@ -32,6 +32,8 @@ const PUBLIC_ROUTES = [
 const PRIVATE_ROUTES = [
   "/account",
   "/account/orders",
+  "/account/profile",
+  "/account/profile?tab=sold",
   "/account/wishlist",
   "/account/wallet",
   "/account/coupons",

@@ -648,7 +648,8 @@
       "notifications": "الإشعارات",
       "settings": "الإعدادات",
       "signOut": "تسجيل الخروج",
-      "referrals": "ادعُ صديقًا"
+      "referrals": "ادعُ صديقًا",
+      "profile": "ملفي"
     }
   },
   "Dashboard": {
@@ -2550,5 +2551,35 @@
     "saveFailed": "تعذّر الحفظ. حاول مرة أخرى.",
     "previewTitle": "ما يراه المتسوقون أثناء غيابك",
     "previewDefault": "هذا البائع في استراحة ولا يستقبل طلبات جديدة حاليًا."
+  },
+  "OwnProfile": {
+    "memberSince": "عضو منذ {date}",
+    "verified": "موثّق",
+    "editProfile": "تعديل الملف",
+    "publicPage": "الصفحة العامة",
+    "stats": {
+      "listed": "معروضة",
+      "sold": "مباعة",
+      "rating": "التقييم"
+    },
+    "tabs": {
+      "shop": "المتجر",
+      "listed": "المعروضة",
+      "sold": "المباعة",
+      "purchased": "المشتراة",
+      "trades": "المبادلات",
+      "auctions": "المزادات",
+      "reviews": "التقييمات",
+      "wishlist": "المفضلة"
+    },
+    "listedItems": "القطع المعروضة ({count})",
+    "soldItems": "القطع المباعة ({count})",
+    "emptyListed": "لا توجد قطع معروضة بعد.",
+    "emptySold": "لم تبع أي قطعة بعد.",
+    "startSelling": "أضف قطعة",
+    "status": {
+      "live": "معروض",
+      "pending": "قيد المراجعة"
+    }
   }
 }

@@ -647,7 +647,8 @@
       "notifications": "Notifications",
       "settings": "Settings",
       "signOut": "Sign Out",
-      "referrals": "Refer a Friend"
+      "referrals": "Refer a Friend",
+      "profile": "My Profile"
     }
   },
   "Dashboard": {
@@ -2549,5 +2550,35 @@
     "saveFailed": "That could not be saved. Please try again.",
     "previewTitle": "What shoppers see while you’re away",
     "previewDefault": "This seller is on a break and not accepting new orders right now."
+  },
+  "OwnProfile": {
+    "memberSince": "Member since {date}",
+    "verified": "VERIFIED",
+    "editProfile": "Edit profile",
+    "publicPage": "Public page",
+    "stats": {
+      "listed": "Listed",
+      "sold": "Sold",
+      "rating": "Rating"
+    },
+    "tabs": {
+      "shop": "Shop",
+      "listed": "Listed",
+      "sold": "Sold",
+      "purchased": "Purchased",
+      "trades": "Trades",
+      "auctions": "Auctions",
+      "reviews": "Reviews",
+      "wishlist": "Wishlist"
+    },
+    "listedItems": "Listed items ({count})",
+    "soldItems": "Sold items ({count})",
+    "emptyListed": "Nothing listed yet.",
+    "emptySold": "Nothing sold yet.",
+    "startSelling": "List an item",
+    "status": {
+      "live": "LIVE",
+      "pending": "PENDING"
+    }
   }
 }

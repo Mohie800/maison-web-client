@@ -252,7 +252,11 @@
     "officialStore": "Official Store",
     "followersLabel": "followers",
     "itemsLabel": "items",
-    "search": "Search"
+    "search": "Search",
+    "viewAll": "View All ›",
+    "browseCategory": "Browse {name}",
+    "browseAllOfType": "Browse all {count} {type} items",
+    "viewAllOfType": "View All {type}"
   },
   "Footer": {
     "tagline": "Saudi Arabia's premier second-hand marketplace.",

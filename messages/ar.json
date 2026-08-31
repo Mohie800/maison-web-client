@@ -253,7 +253,11 @@
     "officialStore": "متجر رسمي",
     "followersLabel": "متابع",
     "itemsLabel": "قطعة",
-    "search": "بحث"
+    "search": "بحث",
+    "viewAll": "عرض الكل ›",
+    "browseCategory": "تصفّح {name}",
+    "browseAllOfType": "تصفّح كل قطع {type} ({count})",
+    "viewAllOfType": "عرض كل {type}"
   },
   "Footer": {
     "tagline": "المنصة الرائدة للسلع المستعملة في السعودية.",

@@ -11,7 +11,10 @@ import { MessagesSquare } from "lucide-react";
 import { BellFilled } from "@/components/icons/header-icons";
 import { NotificationsMenu } from "@/features/notifications/components/notifications-menu";
 import { SearchOverlay } from "@/features/search/components/search-overlay";
+import { CategoriesDropdown } from "@/features/catalog/components/categories-dropdown";
 import { getTrendingSearches } from "@/lib/api/endpoints/discovery";
+import { getCategoryTree } from "@/lib/api/endpoints/catalog";
+import { categoryTypeForSlug } from "@/features/sell/draft";
 
 /**
  * Site header — Figma node 651:544.
@@ -24,6 +27,7 @@ import { getTrendingSearches } from "@/lib/api/endpoints/discovery";
 export async function SiteHeader() {
   const t = await getTranslations("Chrome");
   const tNav = await getTranslations("Nav");
+  const tSell = await getTranslations("Sell");
   const user = await getCurrentUser();
   const avatar = resolveMediaUrl(user?.profilePic);
 
@@ -50,6 +54,19 @@ export async function SiteHeader() {
   // The search panel's resting state. Cached and public, so it costs the header
   // nothing per request and degrades to an empty chip row.
   const trending = await getTrendingSearches().catch(() => []);
+
+  // Web_CategoriesDropdown (`651:2972`). The tree is cached and public.
+  const tree = await getCategoryTree().catch(() => []);
+  const dropdownCategories = tree.map((row) => ({
+    id: row.id,
+    name: row.name,
+    listingCount: row.listingCount ?? null,
+    type: categoryTypeForSlug(row.slug ?? ""),
+    children: (row.children ?? []).map((child) => ({
+      id: child.id,
+      name: child.name,
+    })),
+  }));
 
   return (
     <header className="bg-base border-line-200 sticky top-0 z-40 h-[72px] border-b">
@@ -85,9 +102,22 @@ export async function SiteHeader() {
           <Link href="/" className="text-action text-[14px] font-semibold">
             {tNav("home")}
           </Link>
-          <Link href="/categories" className="text-ink-500 text-[14px]">
-            {t("categories")}
-          </Link>
+          <CategoriesDropdown
+            categories={dropdownCategories}
+            labels={{
+              trigger: t("categories"),
+              types: {
+                fashion: tSell("types.fashion.name"),
+                electronics: tSell("types.electronics.name"),
+                furniture: tSell("types.furniture.name"),
+                toys_art: tSell("types.toys_art.name"),
+              },
+              viewAll: t("viewAll"),
+              browse: t("browseCategory"),
+              browseAll: t("browseAllOfType"),
+              viewAllType: t("viewAllOfType"),
+            }}
+          />
           <Link href="/brands" className="text-ink-500 text-[14px]">
             {t("brands")}
           </Link>

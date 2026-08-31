@@ -385,7 +385,20 @@
     "shippingEta": "{min}–{max} business days",
     "buyerProtection": "Buyer protection",
     "buyerProtectionBody": "Your payment is held securely until the Maison Hub authenticates the item and it's delivered.",
-    "reviewsEmpty": "No reviews on this item yet."
+    "reviewsEmpty": "No reviews on this item yet.",
+    "trade": {
+      "badge": "TRADE",
+      "estimatedValue": "Estimated value",
+      "estimatedValueHint": "Used to balance cash difference in a swap.",
+      "cashTopUp": "Open to cash top-up on either side.",
+      "requestTrade": "Request trade",
+      "messageSeller": "Message seller",
+      "authenticity": "Authenticity Score",
+      "authenticityOf": "{score} / 100",
+      "trusted": "HIGHLY TRUSTED",
+      "shippingTitle": "Trade shipping",
+      "shippingBody": "Shipping cost is split 50/50 between both traders via Maison Sale Hub escrow."
+    }
   },
   "Seller": {
     "tabs": {

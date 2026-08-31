@@ -386,7 +386,20 @@
     "shippingEta": "{min}–{max} أيام عمل",
     "buyerProtection": "حماية المشتري",
     "buyerProtectionBody": "يُحتفظ بمبلغ الدفع بشكل آمن حتى يوثّق مركز ميزون القطعة ويتم التوصيل.",
-    "reviewsEmpty": "لا توجد تقييمات على هذا العنصر بعد."
+    "reviewsEmpty": "لا توجد تقييمات على هذا العنصر بعد.",
+    "trade": {
+      "badge": "مبادلة",
+      "estimatedValue": "القيمة التقديرية",
+      "estimatedValueHint": "تُستخدم لموازنة فرق المبلغ في المبادلة.",
+      "cashTopUp": "قابل لإضافة مبلغ من أي من الطرفين.",
+      "requestTrade": "اطلب مبادلة",
+      "messageSeller": "راسل البائع",
+      "authenticity": "درجة الأصالة",
+      "authenticityOf": "{score} / ١٠٠",
+      "trusted": "موثوق جدًا",
+      "shippingTitle": "شحن المبادلة",
+      "shippingBody": "تُقسم تكلفة الشحن مناصفةً بين الطرفين عبر مركز ميزون سيل بضمان الوسيط."
+    }
   },
   "Seller": {
     "tabs": {

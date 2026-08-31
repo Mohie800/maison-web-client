@@ -5,7 +5,6 @@ import {
   ShieldCheck,
   Truck,
   Undo2,
-  ArrowLeftRight,
   ChevronRight,
 } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -29,6 +28,7 @@ import { ProductAttributes } from "@/features/catalog/components/product-attribu
 import { getShippingOptions } from "@/lib/api/endpoints/checkout";
 import { amountOf } from "@/lib/api/schemas/auction";
 import { BidPanel } from "@/features/auctions/components/bid-panel";
+import { TradePanel } from "@/features/trade/components/trade-panel";
 import type { Locale } from "@/i18n/routing";
 
 /**
@@ -153,6 +153,12 @@ export default async function ProductPage({
     Boolean(row.value),
   );
   const isAuction = listing.saleMode === "auction" || listing.auctionEnabled;
+  /*
+    Web_PDP_Trade (`651:4611`) is the same page with its buy column replaced:
+    a trade listing is not for sale, so it prints an estimated value rather than
+    a price and offers Request trade rather than Buy now.
+  */
+  const isTrade = listing.saleMode === "trade";
 
   /**
    * Structured data so the listing is eligible for rich results. Only fields we
@@ -244,7 +250,7 @@ export default async function ProductPage({
           </h1>
 
           <div className="flex flex-wrap items-baseline gap-3">
-            {!isAuction && (
+            {!isAuction && !isTrade && (
               <span className="text-[28px] font-bold">
                 {formatPrice(listing.price, listing.currency ?? "SAR")}
               </span>
@@ -272,6 +278,29 @@ export default async function ProductPage({
             />
           )}
 
+          {isTrade && (
+            <TradePanel
+              listingId={listing.id}
+              value={listing.price}
+              currency={listing.currency ?? "SAR"}
+              authenticityScore={listing.authenticityScore}
+              locale={locale}
+              labels={{
+                badge: t("trade.badge"),
+                estimatedValue: t("trade.estimatedValue"),
+                estimatedValueHint: t("trade.estimatedValueHint"),
+                cashTopUp: t("trade.cashTopUp"),
+                requestTrade: t("trade.requestTrade"),
+                messageSeller: t("trade.messageSeller"),
+                authenticity: t("trade.authenticity"),
+                authenticityOf: t("trade.authenticityOf"),
+                trusted: t("trade.trusted"),
+                shippingTitle: t("trade.shippingTitle"),
+                shippingBody: t("trade.shippingBody"),
+              }}
+            />
+          )}
+
           <SellerCard
             seller={listing.seller ?? null}
             sellerId={listing.sellerId}
@@ -286,33 +315,27 @@ export default async function ProductPage({
             Those land with the cart and trade work; here they route to the
             correct next step rather than being dead buttons.
           */}
-          <div className="flex flex-col gap-3">
-            {!isAuction && (
-              <Link
-                href="/cart"
-                className="bg-aqua text-on-accent text-label flex h-12 items-center justify-center rounded-[24px] font-semibold"
-              >
-                {t("buyNow")}
-              </Link>
-            )}
-            {!isAuction && (
-              <Link
-                href="/cart"
-                className="border-ink text-label flex h-12 items-center justify-center rounded-[24px] border font-semibold"
-              >
-                {t("addToBag")}
-              </Link>
-            )}
-            {listing.saleMode === "trade" && (
-              <Link
-                href={`/trade/offer/${listing.id}`}
-                className="border-line text-label text-ink-secondary flex h-12 items-center justify-center gap-2 rounded-[24px] border"
-              >
-                <ArrowLeftRight className="size-4" aria-hidden />
-                {t("offerTrade")}
-              </Link>
-            )}
-          </div>
+          {/* A trade listing's actions are the TradePanel's, above. */}
+          {!isTrade && (
+            <div className="flex flex-col gap-3">
+              {!isAuction && (
+                <Link
+                  href="/cart"
+                  className="bg-aqua text-on-accent text-label flex h-12 items-center justify-center rounded-[24px] font-semibold"
+                >
+                  {t("buyNow")}
+                </Link>
+              )}
+              {!isAuction && (
+                <Link
+                  href="/cart"
+                  className="border-ink text-label flex h-12 items-center justify-center rounded-[24px] border font-semibold"
+                >
+                  {t("addToBag")}
+                </Link>
+              )}
+            </div>
+          )}
 
           <ul className="flex flex-wrap gap-2">
             {[

@@ -22,6 +22,7 @@ const NAV = [
   { key: "orders", href: "/account/orders" },
   { key: "wishlist", href: "/account/wishlist" },
   { key: "wallet", href: "/account/wallet" },
+  { key: "coupons", href: "/account/coupons" },
   { key: "listings", href: "/account/listings" },
   { key: "trades", href: "/account/trades" },
   { key: "bids", href: "/account/bids" },

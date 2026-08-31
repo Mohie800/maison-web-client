@@ -630,6 +630,7 @@
       "orders": "My orders",
       "wishlist": "Wishlist",
       "wallet": "Wallet",
+      "coupons": "My Coupons",
       "listings": "My listings",
       "trades": "Trade history",
       "bids": "My Bids",
@@ -2433,6 +2434,43 @@
       "alreadyInBag": "This bundle is already in your bag.",
       "unavailable": "This bundle is no longer available.",
       "unauthenticated": "Sign in to add a bundle to your bag."
+    }
+  },
+  "Coupons": {
+    "title": "My Coupons",
+    "tabs": {
+      "available": "Available",
+      "used": "Used",
+      "expired": "Expired"
+    },
+    "potentialSavings": "Up to {amount} in savings waiting.",
+    "recentlyUsed": "Recently used",
+    "copy": "Copy code",
+    "copied": "Copied",
+    "expiresOn": "Expires {date}",
+    "usedOn": "Used · {date}",
+    "browse": "Browse items",
+    "offer": {
+      "percent": "{percent}% off your next order",
+      "percentOver": "{percent}% off orders over {min}",
+      "fixed": "{amount} off your next order",
+      "fixedOver": "{amount} off orders over {min}",
+      "freeShipping": "Free shipping on your next order",
+      "freeShippingOver": "Free shipping on orders over {min}"
+    },
+    "empty": {
+      "available": {
+        "title": "No coupons yet",
+        "body": "Offers you can use will appear here."
+      },
+      "used": {
+        "title": "Nothing used yet",
+        "body": "Coupons you redeem will be listed here."
+      },
+      "expired": {
+        "title": "Nothing expired",
+        "body": "Coupons that run out of time end up here."
+      }
     }
   }
 }

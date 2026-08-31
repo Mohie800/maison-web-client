@@ -631,6 +631,7 @@
       "orders": "طلباتي",
       "wishlist": "المفضلة",
       "wallet": "المحفظة",
+      "coupons": "قسائمي",
       "listings": "إعلاناتي",
       "trades": "سجل المقايضات",
       "bids": "مزايداتي",
@@ -2434,6 +2435,43 @@
       "alreadyInBag": "هذه الحزمة موجودة في حقيبتك بالفعل.",
       "unavailable": "لم تعد هذه الحزمة متاحة.",
       "unauthenticated": "سجّل الدخول لإضافة الحزمة."
+    }
+  },
+  "Coupons": {
+    "title": "قسائمي",
+    "tabs": {
+      "available": "متاحة",
+      "used": "مستخدمة",
+      "expired": "منتهية"
+    },
+    "potentialSavings": "وفّر حتى {amount} بانتظارك.",
+    "recentlyUsed": "المستخدمة مؤخرًا",
+    "copy": "نسخ الرمز",
+    "copied": "تم النسخ",
+    "expiresOn": "تنتهي في {date}",
+    "usedOn": "استُخدمت · {date}",
+    "browse": "تصفّح القطع",
+    "offer": {
+      "percent": "خصم {percent}٪ على طلبك القادم",
+      "percentOver": "خصم {percent}٪ على الطلبات فوق {min}",
+      "fixed": "خصم {amount} على طلبك القادم",
+      "fixedOver": "خصم {amount} على الطلبات فوق {min}",
+      "freeShipping": "شحن مجاني على طلبك القادم",
+      "freeShippingOver": "شحن مجاني على الطلبات فوق {min}"
+    },
+    "empty": {
+      "available": {
+        "title": "لا توجد قسائم بعد",
+        "body": "ستظهر هنا العروض التي يمكنك استخدامها."
+      },
+      "used": {
+        "title": "لم تستخدم أي قسيمة",
+        "body": "ستُدرج هنا القسائم التي تستخدمها."
+      },
+      "expired": {
+        "title": "لا توجد قسائم منتهية",
+        "body": "ستنتقل إلى هنا القسائم التي ينتهي وقتها."
+      }
     }
   }
 }

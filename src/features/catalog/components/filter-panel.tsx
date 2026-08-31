@@ -328,6 +328,7 @@ export async function FilterPanel({
           </FilterGroup>
         )}
 
+        {/* PLP_TradeFilter — 651:4179. The whole of that frame is this group. */}
         {FILTER_SUPPORT.saleMode && (
           <FilterGroup title={t("saleType")} open={Boolean(filters.saleMode)}>
             <div className="flex flex-wrap gap-2">

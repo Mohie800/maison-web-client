@@ -26,6 +26,7 @@ const NAV = [
   { key: "listings", href: "/account/listings" },
   { key: "trades", href: "/account/trades" },
   { key: "bids", href: "/account/bids" },
+  { key: "referrals", href: "/account/referrals" },
   { key: "settings", href: "/account/settings" },
 ] as const;
 

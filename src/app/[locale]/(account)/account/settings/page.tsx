@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
+import { serverApiFetch } from "@/lib/api/server";
 import { getCurrentUser } from "@/lib/auth/current-user";
 import { getAddresses, getPaymentMethods } from "@/lib/api/endpoints/checkout";
 import { getWallet } from "@/lib/api/endpoints/wallet";
@@ -36,14 +37,20 @@ export default async function SettingsPage({
 
   const t = await getTranslations("Settings");
 
-  const [user, addresses, cards, wallet, wishlist, prefs] = await Promise.all([
-    getCurrentUser(),
-    getAddresses().catch(() => []),
-    getPaymentMethods().catch(() => []),
-    getWallet().catch(() => null),
-    getWishlist().catch(() => null),
-    getNotificationPreferences().catch(() => null),
-  ]);
+  const [user, addresses, cards, wallet, wishlist, prefs, holiday] =
+    await Promise.all([
+      getCurrentUser(),
+      getAddresses().catch(() => []),
+      getPaymentMethods().catch(() => []),
+      getWallet().catch(() => null),
+      getWishlist().catch(() => null),
+      getNotificationPreferences().catch(() => null),
+      /* WEB_03_VacationMode's state, so the row can say On or Off. */
+      serverApiFetch<{ holidayMode?: boolean | null }>(
+        "/users/me/holiday-mode",
+        { cache: "no-store" },
+      ).catch(() => null),
+    ]);
 
   const card = cards.find((each) => each.isDefault) ?? cards[0] ?? null;
 
@@ -67,6 +74,16 @@ export default async function SettingsPage({
           key: "addresses",
           href: "/checkout/shipping",
           value: t("rows.saved", { count: addresses.length }),
+        },
+        {
+          key: "vacation",
+          href: "/account/settings/vacation",
+          value: holiday?.holidayMode ? t("rows.on") : t("rows.off"),
+        },
+        {
+          key: "referrals",
+          href: "/account/referrals",
+          value: "",
         },
         {
           key: "payment",
@@ -239,6 +256,31 @@ export default async function SettingsPage({
                 ))}
               </section>
             ))}
+
+            {/*
+              Security — 651:9730, from the third Web_Settings frame
+              (`651:9687`). Only one of its three controls exists: there is no
+              2FA endpoint and no biometric one, and no signed-in password
+              change either, so Change password runs the forgot-password flow,
+              which is the one that works. See plans/09 C61.
+            */}
+            <section className="bg-base border-line-200 flex flex-col rounded-12 border">
+              <h2 className="text-ink-400 px-4 pt-5 pb-2 text-[10px] font-bold tracking-[0.8px] uppercase">
+                {t("groups.security")}
+              </h2>
+              <Link
+                href="/forgot-password"
+                className="border-fill-100 flex items-center gap-2 border-b px-4 py-3.5 text-[13px]"
+              >
+                <span className="text-ink-900 flex-1">
+                  {t("rows.changePassword")}
+                </span>
+                <ChevronRight
+                  className="text-ink-400 size-3.5 rtl:rotate-180"
+                  aria-hidden
+                />
+              </Link>
+            </section>
 
             {/* AppCard — 651:9666 */}
             <section className="bg-base border-line-200 flex flex-col rounded-12 border">

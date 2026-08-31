@@ -646,7 +646,8 @@
       "bids": "My Bids",
       "notifications": "Notifications",
       "settings": "Settings",
-      "signOut": "Sign Out"
+      "signOut": "Sign Out",
+      "referrals": "Refer a Friend"
     }
   },
   "Dashboard": {
@@ -676,7 +677,8 @@
       "account": "Account",
       "shopping": "Shopping",
       "general": "General",
-      "appearance": "Appearance"
+      "appearance": "Appearance",
+      "security": "Security"
     },
     "rows": {
       "personal": "Personal Information",
@@ -698,7 +700,12 @@
       "saved": "{count, plural, =0 {None saved} one {# saved} other {# saved}}",
       "items": "{count, plural, =0 {Empty} one {# item} other {# items}}",
       "language": "Language",
-      "privacy": "Privacy & Security"
+      "privacy": "Privacy & Security",
+      "changePassword": "Change password",
+      "vacation": "Vacation mode",
+      "referrals": "Refer a friend",
+      "on": "On",
+      "off": "Off"
     },
     "channels": {
       "push": "Push",
@@ -2484,5 +2491,63 @@
         "body": "Coupons that run out of time end up here."
       }
     }
+  },
+  "NotFound": {
+    "code": "404",
+    "title": "Page not found",
+    "body": "The page you’re looking for doesn’t exist or has been moved.",
+    "body2": "Don’t worry — there’s plenty more to explore!",
+    "home": "Go to Homepage",
+    "categories": "Browse Categories"
+  },
+  "Referrals": {
+    "title": "Refer a Friend",
+    "subtitle": "Grow the Maison Sale community and earn credit for every friend who joins.",
+    "heroKicker": "SPREAD THE LOVE",
+    "heroTitle": "{amount} for you, {amount} for them*",
+    "heroBody": "Refer a friend right now and you’ll both get {amount} as soon as they sign up with your code.",
+    "creditsToSpend": "Credits to spend",
+    "friendsJoined": "Friends joined",
+    "howTitle": "How It Works",
+    "howBody": "Build a more sustainable and inclusive future for fashion by helping expand our resale community",
+    "steps": {
+      "tell": {
+        "title": "You tell your friends",
+        "body": "Share your unique referral code with your inner circle"
+      },
+      "signUp": {
+        "title": "They sign up",
+        "body": "Your friends join Maison Sale using your unique referral code"
+      },
+      "earn": {
+        "title": "You both earn",
+        "body": "You each get {amount} credit to spend on Maison Sale"
+      }
+    },
+    "yourCode": "Your Referral Code",
+    "copy": "Copy",
+    "copied": "Copied",
+    "makeReferral": "Make a Referral",
+    "noCode": "No referral code has been issued for this account yet.",
+    "footnote": "*Credit is added once your friend completes their first purchase."
+  },
+  "Vacation": {
+    "title": "Settings",
+    "subtitle": "Manage your selling preferences, account, and notifications.",
+    "cardTitle": "Vacation Mode",
+    "cardSubtitle": "Taking a break? Turn on vacation mode.",
+    "bodyOn": "While vacation mode is on, your listings are hidden from search, the home feed, and your public profile. Shoppers visiting your profile will see a friendly note that you’re away.",
+    "bodyOff": "Turn it off when you’re back and every item reappears instantly — no need to relist. Enjoy your time off!",
+    "toggleLabel": "Vacation mode",
+    "on": "On",
+    "off": "Off",
+    "noteLabel": "Note for shoppers (optional)",
+    "notePlaceholder": "e.g. Back on the 15th — thanks for your patience!",
+    "save": "Save",
+    "savedOn": "Vacation mode is on. Your listings are hidden.",
+    "savedOff": "Vacation mode is off. Your listings are visible again.",
+    "saveFailed": "That could not be saved. Please try again.",
+    "previewTitle": "What shoppers see while you’re away",
+    "previewDefault": "This seller is on a break and not accepting new orders right now."
   }
 }

@@ -37,6 +37,8 @@ const PRIVATE_ROUTES = [
   "/account/coupons",
   "/account/coupons?tab=used",
   "/email-verified",
+  "/account/referrals",
+  "/account/settings/vacation",
   "/account/listings",
   "/account/trades",
   "/account/trades?tab=sent",

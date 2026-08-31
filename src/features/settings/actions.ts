@@ -96,3 +96,31 @@ export async function saveNotificationsAction(
   revalidatePath(page);
   redirect(`${page}?saved=notifications#notifications`);
 }
+
+/**
+ * `PUT /users/me/holiday-mode` — WEB_03_VacationMode (`656:228`).
+ *
+ * The DTO is `{ enabled, note }`, not the `{ holidayMode, holidayModeNote }`
+ * the *read* answers with, and it is a `PUT` where every other user-scoped
+ * write on this API is a `PATCH`. Both were found by probing; `/docs-json`
+ * describes neither (GAP-99).
+ */
+export async function setVacationModeAction(formData: FormData): Promise<void> {
+  const locale = String(formData.get("locale") ?? "en");
+  const page = `/${locale}/account/settings/vacation`;
+  const enabled = formData.get("enabled") === "on";
+  const note = String(formData.get("note") ?? "").trim();
+
+  try {
+    await serverApiFetch("/users/me/holiday-mode", {
+      method: "PUT",
+      body: { enabled, ...(enabled && note ? { note } : {}) },
+    });
+  } catch {
+    redirect(`${page}?error=requestFailed`);
+  }
+
+  revalidatePath(page);
+  revalidatePath(`/${locale}/account/settings`);
+  redirect(`${page}?saved=1`);
+}

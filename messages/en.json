@@ -208,7 +208,13 @@
     "ruleLength": "At least 8 characters",
     "ruleUppercase": "One uppercase letter",
     "ruleNumber": "One number or symbol",
-    "addPhoto": "Add a profile photo"
+    "addPhoto": "Add a profile photo",
+    "emailVerifiedTitle": "Email verified!",
+    "emailVerifiedBody": "Your email has been successfully verified.",
+    "emailVerifiedBody2": "You can now sign in to your account.",
+    "verified": "Verified",
+    "continueToSignIn": "Continue to Sign In",
+    "continueToApp": "Continue"
   },
   "Validation": {
     "required": "This field is required.",

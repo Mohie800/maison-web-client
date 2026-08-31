@@ -267,6 +267,7 @@ export async function FilterPanel({
           </FilterGroup>
         )}
 
+        {/* PLP_Filter_Discount — 672:214, in context at 672:246. */}
         {FILTER_SUPPORT.discount && (
           <FilterGroup
             title={t("discount")}

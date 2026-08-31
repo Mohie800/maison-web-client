@@ -209,7 +209,13 @@
     "ruleLength": "٨ أحرف على الأقل",
     "ruleUppercase": "حرف كبير واحد",
     "ruleNumber": "رقم أو رمز واحد",
-    "addPhoto": "أضف صورة شخصية"
+    "addPhoto": "أضف صورة شخصية",
+    "emailVerifiedTitle": "تم التحقق من البريد!",
+    "emailVerifiedBody": "تم التحقق من بريدك الإلكتروني بنجاح.",
+    "emailVerifiedBody2": "يمكنك الآن تسجيل الدخول إلى حسابك.",
+    "verified": "موثّق",
+    "continueToSignIn": "المتابعة لتسجيل الدخول",
+    "continueToApp": "متابعة"
   },
   "Validation": {
     "required": "هذا الحقل مطلوب.",

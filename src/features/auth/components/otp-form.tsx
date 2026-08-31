@@ -73,7 +73,11 @@ export function OtpForm() {
     setError(null);
     try {
       const result = await authApi.verifyOtp({ userId, code: value });
-      router.replace(result.profileCompleted ? "/" : "/onboarding/profile");
+      /* Web_EmailVerified (`651:16561`) sits between the two — it used to be
+         skipped entirely. A finished profile still gets the confirmation. */
+      router.replace(
+        result.profileCompleted ? "/email-verified" : "/onboarding/profile",
+      );
       router.refresh();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : t("otpFailed"));

@@ -17,10 +17,11 @@ import {
 test.describe("trade cash breakdown", () => {
   /**
    * Round 6 made the two totals one signed measurement and added `viewerTotal`
-   * (GAP-87) — but they are stored when a trade is priced, not recomputed on
-   * read, so a trade priced before that deploy still carries the old asymmetric
-   * figures (GAP-95). The breakdown therefore falls back to summing the rows
-   * the frame prints whenever the stated total disagrees with them.
+   * (GAP-87); Round 7 made all three a projection over the row's own inputs
+   * (GAP-95), so the panel prints `viewerTotal` and nothing is summed locally.
+   * This pins the two against each other: the total the page prints must still
+   * be the three rows above it, or one of them is being drawn from something
+   * else.
    *
    * The fixture is found or created rather than hard-coded: a trade expires 24
    * hours after it opens, and the row this used to name is now `expired`.

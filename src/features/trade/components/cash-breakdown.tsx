@@ -36,7 +36,6 @@ export function CashBreakdown({
     shipping: string;
     receive: string;
     pay: string;
-    directionUnknown: string;
   };
 }) {
   const card = variant === "card";
@@ -115,12 +114,6 @@ export function CashBreakdown({
           {formatPrice(Math.abs(cash.net), currency)}
         </span>
       </div>
-
-      {cash.directionUnknown && (
-        <p className="text-ink-tertiary mt-3 text-[12px]">
-          {labels.directionUnknown}
-        </p>
-      )}
     </div>
   );
 }

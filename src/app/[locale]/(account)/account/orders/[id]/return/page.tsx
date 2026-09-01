@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { getOrder } from "@/lib/api/endpoints/orders";
 import { getReturnEligibility } from "@/lib/api/endpoints/returns";
 import {
+  INELIGIBLE_REASONS,
   NOTE_MAX,
   RETURN_REASONS,
   requiresPhotos,
@@ -31,20 +32,19 @@ import { ReturnReasonPicker } from "@/features/returns/components/return-reason-
  *   choosing one explains that and points at support instead of failing.
  * - "Preferred refund method" is cut: the DTO has no field for it, so the
  *   choice would not reach anyone.
+ *
+ * One line the frame does not draw: what return shipping costs, and that the
+ * three seller's-fault reasons waive it. Both come from the eligibility
+ * response since GAP-94, and the reason is picked here — so this is where the
+ * buyer can still act on it.
  */
 export const metadata: Metadata = { robots: { index: false } };
-
-const INELIGIBLE_CODES = [
-  "already_returned",
-  "window_closed",
-  "not_delivered",
-] as const;
 
 function ineligibleMessage(
   code: string | null,
   t: (key: string) => string,
 ): string {
-  return (INELIGIBLE_CODES as readonly string[]).includes(code ?? "")
+  return (INELIGIBLE_REASONS as readonly string[]).includes(code ?? "")
     ? t(`ineligible.${code}`)
     : t("ineligible.unknown");
 }
@@ -74,6 +74,8 @@ export default async function ReturnRequestPage({
 
   const currency = eligibility.currency ?? order?.currency ?? "SAR";
   const reference = order?.orderNumber ?? null;
+  const shippingFee = Number(eligibility.returnShippingFee ?? 0) || 0;
+  const waivedFor: string[] = eligibility.returnShippingWaivedFor ?? [];
 
   return (
     <div className="bg-surface pb-16">
@@ -163,7 +165,11 @@ export default async function ReturnRequestPage({
                 value: reason,
                 label: t(`reasons.${reason}`),
                 needsPhotos: requiresPhotos(reason),
+                /* The fee is waived on the seller's-fault reasons — the same
+                   three that require photos, and the API states which (GAP-94). */
+                waivesShipping: waivedFor.includes(reason),
               }))}
+              chargesShipping={shippingFee > 0}
               labels={{
                 legend: t("reasonLegend"),
                 describe: t("describeLegend"),
@@ -175,6 +181,10 @@ export default async function ReturnRequestPage({
                 footnote: t("footnote", {
                   days: eligibility.returnWindowDays ?? 7,
                 }),
+                shippingFee: t("shippingFeeNote", {
+                  amount: formatPrice(shippingFee, currency),
+                }),
+                shippingWaived: t("shippingWaivedNote"),
               }}
               noteMax={NOTE_MAX}
             />

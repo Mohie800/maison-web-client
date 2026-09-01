@@ -233,6 +233,12 @@ export const trendingSearchSchema = z.object({
   growthPercent: z.number().nullish(),
   formattedGrowth: z.string().nullish(),
   source: z.enum(["measured", "seed"]).nullish(),
+  /**
+   * The cover photo of the most-viewed live listing the term matches, resolved
+   * with the same rule searching it runs (GAP-93). Null when the term matches
+   * nothing with a photo — there is no stand-in.
+   */
+  imageUrl: z.string().nullish(),
 });
 
 export type TrendingSearch = z.infer<typeof trendingSearchSchema>;

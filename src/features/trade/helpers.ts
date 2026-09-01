@@ -59,12 +59,10 @@ export interface TradeCash {
   commission: number;
   /** Half of `shippingTotal`; the frame labels it "Your shipping share (50%)". */
   shippingShare: number;
-  /** `difference − commission − shippingShare`. Positive is received. */
+  /** `viewerTotal`, negated. Positive is received. */
   net: number;
   /** True when neither side owes cash on top of the swap. */
   isEven: boolean;
-  /** The direction could not be read from the payload — see GAP-86. */
-  directionUnknown: boolean;
 }
 
 /**
@@ -74,14 +72,13 @@ export interface TradeCash {
  * `payerId` carries the direction — never re-derive it from the item values.
  *
  * The net is `viewerTotal`, negated: the API signs it positive when the viewer
- * settles the trade, the panel signs it positive when they are paid. Totals are
- * stored when a trade is priced, so a row priced before the Round 6 deploy
- * still carries the old asymmetric figures — hence the fallback to the sum of
- * the rows the frame prints when the two disagree (GAP-95).
+ * settles the trade, the panel signs it positive when they are paid. Both
+ * totals and `payerId` are computed on read since Round 7, so a row priced
+ * before that deploy is corrected on the way out (GAP-95) — there is nothing
+ * left here to reconcile or infer.
  */
 export function tradeCash(
   request: TradeRequest,
-  sides: TradeSides,
   viewerId: string | null,
 ): TradeCash {
   const countered =
@@ -95,45 +92,21 @@ export function tradeCash(
     viewerId && request.commissionPayerId === viewerId
       ? toNumber(request.commissionAmount)
       : 0;
+  const net = -toNumber(request.viewerTotal);
 
   if (amount === 0) {
-    return {
-      difference: 0,
-      commission,
-      shippingShare,
-      net: settle(request, -(commission + shippingShare)),
-      isEven: true,
-      directionUnknown: false,
-    };
+    return { difference: 0, commission, shippingShare, net, isEven: true };
   }
 
-  const payerId = request.payerId ?? null;
-  const directionUnknown = payerId === null && countered;
-
-  // Known payer wins; otherwise a counter is the responder asking to be paid.
-  const viewerPays = payerId
-    ? Boolean(viewerId) && payerId === viewerId
-    : sides.isRequester;
-
-  const difference = viewerPays ? -amount : amount;
+  const viewerPays = Boolean(viewerId) && request.payerId === viewerId;
 
   return {
-    difference,
+    difference: viewerPays ? -amount : amount,
     commission,
     shippingShare,
-    net: settle(request, difference - commission - shippingShare),
+    net,
     isEven: false,
-    directionUnknown,
   };
-}
-
-/** `viewerTotal` when it agrees with the rows above it, the rows when it does not. */
-function settle(request: TradeRequest, rowSum: number): number {
-  if (request.viewerTotal === null || request.viewerTotal === undefined) {
-    return rowSum;
-  }
-  const stated = -toNumber(request.viewerTotal);
-  return Math.abs(stated - rowSum) < 0.01 ? stated : rowSum;
 }
 
 /**

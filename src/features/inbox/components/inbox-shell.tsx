@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations, getFormatter } from "next-intl/server";
 import { Mail, MessagesSquare } from "lucide-react";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,7 @@ import { requireUser } from "@/lib/auth/current-user";
 import { markReadAction } from "../actions";
 import { ConversationList } from "./conversation-list";
 import { MessageThread } from "./message-thread";
+import { ThreadPending } from "./thread-pending";
 
 /**
  * Inbox — Figma `651:6796` (Web_Inbox) and `651:6902` (Web_Inbox_Empty).
@@ -27,6 +29,11 @@ import { MessageThread } from "./message-thread";
  * draw them, but they map to `GET /conversations?filter=` and dropping them
  * would leave the filter unreachable exactly when there is something to filter
  * (plans/09 C43).
+ *
+ * The rail's data is awaited and the thread's is not: the open conversation is
+ * two more requests, and blocking the whole page on them is what made moving
+ * between threads redraw the rail. `<Suspense>` keyed on the id streams the
+ * pane instead, so the rail stays put and only the pane it replaces waits.
  */
 export async function InboxShell({
   locale,
@@ -43,8 +50,6 @@ export async function InboxShell({
   );
 
   const t = await getTranslations("Inbox");
-  const tTrade = await getTranslations("Trade");
-  const format = await getFormatter();
 
   const filter: InboxFilter =
     typeof query.filter === "string" && isInboxFilter(query.filter)
@@ -57,13 +62,6 @@ export async function InboxShell({
     getConversations(filter, search || undefined),
     getUnreadCount(),
   ]);
-
-  const [conversation, messages] = activeId
-    ? await Promise.all([getConversation(activeId), getMessages(activeId)])
-    : [null, []];
-
-  // Opening a thread is what marks it read; the rail's badge follows.
-  if (conversation) await markReadAction(conversation.id, locale);
 
   const noConversations =
     list.items.length === 0 && !search && filter === "all";
@@ -147,11 +145,70 @@ export async function InboxShell({
               aria-hidden
             />
 
-            {conversation ? (
+            {activeId ? (
+              <Suspense key={activeId} fallback={<ThreadPending />}>
+                <ThreadPane
+                  id={activeId}
+                  viewerId={user.id}
+                  locale={locale}
+                  error={error}
+                />
+              </Suspense>
+            ) : (
+              <div className="hidden min-w-0 flex-1 flex-col items-center justify-center gap-3 p-10 text-center lg:flex">
+                <MessagesSquare className="text-ink-400 size-8" aria-hidden />
+                <p className="text-ink-400 text-[13px]">{t("pickThread")}</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * The open conversation — its own request pair, so the rail beside it renders
+ * without waiting for them. A thread that has gone (deleted, or not the
+ * viewer's) falls back to the same prompt the index draws.
+ */
+async function ThreadPane({
+  id,
+  viewerId,
+  locale,
+  error,
+}: {
+  id: string;
+  viewerId: string;
+  locale: string;
+  error: string | null;
+}) {
+  const t = await getTranslations("Inbox");
+  const tTrade = await getTranslations("Trade");
+  const format = await getFormatter();
+
+  const [conversation, messages] = await Promise.all([
+    getConversation(id),
+    getMessages(id),
+  ]);
+
+  if (!conversation) {
+    return (
+      <div className="hidden min-w-0 flex-1 flex-col items-center justify-center gap-3 p-10 text-center lg:flex">
+        <MessagesSquare className="text-ink-400 size-8" aria-hidden />
+        <p className="text-ink-400 text-[13px]">{t("pickThread")}</p>
+      </div>
+    );
+  }
+
+  // Opening a thread is what marks it read; the rail's badge follows.
+  await markReadAction(conversation.id, locale);
+
+  return (
               <MessageThread
                 conversation={conversation}
                 messages={messages}
-                viewerId={user.id}
+                viewerId={viewerId}
                 locale={locale}
                 error={error}
                 labels={{
@@ -175,15 +232,5 @@ export async function InboxShell({
                     format.dateTime(new Date(iso), { timeStyle: "short" }),
                 }}
               />
-            ) : (
-              <div className="hidden min-w-0 flex-1 flex-col items-center justify-center gap-3 p-10 text-center lg:flex">
-                <MessagesSquare className="text-ink-400 size-8" aria-hidden />
-                <p className="text-ink-400 text-[13px]">{t("pickThread")}</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
   );
 }

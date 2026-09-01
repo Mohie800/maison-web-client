@@ -13,10 +13,18 @@ import { useState } from "react";
  */
 export function ReturnReasonPicker({
   reasons,
+  chargesShipping,
   labels,
   noteMax,
 }: {
-  reasons: { value: string; label: string; needsPhotos: boolean }[];
+  reasons: {
+    value: string;
+    label: string;
+    needsPhotos: boolean;
+    waivesShipping: boolean;
+  }[];
+  /** False when the API charges no return shipping at all. */
+  chargesShipping: boolean;
   labels: Record<
     | "legend"
     | "describe"
@@ -25,7 +33,9 @@ export function ReturnReasonPicker({
     | "photosLegend"
     | "photosRequired"
     | "submit"
-    | "footnote",
+    | "footnote"
+    | "shippingFee"
+    | "shippingWaived",
     string
   >;
   noteMax: number;
@@ -72,6 +82,14 @@ export function ReturnReasonPicker({
             </label>
           );
         })}
+        {/* What the reason costs, stated before it is picked (GAP-94). */}
+        {chargesShipping && (
+          <p className="text-ink-tertiary text-[12px]">
+            {chosen?.waivesShipping
+              ? labels.shippingWaived
+              : labels.shippingFee}
+          </p>
+        )}
       </fieldset>
 
       {/* DW — 651:8542 */}

@@ -65,7 +65,7 @@ export function NotificationRow({
     the destination. The API deliberately keeps the routing ours.
   */
   const p = item.payload;
-  const trade = p?.tradeRequestId ?? p?.tradeId;
+  const trade = p?.tradeRequestId;
   const href = p?.orderId
     ? `/account/orders/${p.orderId}`
     : p?.conversationId

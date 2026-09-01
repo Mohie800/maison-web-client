@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import type { ConversationRow } from "@/lib/api/schemas/conversation";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { avatarTint, initials, shortAge } from "../helpers";
+import { RowPending } from "./row-pending";
 
 /** badge — `651:6745` (TRADE) and `651:6755` (SELLING). */
 const PERSPECTIVE_TONE: Record<string, string> = {
@@ -82,10 +83,11 @@ export async function ConversationList({
                 <Link
                   href={`/inbox/${row.id}`}
                   aria-current={active ? "page" : undefined}
-                  className={`flex w-full items-center gap-3 px-3.5 py-3 ${
+                  className={`relative flex w-full items-center gap-3 px-3.5 py-3 ${
                     active ? "bg-success-tint" : "hover:bg-fill-50"
                   }`}
                 >
+                  <RowPending />
                   <span
                     className={`flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-20 text-[12px] font-bold ${avatarTint(
                       row.otherUser?.id,

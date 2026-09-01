@@ -3,7 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
 import { VisualSearchIcon } from "@/components/icons/header-icons";
+import { Skeleton, SkeletonRoot } from "@/components/ui/skeleton";
 import { resolveMediaUrl } from "@/lib/api/media";
+import {
+  clearSearches,
+  forgetSearch,
+  recentSearches,
+  type RecentSearch,
+} from "../recent-searches";
 
 /**
  * 01_Search — `651:2352`, all four of its states.
@@ -17,6 +24,11 @@ import { resolveMediaUrl } from "@/lib/api/media";
  * rows carry exactly what the frame prints — `formattedFollowersCount`,
  * `ratingAvg`, `formattedItemsCount`, `brandType`.
  *
+ * **Recent rows are this browser's.** `/search/recent` reads and deletes but
+ * nothing writes it (plans/09 C32), so submitted terms are stored locally and
+ * shown under whatever the server has — which is nothing today, and the moment
+ * it is not, the server's rows come first.
+ *
  * **The form still works with JavaScript off.** It stays a GET form to
  * `/search`, so submitting goes to the full results page as it always did; this
  * panel is an enhancement on top, not a replacement. That is also why Enter is
@@ -29,10 +41,6 @@ type Tab = (typeof TABS)[number];
 interface Trending {
   term: string;
   formattedCount?: string | null;
-}
-interface RecentSearch {
-  id: string;
-  query: string;
 }
 interface ProductHit {
   id: string;
@@ -97,7 +105,16 @@ export function SearchOverlay({
   const [people, setPeople] = useState<PersonHit[]>([]);
   const [brands, setBrands] = useState<BrandHit[]>([]);
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
+  /**
+   * The `tab:term` the rows on screen answer, empty until a query settles.
+   *
+   * A `loading` flag could only be raised once the debounce fired, so for the
+   * 250ms before that the panel had no rows and nothing in flight and drew
+   * "No results" over a search that had not started. This compares what is
+   * shown against what is asked instead, so every gap — the debounce, the
+   * request, a tab switch — is one pending state.
+   */
+  const [shown, setShown] = useState("");
 
   const term = query.trim();
 
@@ -109,6 +126,7 @@ export function SearchOverlay({
       setPeople([]);
       setBrands([]);
       setTotal(0);
+      setShown("");
     }
   };
 
@@ -128,7 +146,13 @@ export function SearchOverlay({
     };
   }, [open]);
 
-  // Recent searches belong to the account, so they load once the panel opens.
+  /* This browser's rows are read when the panel opens, not in an effect. */
+  const openPanel = () => {
+    setOpen(true);
+    setRecent(recentSearches());
+  };
+
+  // The account's rows, if it has any, are laid over this browser's.
   useEffect(() => {
     if (!open || !signedIn || term) return;
     let cancelled = false;
@@ -136,7 +160,13 @@ export function SearchOverlay({
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (cancelled || !data) return;
-        setRecent(data.recentSearches ?? []);
+        const theirs: RecentSearch[] = data.recentSearches ?? [];
+        if (theirs.length === 0) return;
+        const taken = new Set(theirs.map((row) => row.query.toLowerCase()));
+        setRecent((mine) => [
+          ...theirs,
+          ...mine.filter((row) => !taken.has(row.query.toLowerCase())),
+        ]);
       })
       .catch(() => {});
     return () => {
@@ -150,7 +180,7 @@ export function SearchOverlay({
     let cancelled = false;
     const timer = setTimeout(async () => {
       const q = encodeURIComponent(term);
-      if (!cancelled) setLoading(true);
+      const asked = `${tab}:${term}`;
       try {
         if (tab === "products") {
           /*
@@ -181,7 +211,8 @@ export function SearchOverlay({
       } catch {
         // Offline: the panel keeps whatever it had rather than blanking.
       } finally {
-        if (!cancelled) setLoading(false);
+        // Settled either way — a failed request must not pend for ever.
+        if (!cancelled) setShown(asked);
       }
     }, 250);
     return () => {
@@ -195,19 +226,25 @@ export function SearchOverlay({
     router.push(href);
   };
 
-  const forget = async (id: string) => {
-    setRecent((rows) => rows.filter((row) => row.id !== id));
-    await fetch(`/api/proxy/search/recent/${id}`, { method: "DELETE" }).catch(
-      () => {},
-    );
+  /* A local row is dropped from storage; a server row still takes a DELETE. */
+  const forget = async (row: RecentSearch) => {
+    setRecent((rows) => rows.filter((other) => other.id !== row.id));
+    if (row.local) {
+      forgetSearch(row.query);
+      return;
+    }
+    await fetch(`/api/proxy/search/recent/${row.id}`, {
+      method: "DELETE",
+    }).catch(() => {});
   };
 
   const forgetAll = async () => {
-    const ids = recent.map((row) => row.id);
+    const theirs = recent.filter((row) => !row.local);
     setRecent([]);
+    clearSearches();
     await Promise.all(
-      ids.map((id) =>
-        fetch(`/api/proxy/search/recent/${id}`, { method: "DELETE" }).catch(
+      theirs.map((row) =>
+        fetch(`/api/proxy/search/recent/${row.id}`, { method: "DELETE" }).catch(
           () => {},
         ),
       ),
@@ -231,7 +268,7 @@ export function SearchOverlay({
           name="q"
           value={query}
           onChange={(event) => retype(event.target.value)}
-          onFocus={() => setOpen(true)}
+          onFocus={openPanel}
           placeholder={labels.placeholder}
           aria-label={labels.placeholder}
           autoComplete="off"
@@ -307,7 +344,7 @@ export function SearchOverlay({
                       </button>
                       <button
                         type="button"
-                        onClick={() => forget(row.id)}
+                        onClick={() => forget(row)}
                         aria-label={labels.remove}
                         className="text-ink-400 shrink-0 ps-3 text-[12px]"
                       >
@@ -351,7 +388,7 @@ export function SearchOverlay({
           ) : (
             <Results
               tab={tab}
-              loading={loading}
+              pending={shown !== `${tab}:${term}`}
               term={term}
               total={total}
               products={products}
@@ -367,9 +404,35 @@ export function SearchOverlay({
   );
 }
 
+/**
+ * The shape of the rows being fetched, in the tab's own layout — a product grid
+ * or a list. No copy, so it needs no translation and reads the same in both
+ * locales.
+ */
+function ResultsPending({ tab }: { tab: Tab }) {
+  const products = tab === "products";
+  return (
+    <SkeletonRoot className="p-4">
+      <div className={products ? "grid grid-cols-1 gap-2 sm:grid-cols-2" : "flex flex-col gap-3.5"}>
+        {Array.from({ length: products ? 4 : 5 }).map((_, index) => (
+          <div key={index} className="flex items-center gap-2.5">
+            <Skeleton
+              className={products ? "size-13 rounded-8" : "size-11 rounded-10"}
+            />
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <Skeleton className="h-3 w-3/5" />
+              <Skeleton className="h-2.5 w-2/5" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </SkeletonRoot>
+  );
+}
+
 function Results({
   tab,
-  loading,
+  pending,
   term,
   total,
   products,
@@ -379,7 +442,8 @@ function Results({
   onGo,
 }: {
   tab: Tab;
-  loading: boolean;
+  /** Nothing on screen answers this term yet — debounce, request or tab switch. */
+  pending: boolean;
   term: string;
   total: number;
   products: ProductHit[];
@@ -395,7 +459,9 @@ function Results({
         ? people.length
         : brands.length;
 
-  if (!loading && rows === 0) {
+  if (pending) return <ResultsPending tab={tab} />;
+
+  if (rows === 0) {
     return (
       <p className="text-ink-400 px-4 py-8 text-center text-[13px]">
         {labels.noResults}

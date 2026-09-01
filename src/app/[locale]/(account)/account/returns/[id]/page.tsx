@@ -9,6 +9,7 @@ import {
   RETURN_TIMELINE,
   type ReturnStatus,
 } from "@/lib/api/schemas/return";
+import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
 import { cancelReturnAction } from "@/features/returns/actions";
 
@@ -30,10 +31,12 @@ import { cancelReturnAction } from "@/features/returns/actions";
  * from `approved` — there is no notification status — and `pickup_scheduled`
  * is a real state the frame has no step for, so it is added.
  *
- * The frame also puts a thumbnail on the item card and splits the refund into
- * price minus return shipping. `GET /returns/{id}` has no response schema in
- * the OpenAPI document and no return has ever existed on dev, so neither field
- * can be confirmed to exist; both are drawn only when present (GAP-94).
+ * The frame's thumbnail and its three-row refund panel are both real since
+ * GAP-94: each item carries `listingId` and `coverPhotoUrl`, and the refund is
+ * stored as the subtraction it is drawn as — `itemsSubtotal`,
+ * `returnShippingFee` and the net `refundAmount`. The fee row is drawn only
+ * when it was charged; it is waived on the three seller's-fault reasons, and a
+ * "− SAR 0" line would read as a deduction that happened.
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -69,7 +72,10 @@ export default async function ReturnStatusPage({
 
   const status = (request.status ?? "requested") as ReturnStatus;
   const currency = request.currency ?? "SAR";
-  const item = request.items?.[0] ?? null;
+  const items = request.items ?? [];
+  const item = items[0] ?? null;
+  /* Drawn only when it was charged — the fee is waived on a fault reason. */
+  const shippingFee = Number(request.returnShippingFee ?? 0) || 0;
 
   // Each step is reached because it carries a timestamp, never because of
   // where it sits in the list — the return has a column per state.
@@ -205,28 +211,56 @@ export default async function ReturnStatusPage({
 
         <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start">
           <div className="flex min-w-0 flex-1 flex-col gap-6">
-            {/* item — 651:8580 */}
-            {item && (
-              <div className="bg-base border-line flex items-center gap-4 rounded-[14px] border p-4">
-                <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="truncate text-[15px] font-semibold" dir="auto">
-                    {item.titleSnapshot}
+            {/* item — 651:8580, one card per returned line */}
+            {items.map((line, index) => {
+              const photo = resolveMediaUrl(
+                line.coverPhotoUrl ?? line.listing?.coverPhotoUrl,
+              );
+              const title = line.titleSnapshot ?? line.listing?.title ?? "";
+
+              return (
+                <div
+                  key={line.id ?? line.orderItemId ?? index}
+                  className="bg-base border-line flex items-center gap-4 rounded-[14px] border p-4"
+                >
+                  {/* 68px thumb — 651:8581 */}
+                  <span className="bg-fill-100 size-17 shrink-0 overflow-hidden rounded-10">
+                    {photo && (
+                      // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+                      <img src={photo} alt="" className="size-full object-cover" />
+                    )}
                   </span>
-                  <span className="text-ink-secondary text-[13px]" dir="ltr">
-                    {formatPrice(item.priceSnapshot, currency)}
-                  </span>
-                  {request.reason && (
-                    <span className="text-ink-tertiary text-[12px] font-medium">
-                      {t("reasonLine", {
-                        reason: t(
-                          `reasons.${request.reason}` as "reasons.other",
-                        ),
-                      })}
+                  <span className="flex min-w-0 flex-col gap-0.5">
+                    {line.listingId ? (
+                      <Link
+                        href={`/products/${line.listingId}`}
+                        className="truncate text-[15px] font-semibold"
+                        dir="auto"
+                      >
+                        {title}
+                      </Link>
+                    ) : (
+                      <span className="truncate text-[15px] font-semibold" dir="auto">
+                        {title}
+                      </span>
+                    )}
+                    <span className="text-ink-secondary text-[13px]" dir="ltr">
+                      {formatPrice(line.priceSnapshot, currency)}
                     </span>
-                  )}
-                </span>
-              </div>
-            )}
+                    {/* The reason is the return's, so only the first card says it. */}
+                    {index === 0 && request.reason && (
+                      <span className="text-ink-tertiary text-[12px] font-medium">
+                        {t("reasonLine", {
+                          reason: t(
+                            `reasons.${request.reason}` as "reasons.other",
+                          ),
+                        })}
+                      </span>
+                    )}
+                  </span>
+                </div>
+              );
+            })}
 
             {/* timeline — 651:8585 */}
             <section className="bg-base border-line flex flex-col gap-5 rounded-16 border p-6">
@@ -300,6 +334,26 @@ export default async function ReturnStatusPage({
               <section className="bg-surface flex flex-col gap-3 rounded-16 p-5">
                 <h2 className="text-[14px] font-semibold">{t("refundTitle")}</h2>
                 <div className="bg-line-subtle h-px w-full" />
+                {request.itemsSubtotal != null && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-ink-secondary text-[13px]">
+                      {t("refundItemsSubtotal")}
+                    </span>
+                    <span className="text-[13px] font-medium" dir="ltr">
+                      {formatPrice(request.itemsSubtotal, currency)}
+                    </span>
+                  </div>
+                )}
+                {shippingFee > 0 && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-ink-secondary text-[13px]">
+                      {t("refundShippingFee")}
+                    </span>
+                    <span className="text-[13px] font-medium" dir="ltr">
+                      − {formatPrice(shippingFee, currency)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex items-center justify-between gap-3">
                   <span className="text-[15px] font-semibold">
                     {t("refundAmount")}

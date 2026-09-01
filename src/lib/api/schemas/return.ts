@@ -84,10 +84,35 @@ export const eligibleItemSchema = z.object({
 
 export type EligibleItem = z.infer<typeof eligibleItemSchema>;
 
+/**
+ * `ReturnEligibilityItemDto.ineligibleReason`, read off the schema published
+ * with GAP-94. We had been matching on `window_closed`, which this API has
+ * never sent, so an out-of-window item fell through to the generic line.
+ */
+export const INELIGIBLE_REASONS = [
+  "not_delivered",
+  "window_expired",
+  "final_sale",
+  "already_returned",
+] as const;
+
+export type IneligibleReason = (typeof INELIGIBLE_REASONS)[number];
+
 export const returnEligibilitySchema = z.object({
   orderId: z.string().nullish(),
   returnWindowDays: z.number().nullish(),
   items: z.array(eligibleItemSchema),
+  /** The eligible items' prices, summed. */
+  itemsSubtotal: money,
+  /**
+   * What return shipping *would* cost. This endpoint states the fee rather than
+   * applying it, because the reason — which decides the waiver — is chosen on
+   * the next screen (GAP-94).
+   */
+  returnShippingFee: money,
+  /** The reasons that waive the fee: the seller's-fault ones. */
+  returnShippingWaivedFor: z.array(z.string()).nullish(),
+  /** The subtotal, before any deduction. */
   estimatedRefund: money,
   currency: z.string().nullish(),
 });
@@ -102,6 +127,13 @@ export const returnRequestSchema = z.object({
   reasonNote: z.string().nullish(),
   rejectionReason: z.string().nullish(),
   evidencePhotos: z.array(z.string()).nullish(),
+  /**
+   * The three rows the refund panel draws (`651:8609`), since GAP-94:
+   * `refundAmount` is the **net** — `itemsSubtotal − returnShippingFee` — and
+   * the fee is `"0"` when the return is the seller's fault.
+   */
+  itemsSubtotal: money,
+  returnShippingFee: money,
   refundAmount: money,
   /** "Visa •••• 1111" — the method the refund goes back to, already decided. */
   refundMethodSnapshot: z.string().nullish(),
@@ -129,9 +161,20 @@ export const returnRequestSchema = z.object({
     .array(
       z.object({
         id: z.string().nullish(),
+        /** The order line, not the listing — `listingId` reaches the product. */
         orderItemId: z.string().nullish(),
         titleSnapshot: z.string().nullish(),
         priceSnapshot: money,
+        /** Null on a bundle line, and on a listing since deleted (GAP-94). */
+        listingId: z.string().nullish(),
+        coverPhotoUrl: z.string().nullish(),
+        listing: z
+          .object({
+            id: z.string().nullish(),
+            title: z.string().nullish(),
+            coverPhotoUrl: z.string().nullish(),
+          })
+          .nullish(),
       }),
     )
     .nullish(),

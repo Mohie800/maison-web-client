@@ -14,6 +14,7 @@ import { ProductCard } from "@/components/commerce/product-card";
 import { FilterPanel } from "@/features/catalog/components/filter-panel";
 import { SortMenu } from "@/features/catalog/components/sort-menu";
 import { Pagination } from "@/features/catalog/components/pagination";
+import { RecordSearch } from "@/features/search/components/record-search";
 import {
   buildHref,
   PAGE_SIZE,
@@ -44,6 +45,10 @@ import type { Locale } from "@/i18n/routing";
  *   drift within a sprint.
  * - The "Related:" chips have no source — nothing suggests query variants.
  *   `/search/trending` is popular terms, not terms related to yours.
+ *
+ * A submitted term is recorded here rather than in the two search forms, so
+ * every route to a result set counts once and no keystroke ever does — see
+ * `RecordSearch`.
  */
 export async function generateMetadata(props: {
   params: Promise<{ locale: string }>;
@@ -135,6 +140,7 @@ export default async function SearchPage({
 
   return (
     <div className="bg-surface flex flex-col">
+      {filters.search && <RecordSearch term={filters.search} />}
       {/* SS — 651:2624 */}
       <div className="bg-base border-line-200 border-b">
         <div className="mx-auto flex max-w-[1440px] flex-col gap-4 px-4 py-6 lg:px-20">

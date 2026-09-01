@@ -1024,9 +1024,10 @@
     "contactSupportCta": "Contact support",
     "ineligible": {
       "already_returned": "A return has already been requested for this item.",
-      "window_closed": "The return window has closed.",
       "not_delivered": "This item hasn't been delivered yet.",
-      "unknown": "This item can no longer be returned."
+      "unknown": "This item can no longer be returned.",
+      "window_expired": "The return window has closed.",
+      "final_sale": "This item was a final sale and cannot be returned."
     },
     "photosRequired": "Add at least one photo of the problem.",
     "refundIssuedTitle": "Refund issued",
@@ -1036,7 +1037,11 @@
     "summaryProcessed": "Processed on",
     "refundDelay": "It may take 3–5 business days to appear on your statement.",
     "viewOrder": "View order",
-    "backToPurchases": "Back to Purchases"
+    "backToPurchases": "Back to Purchases",
+    "shippingFeeNote": "Return shipping of {amount} is deducted from your refund — unless the item arrived damaged, fake, or not as described.",
+    "shippingWaivedNote": "No return shipping fee for this reason — the full item price is refunded.",
+    "refundItemsSubtotal": "Item price",
+    "refundShippingFee": "Return shipping"
   },
   "Wallet": {
     "title": "Wallet",
@@ -2288,7 +2293,6 @@
     "shippingShare": "Your shipping share (50%)",
     "youllReceive": "You’ll receive",
     "youllPay": "You’ll pay",
-    "directionUnknown": "The API does not say which side owes this counter’s cash; it is shown from the counter’s own terms.",
     "topSeller": "Top seller",
     "noNote": "No note was sent with this offer.",
     "verifiedSwapper": "Verified swapper",

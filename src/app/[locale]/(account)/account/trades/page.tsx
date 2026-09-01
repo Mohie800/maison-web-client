@@ -157,7 +157,7 @@ export default async function TradesPage({
             ) : (
               rows.map((request) => {
                 const sides = tradeSides(request, user.id);
-                const cash = tradeCash(request, sides, user.id);
+                const cash = tradeCash(request, user.id);
                 const mine = sides.mine[0] ?? null;
                 const theirs = sides.theirs[0] ?? null;
                 const currency = request.currency ?? "SAR";

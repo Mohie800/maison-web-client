@@ -1,8 +1,11 @@
 import { Skeleton, SkeletonRoot } from "@/components/ui/skeleton";
 
 /**
- * Inbox shell. Also covers `/inbox/[id]` — same two-pane frame, the thread pane
- * just fills in, so the cascade is correct here.
+ * The inbox index, and only the index — it sits in the `(index)` group so that
+ * `/inbox/[id]` is outside its boundary. It used to cover both, which meant
+ * every move from one thread to another replaced the rail and the open
+ * conversation with bones for as long as the fetch took. A thread route now
+ * streams its own pane instead (`ThreadPending`), leaving the rail alone.
  *
  * Free of data and i18n calls: this file is what the router prefetches.
  */
@@ -43,21 +46,10 @@ export default function Loading() {
             ))}
           </div>
 
-          <div className="hidden min-w-0 flex-1 flex-col gap-4 p-6 lg:flex">
-            <div className="flex items-center gap-3">
-              <Skeleton className="size-11 shrink-0 rounded-full" />
-              <div className="flex flex-col gap-1.5">
-                <Skeleton className="h-3.5 w-32" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-            </div>
-            <Skeleton className="h-px w-full rounded-none" />
-            <div className="flex flex-1 flex-col justify-end gap-3">
-              <Skeleton className="h-12 w-2/3 rounded-12" />
-              <Skeleton className="h-16 w-3/5 self-end rounded-12" />
-              <Skeleton className="h-12 w-1/2 rounded-12" />
-            </div>
-            <Skeleton className="h-12 w-full rounded-12" />
+          {/* No thread is open on this route — the pane is the prompt to pick one. */}
+          <div className="hidden min-w-0 flex-1 flex-col items-center justify-center gap-3 p-10 lg:flex">
+            <Skeleton className="size-8 rounded-8" />
+            <Skeleton className="h-3 w-44" />
           </div>
         </div>
       </div>

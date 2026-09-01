@@ -21,9 +21,11 @@ import type { Locale } from "@/i18n/routing";
  * by the real saving since GAP-33.
  *
  * Trending Categories runs on `GET /search/trending`, measured from real search
- * events since GAP-54. The frame puts a photo on each card; the response
- * carries a term and a count and nothing else, so the card is the frame's
- * coloured band with no image over it (GAP-93). The design's chip is a growth figure ("+234% searches");
+ * events since GAP-54. The frame puts a photo on each card, and `imageUrl` is
+ * it since GAP-93 — the cover of the most-viewed live listing the term matches,
+ * so the picture and the results behind the card are the same thing. A term
+ * that matches nothing keeps the coloured band, which is the empty state.
+ * The design's chip is a growth figure ("+234% searches");
  * it renders when the term has a previous-window baseline, and falls back to
  * the absolute count when it doesn't. A `seed` row — the curated starter list,
  * shown while the current window is still empty — gets no number at all.
@@ -241,25 +243,38 @@ export default async function TrendsPage({
           ) : (
             /* CatRow — 651:1889 */
             <div className="grid gap-6 sm:grid-cols-3 lg:grid-cols-5">
-              {trending.slice(0, 5).map((row, index) => (
-                <Link
-                  key={row.term}
-                  href={`/products?q=${encodeURIComponent(row.term)}`}
-                  className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
-                >
-                  <div className={`h-[120px] ${CATEGORY_BANDS[index % CATEGORY_BANDS.length]}`} />
-                  <div className="flex flex-col items-start gap-1.5 p-3">
-                    <p className="truncate text-[13px] font-semibold" dir="auto">
-                      {row.term}
-                    </p>
-                    <span className="bg-action-tint text-action flex h-[22px] items-center rounded-[11px] px-2 text-[10px] font-bold">
-                      {row.formattedGrowth ??
-                        row.formattedCount ??
-                        t("searches", { count: row.searchCount ?? 0 })}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+              {trending.slice(0, 5).map((row, index) => {
+                const photo = resolveMediaUrl(row.imageUrl);
+                return (
+                  <Link
+                    key={row.term}
+                    href={`/products?q=${encodeURIComponent(row.term)}`}
+                    className="bg-base border-line-200 flex flex-col overflow-hidden rounded-[14px] border"
+                  >
+                    <div className={`h-[120px] ${CATEGORY_BANDS[index % CATEGORY_BANDS.length]}`}>
+                      {photo && (
+                        // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+                        <img
+                          src={photo}
+                          alt=""
+                          className="size-full object-cover"
+                          loading="lazy"
+                        />
+                      )}
+                    </div>
+                    <div className="flex flex-col items-start gap-1.5 p-3">
+                      <p className="truncate text-[13px] font-semibold" dir="auto">
+                        {row.term}
+                      </p>
+                      <span className="bg-action-tint text-action flex h-[22px] items-center rounded-[11px] px-2 text-[10px] font-bold">
+                        {row.formattedGrowth ??
+                          row.formattedCount ??
+                          t("searches", { count: row.searchCount ?? 0 })}
+                      </span>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

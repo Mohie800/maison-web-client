@@ -63,9 +63,9 @@ export const notificationSchema = z.object({
   body: z.string().nullish(),
   imageUrl: z.string().nullish(),
   /**
-   * One entity id per type, plus its display number where there is one. The
-   * trade key is `tradeRequestId`; `/docs-json` still documents it as `tradeId`,
-   * so both are read (GAP-96).
+   * One entity id per type, plus its display number where there is one.
+   * `NotificationDto.payload` in `/docs-json` now tables the complete set of
+   * keys per type, and the trade key is `tradeRequestId` (GAP-96).
    */
   payload: z
     .object({
@@ -76,7 +76,6 @@ export const notificationSchema = z.object({
       conversationId: z.string().nullish(),
       messageId: z.string().nullish(),
       tradeRequestId: z.string().nullish(),
-      tradeId: z.string().nullish(),
       tradeNumber: z.string().nullish(),
       reviewId: z.string().nullish(),
       userId: z.string().nullish(),

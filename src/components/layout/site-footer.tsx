@@ -81,11 +81,13 @@ export async function SiteFooter() {
               default `stretch` would pull the image to the full 320px and
               `w-auto` would resolve against that, squashing the logo.
             */}
+            {/* width/height are the rendered size, not the file's — see the
+                header. */}
             <Image
               src="/brand/logo-dark.png"
               alt="Maison Sale"
-              width={480}
-              height={203}
+              width={154}
+              height={65}
               className="h-[65px] w-auto self-start"
             />
             {/*
@@ -101,15 +103,15 @@ export async function SiteFooter() {
               <Image
                 src="/brand/saudi-made.jpg"
                 alt={t("marks.saudiMade")}
-                width={1280}
-                height={427}
+                width={114}
+                height={38}
                 className="h-[38px] w-auto"
               />
               <Image
                 src="/brand/saudi-tech.jpg"
                 alt={t("marks.saudiTech")}
-                width={882}
-                height={1600}
+                width={35}
+                height={64}
                 className="h-16 w-auto"
               />
             </div>
@@ -146,15 +148,15 @@ export async function SiteFooter() {
           <Image
             src="/brand/iso-9001.png"
             alt={t("marks.iso9001")}
-            width={267}
-            height={280}
+            width={95}
+            height={100}
             className="h-[100px] w-auto"
           />
           <Image
             src="/brand/iso-27001.png"
             alt={t("marks.iso27001")}
-            width={1777}
-            height={1480}
+            width={120}
+            height={100}
             className="h-[100px] w-auto"
           />
         </div>
@@ -169,8 +171,8 @@ export async function SiteFooter() {
             <Image
               src="/brand/zatca-vat.png"
               alt={t("marks.vat")}
-              width={950}
-              height={356}
+              width={96}
+              height={36}
               className="h-9 w-auto"
             />
           </div>

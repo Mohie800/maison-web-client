@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/format/money";
+import { resolveMediaUrl } from "@/lib/api/media";
 import {
   EMPTY_DRAFT,
   SELL_STEPS,
@@ -450,7 +451,7 @@ function Submitted({
             {draft.photos[0] && (
               // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
               <img
-                src={draft.photos[0]}
+                src={resolveMediaUrl(draft.photos[0]) ?? draft.photos[0]}
                 alt=""
                 className="size-full object-cover"
               />

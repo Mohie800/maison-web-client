@@ -126,7 +126,9 @@
     },
     "addToCart": "Add to Cart",
     "buyNow": "Buy Now",
-    "bidNow": "Bid Now"
+    "bidNow": "Bid Now",
+    "addToWishlist": "Add to wishlist",
+    "removeFromWishlist": "Remove from wishlist"
   },
   "Error": {
     "notFoundTitle": "Page not found",
@@ -2544,12 +2546,15 @@
     "off": "Off",
     "noteLabel": "Note for shoppers (optional)",
     "notePlaceholder": "e.g. Back on the 15th — thanks for your patience!",
+    "untilLabel": "Away until (optional)",
+    "untilHint": "Leave empty to stay away until you turn this off.",
     "save": "Save",
     "savedOn": "Vacation mode is on. Your listings are hidden.",
     "savedOff": "Vacation mode is off. Your listings are visible again.",
     "saveFailed": "That could not be saved. Please try again.",
     "previewTitle": "What shoppers see while you’re away",
-    "previewDefault": "This seller is on a break and not accepting new orders right now."
+    "previewDefault": "This seller is on a break and not accepting new orders right now.",
+    "previewUntil": "Back on {date}"
   },
   "OwnProfile": {
     "memberSince": "Member since {date}",

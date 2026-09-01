@@ -1,6 +1,6 @@
-import { Heart } from "lucide-react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { LikeButton } from "@/features/wishlist/components/like-button";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { formatPrice } from "@/lib/format/money";
 import {
@@ -55,7 +55,6 @@ export async function ProductCard({
   badge?: string;
 }) {
   const t = await getTranslations("Listing");
-  const tCommon = await getTranslations("Common");
   const locale = await getLocale();
 
   const image = resolveMediaUrl(card.coverPhotoUrl ?? card.photoUrls?.[0]);
@@ -172,18 +171,14 @@ export async function ProductCard({
             )}
           </div>
 
-          {/*
-            Liking requires a session and a mutation, so the interactive control
-            lands with the wishlist work. Rendered as a link to the product
-            rather than a dead button.
-          */}
-          <Link
-            href={`/products/${card.id}`}
-            aria-label={tCommon("seeAll")}
-            className="bg-fill-100 text-ink-500 hover:text-error flex size-[30px] shrink-0 items-center justify-center rounded-[15px]"
-          >
-            <Heart className="size-4" aria-hidden />
-          </Link>
+          <LikeButton
+            listingId={card.id}
+            initialLiked={card.isLiked ?? false}
+            labels={{
+              add: t("addToWishlist"),
+              remove: t("removeFromWishlist"),
+            }}
+          />
         </div>
 
         {/*

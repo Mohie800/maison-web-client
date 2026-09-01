@@ -1,18 +1,25 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import {
+  getTranslations,
+  setRequestLocale,
+  getLocale,
+} from "next-intl/server";
 import { Eye, Plane } from "lucide-react";
 import { serverApiFetch } from "@/lib/api/server";
 import { requireUser } from "@/lib/auth/current-user";
+import { formatDate } from "@/lib/format/date";
+import type { Locale } from "@/i18n/routing";
 import { AccountSidebar } from "@/components/layout/account-sidebar";
 import { setVacationModeAction } from "@/features/settings/actions";
 
 /**
  * WEB_03_VacationMode — `656:228`.
  *
- * `GET /users/me/holiday-mode` reads it back and `PUT` writes it. The note the
- * frame does not draw a field for *is* on the write DTO, so it gets one: the
- * preview card at `656:322` promises shoppers "a friendly note that you're
- * away", and without an input that note could only ever be the API's default.
+ * `GET /users/me/holiday-mode` reads it back and `PUT` writes it. The frame
+ * draws only the toggle; the note and the end date are both on the write DTO,
+ * so they get fields. Without the note input the preview card at `656:322`
+ * could only ever show the API's default, and `until` is what turns "away"
+ * into "back on the 15th".
  */
 export const metadata: Metadata = { robots: { index: false } };
 
@@ -42,6 +49,9 @@ export default async function VacationModePage({
     cache: "no-store",
   }).catch(() => null);
   const on = state?.holidayMode === true;
+  const activeLocale = (await getLocale()) as Locale;
+  const until = state?.holidayModeUntil?.slice(0, 10) ?? "";
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="bg-surface min-h-screen">
@@ -113,22 +123,44 @@ export default async function VacationModePage({
                 />
               </label>
 
-              <div className="flex flex-col gap-1.5">
-                <label
-                  htmlFor="vacation-note"
-                  className="text-ink-700 text-[12px] font-medium"
-                >
-                  {t("noteLabel")}
-                </label>
-                <input
-                  id="vacation-note"
-                  name="note"
-                  defaultValue={state?.holidayModeNote ?? ""}
-                  maxLength={200}
-                  placeholder={t("notePlaceholder")}
-                  dir="auto"
-                  className="bg-fill-50 border-line-200 text-ink-900 placeholder:text-ink-400 h-11 w-full rounded-8 border ps-3.5 text-[13px] outline-none"
-                />
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                  <label
+                    htmlFor="vacation-note"
+                    className="text-ink-700 text-[12px] font-medium"
+                  >
+                    {t("noteLabel")}
+                  </label>
+                  <input
+                    id="vacation-note"
+                    name="note"
+                    defaultValue={state?.holidayModeNote ?? ""}
+                    maxLength={200}
+                    placeholder={t("notePlaceholder")}
+                    dir="auto"
+                    className="bg-fill-50 border-line-200 text-ink-900 placeholder:text-ink-400 h-11 w-full rounded-8 border ps-3.5 text-[13px] outline-none"
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1.5 sm:w-52">
+                  <label
+                    htmlFor="vacation-until"
+                    className="text-ink-700 text-[12px] font-medium"
+                  >
+                    {t("untilLabel")}
+                  </label>
+                  <input
+                    id="vacation-until"
+                    name="until"
+                    type="date"
+                    defaultValue={until}
+                    min={until && until < today ? until : today}
+                    className="bg-fill-50 border-line-200 text-ink-900 h-11 w-full rounded-8 border px-3.5 text-[13px] outline-none"
+                  />
+                  <p className="text-ink-tertiary text-[11px] leading-[16px]">
+                    {t("untilHint")}
+                  </p>
+                </div>
               </div>
 
               <button
@@ -151,6 +183,13 @@ export default async function VacationModePage({
                 <span className="text-ink-secondary text-[12px]" dir="auto">
                   “{state?.holidayModeNote?.trim() || t("previewDefault")}”
                 </span>
+                {on && state?.holidayModeUntil && (
+                  <span className="text-ink-tertiary text-[12px]">
+                    {t("previewUntil", {
+                      date: formatDate(state.holidayModeUntil, activeLocale),
+                    })}
+                  </span>
+                )}
               </span>
             </div>
           </div>

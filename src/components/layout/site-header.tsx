@@ -2,6 +2,7 @@ import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/current-user";
+import { isAuthenticated } from "@/lib/auth/session";
 import { getBag } from "@/lib/api/endpoints/checkout";
 import { getUnreadCount } from "@/lib/api/endpoints/conversations";
 import { getNotificationUnreadCount } from "@/lib/api/endpoints/notifications";
@@ -25,38 +26,52 @@ import { categoryTypeForSlug } from "@/features/sell/draft";
  * before the avatar.
  */
 export async function SiteHeader() {
+  /*
+    Gated on the session cookie rather than on `getCurrentUser()` resolving:
+    waiting for the profile first put four round trips in series in front of
+    every page. Each badge below already degrades to 0, so a cookie that turns
+    out to be expired costs three discarded requests, not a broken header.
+  */
+  const signedIn = await isAuthenticated();
+
+  // One batch — nothing here depends on anything else here.
+  const [
+    user,
+    bagCount,
+    unreadMessages,
+    unreadNotifications,
+    trending,
+    tree,
+  ] = await Promise.all([
+    getCurrentUser(),
+    // The bag is user-scoped; an anonymous visitor has nothing to show.
+    signedIn
+      ? getBag()
+          .then((bag) => bag.items.length)
+          .catch(() => 0)
+      : 0,
+    /*
+      The inbox badge. No frame draws a way into the inbox, but
+      `GET /conversations/unread-count` describes itself as being "for the
+      inbox badge", so one is intended somewhere — recorded in plans/09 C44.
+    */
+    signedIn ? getUnreadCount() : 0,
+    signedIn ? getNotificationUnreadCount() : 0,
+    // Public and cached, so these cost the header nothing per request and
+    // degrade to an empty chip row / no dropdown.
+    getTrendingSearches().catch(() => []),
+    // Web_CategoriesDropdown (`651:2972`).
+    getCategoryTree().catch(() => []),
+  ]);
+
+  // Sequential, not batched: these read already-loaded messages, and racing
+  // three of them makes next-intl resolve its request config three times.
   const t = await getTranslations("Chrome");
   const tNav = await getTranslations("Nav");
   const tSell = await getTranslations("Sell");
-  const user = await getCurrentUser();
+
   const avatar = resolveMediaUrl(user?.profilePic);
 
-  /**
-   * Real cart count for the badge. Only fetched when signed in — the bag is
-   * user-scoped, and an anonymous visitor has nothing to show. A failure here
-   * must not take the header down, so it degrades to no badge.
-   */
-  const bagCount = user
-    ? await getBag()
-        .then((bag) => bag.items.length)
-        .catch(() => 0)
-    : 0;
-
-  /*
-    The inbox badge. No frame draws a way into the inbox — not the header, not
-    the account rail — but `GET /conversations/unread-count` describes itself as
-    being "for the inbox badge", so one is intended somewhere. It goes here,
-    beside the other three, and is recorded in plans/09 C44.
-  */
-  const unreadMessages = user ? await getUnreadCount() : 0;
-  const unreadNotifications = user ? await getNotificationUnreadCount() : 0;
-
-  // The search panel's resting state. Cached and public, so it costs the header
-  // nothing per request and degrades to an empty chip row.
-  const trending = await getTrendingSearches().catch(() => []);
-
-  // Web_CategoriesDropdown (`651:2972`). The tree is cached and public.
-  const tree = await getCategoryTree().catch(() => []);
   const dropdownCategories = tree.map((row) => ({
     id: row.id,
     name: row.name,
@@ -80,19 +95,22 @@ export async function SiteHeader() {
           variant is transparent and drawn for exactly that background.
         */}
         <Link href="/" className="shrink-0" aria-label="Maison Sale">
+          {/* width/height are the rendered size, not the file's — they drive
+              the srcset, and the source dimensions asked for a 640w wordmark
+              to fill 125px. */}
           <Image
             src="/brand/logo-light.png"
             alt="Maison Sale"
-            width={250}
-            height={105}
+            width={126}
+            height={53}
             priority
             className="h-[53px] w-auto dark:hidden"
           />
           <Image
             src="/brand/logo-dark.png"
             alt="Maison Sale"
-            width={480}
-            height={203}
+            width={125}
+            height={53}
             priority
             className="hidden h-[53px] w-auto dark:block"
           />
@@ -113,9 +131,9 @@ export async function SiteHeader() {
                 toys_art: tSell("types.toys_art.name"),
               },
               viewAll: t("viewAll"),
-              browse: t("browseCategory"),
-              browseAll: t("browseAllOfType"),
-              viewAllType: t("viewAllOfType"),
+              browse: t.raw("browseCategory") as string,
+              browseAll: t.raw("browseAllOfType") as string,
+              viewAllType: t.raw("viewAllOfType") as string,
             }}
           />
           <Link href="/brands" className="text-ink-500 text-[14px]">
@@ -148,7 +166,7 @@ export async function SiteHeader() {
             clearAll: t("clearAll"),
             remove: t("removeSearch"),
             trending: t("trendingNow"),
-            seeAll: t("seeAllResults"),
+            seeAll: t.raw("seeAllResults") as string,
             noResults: t("noSearchResults"),
             official: t("officialStore"),
             followers: t("followersLabel"),

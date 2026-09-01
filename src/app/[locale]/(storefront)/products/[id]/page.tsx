@@ -298,7 +298,7 @@ export default async function ProductPage({
                 requestTrade: t("trade.requestTrade"),
                 messageSeller: t("trade.messageSeller"),
                 authenticity: t("trade.authenticity"),
-                authenticityOf: t("trade.authenticityOf"),
+                authenticityOf: t.raw("trade.authenticityOf") as string,
                 trusted: t("trade.trusted"),
                 shippingTitle: t("trade.shippingTitle"),
                 shippingBody: t("trade.shippingBody"),
@@ -469,9 +469,9 @@ export default async function ProductPage({
           viewerName={currentUser?.fullName ?? null}
           locale={activeLocale}
           labels={{
-            title: t("bidHistory"),
+            title: t.raw("bidHistory") as string,
             you: t("bidHistoryYou"),
-            bidder: t("bidHistoryBidder"),
+            bidder: t.raw("bidHistoryBidder") as string,
             empty: t("bidHistoryEmpty"),
           }}
         />

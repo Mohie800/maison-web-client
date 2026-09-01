@@ -81,7 +81,7 @@ export default async function AddStoryPage({
           linkProduct: t("compose.linkProduct"),
           linkNone: t("compose.linkNone"),
           duration: t("compose.duration"),
-          durationOption: t("compose.durationOption"),
+          durationOption: t.raw("compose.durationOption") as string,
           audience: t("compose.audience"),
           audienceOption: {
             everyone: t("compose.audienceOption.everyone"),
@@ -89,7 +89,7 @@ export default async function AddStoryPage({
           },
           next: t("compose.next"),
           ready: t("compose.ready"),
-          summary: t("compose.summary"),
+          summary: t.raw("compose.summary") as string,
           edit: t("compose.edit"),
           back: t("compose.back"),
           post: t("compose.post"),

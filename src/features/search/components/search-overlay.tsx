@@ -153,13 +153,21 @@ export function SearchOverlay({
       if (!cancelled) setLoading(true);
       try {
         if (tab === "products") {
-          const res = await fetch(`/api/proxy/search?q=${q}&limit=4`, {
-            cache: "no-store",
-          });
+          /*
+            `/listings?search=` rather than `/search`, for the same reason the
+            results page uses it (plans/09 C32) plus one more: the combined
+            endpoint returns listing rows with no photo field at all, so every
+            hit rendered a blank tile. This one carries `photos` and a real
+            `total`.
+          */
+          const res = await fetch(
+            `/api/proxy/listings?status=live&search=${q}&limit=4`,
+            { cache: "no-store" },
+          );
           const data = res.ok ? await res.json() : null;
           if (cancelled) return;
           setProducts(toProducts(data));
-          setTotal(data?.total ?? data?.listings?.length ?? 0);
+          setTotal(data?.total ?? data?.items?.length ?? 0);
         } else {
           const res = await fetch(`/api/proxy/search/${tab}?q=${q}&limit=5`, {
             cache: "no-store",
@@ -545,10 +553,9 @@ function initials(name: string): string {
   return name.trim().slice(0, 2).toUpperCase() || "?";
 }
 
-/** `/search` answers `{ listings: [...] }`, not the `{ items }` the others use. */
 function toProducts(data: unknown): ProductHit[] {
   const rows =
-    (data as { listings?: Record<string, unknown>[] } | null)?.listings ?? [];
+    (data as { items?: Record<string, unknown>[] } | null)?.items ?? [];
   return rows.slice(0, 4).map((row) => {
     const photos = row.photos as { url?: string; isCover?: boolean }[] | null;
     const cover = photos?.find((p) => p.isCover) ?? photos?.[0];

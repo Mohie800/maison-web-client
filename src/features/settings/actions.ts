@@ -100,21 +100,27 @@ export async function saveNotificationsAction(
 /**
  * `PUT /users/me/holiday-mode` — WEB_03_VacationMode (`656:228`).
  *
- * The DTO is `{ enabled, note }`, not the `{ holidayMode, holidayModeNote }`
- * the *read* answers with, and it is a `PUT` where every other user-scoped
- * write on this API is a `PATCH`. Both were found by probing; `/docs-json`
- * describes neither (GAP-99).
+ * Writes `{ enabled, note, until }` (`UpdateHolidayModeDto`) and reads back
+ * `{ holidayMode, holidayModeUntil, holidayModeNote }`. It is a `PUT` where
+ * every other user-scoped write on this API is a `PATCH`.
  */
 export async function setVacationModeAction(formData: FormData): Promise<void> {
   const locale = String(formData.get("locale") ?? "en");
   const page = `/${locale}/account/settings/vacation`;
   const enabled = formData.get("enabled") === "on";
   const note = String(formData.get("note") ?? "").trim();
+  const until = String(formData.get("until") ?? "").trim();
 
   try {
+    // The PUT replaces the whole state, so an omitted field clears it, and an
+    // empty `until` must be omitted rather than sent — the API 400s on "".
     await serverApiFetch("/users/me/holiday-mode", {
       method: "PUT",
-      body: { enabled, ...(enabled && note ? { note } : {}) },
+      body: {
+        enabled,
+        ...(enabled && note ? { note } : {}),
+        ...(enabled && until ? { until: `${until}T00:00:00.000Z` } : {}),
+      },
     });
   } catch {
     redirect(`${page}?error=requestFailed`);

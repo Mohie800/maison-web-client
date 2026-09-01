@@ -41,8 +41,16 @@ export function AuctionCountdown({
 
   if (Number.isNaN(deadline)) return null;
 
+  /*
+    `suppressHydrationWarning` on every branch below: the server renders this
+    against its own clock and the browser hydrates a second or two later, so the
+    seconds digit legitimately differs. Without it React treats that as a failed
+    hydration and regenerates the subtree on the client — on a page with a
+    countdown per card, that is the whole rail thrown away and re-rendered. The
+    interval corrects the value within a second either way.
+  */
   const left = Math.max(0, Math.floor((deadline - now) / 1000));
-  if (left === 0) return <span>{endedLabel}</span>;
+  if (left === 0) return <span suppressHydrationWarning>{endedLabel}</span>;
 
   const pad = (n: number) => String(n).padStart(2, "0");
   const days = Math.floor(left / 86_400);
@@ -53,7 +61,7 @@ export function AuctionCountdown({
   if (variant === "clock") {
     // Days roll into hours here — the pill has room for exactly eight glyphs.
     return (
-      <span dir="ltr">
+      <span dir="ltr" suppressHydrationWarning>
         {pad(days * 24 + hours)}:{pad(minutes)}:{pad(seconds)}
       </span>
     );
@@ -61,7 +69,7 @@ export function AuctionCountdown({
 
   if (variant === "spaced") {
     return (
-      <span dir="ltr">
+      <span dir="ltr" suppressHydrationWarning>
         {days > 0 && `${days}d : `}
         {pad(hours)}h : {pad(minutes)}m : {pad(seconds)}s
       </span>
@@ -70,7 +78,7 @@ export function AuctionCountdown({
 
   if (variant === "hm") {
     return (
-      <span dir="ltr">
+      <span dir="ltr" suppressHydrationWarning>
         {days > 0 && `${days}d:`}
         {pad(hours)}h:{pad(minutes)}m
       </span>
@@ -78,7 +86,7 @@ export function AuctionCountdown({
   }
 
   return (
-    <span dir="ltr">
+    <span dir="ltr" suppressHydrationWarning>
       {days > 0 && `${days}d:`}
       {pad(hours)}h:{pad(minutes)}m:{pad(seconds)}s
     </span>

@@ -11,6 +11,20 @@ import {
 } from "../schemas/wishlist";
 
 /**
+ * Saving and unsaving. There is no `POST /wishlist` — the add half of the
+ * wishlist lives under the listing as a "like", and the two are the same act
+ * (see schemas/wishlist.ts). Removal has both a `DELETE /wishlist/{id}` and
+ * this; this one keeps the pair symmetric from a card.
+ */
+export async function likeListing(listingId: string): Promise<void> {
+  await serverApiFetch(`/listings/${listingId}/like`, { method: "POST" });
+}
+
+export async function unlikeListing(listingId: string): Promise<void> {
+  await serverApiFetch(`/listings/${listingId}/like`, { method: "DELETE" });
+}
+
+/**
  * The signed-in user's saved items.
  *
  * `tab` is server-filtered and the response carries a `counts` object with the

@@ -3,7 +3,12 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { serverApiFetch } from "@/lib/api/server";
-import { shareWishlist, unshareWishlist } from "@/lib/api/endpoints/wishlist";
+import {
+  likeListing,
+  shareWishlist,
+  unlikeListing,
+  unshareWishlist,
+} from "@/lib/api/endpoints/wishlist";
 import { ApiError } from "@/lib/api/errors";
 
 /**
@@ -28,6 +33,35 @@ async function quietly(fn: () => Promise<unknown>): Promise<void> {
 function revalidateWishlist(locale: string) {
   revalidatePath(`/${locale}/account/wishlist`);
   revalidatePath(`/${locale}/cart`);
+}
+
+export type LikeResult = "ok" | "unauthenticated" | "failed";
+
+/**
+ * The heart on a listing card. Called from a client component rather than a
+ * form, so it reports back rather than redirecting: the caller knows which page
+ * it is on and can send a signed-out visitor to sign-in and back, the way Add
+ * to Cart and Buy Now already do from the same card.
+ *
+ * Nothing is revalidated: the wishlist page reads `no-store`, so it is already
+ * fresh on arrival, and revalidating here would re-render the whole rail the
+ * card sits in for a change only that one heart can see.
+ */
+export async function toggleLikeAction(
+  listingId: string,
+  liked: boolean,
+): Promise<LikeResult> {
+  if (!listingId) return "failed";
+  try {
+    await (liked ? likeListing(listingId) : unlikeListing(listingId));
+    return "ok";
+  } catch (error) {
+    /* Both verbs are idempotent, so a 404 is the end state we wanted anyway. */
+    if (error instanceof ApiError && error.isNotFound) return "ok";
+    if (error instanceof ApiError && error.isUnauthorized)
+      return "unauthenticated";
+    throw error;
+  }
 }
 
 export async function removeFromWishlistAction(formData: FormData): Promise<void> {

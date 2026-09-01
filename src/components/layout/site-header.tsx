@@ -8,8 +8,9 @@ import { getUnreadCount } from "@/lib/api/endpoints/conversations";
 import { getNotificationUnreadCount } from "@/lib/api/endpoints/notifications";
 import { resolveMediaUrl } from "@/lib/api/media";
 import { CartFilled, HeartFilled } from "@/components/icons/header-icons";
-import { MessagesSquare } from "lucide-react";
+import { MessagesSquare, Search } from "lucide-react";
 import { BellFilled } from "@/components/icons/header-icons";
+import { MobileNav } from "@/components/layout/mobile-nav";
 import { NotificationsMenu } from "@/features/notifications/components/notifications-menu";
 import { SearchOverlay } from "@/features/search/components/search-overlay";
 import { CategoriesDropdown } from "@/features/catalog/components/categories-dropdown";
@@ -84,8 +85,18 @@ export async function SiteHeader() {
   }));
 
   return (
-    <header className="bg-base border-line-200 sticky top-0 z-40 h-[72px] border-b">
+    <header className="bg-base border-line-200 sticky top-0 z-40 h-[60px] border-b lg:h-[72px]">
       <div className="mx-auto flex h-full max-w-[1440px] items-center px-4 lg:px-20">
+        {/*
+          Below lg the nav, the sub-nav and the util bar are all hidden, so the
+          drawer is the only route to categories, auctions, trade, the trend
+          hub, the language switch and the theme toggle.
+        */}
+        <MobileNav
+          categories={dropdownCategories.map(({ id, name }) => ({ id, name }))}
+          signedIn={Boolean(user)}
+        />
+
         {/*
           Two wordmarks swapped by the `dark:` variant rather than by reading
           the theme in JS: this is a Server Component, and next-themes has no
@@ -94,7 +105,7 @@ export async function SiteHeader() {
           the image, which reads as a white box on the dark surface; the footer
           variant is transparent and drawn for exactly that background.
         */}
-        <Link href="/" className="shrink-0" aria-label="Maison Sale">
+        <Link href="/" className="ms-1 shrink-0 lg:ms-0" aria-label="Maison Sale">
           {/* width/height are the rendered size, not the file's — they drive
               the srcset, and the source dimensions asked for a 640w wordmark
               to fill 125px. */}
@@ -104,7 +115,7 @@ export async function SiteHeader() {
             width={126}
             height={53}
             priority
-            className="h-[53px] w-auto dark:hidden"
+            className="h-9 w-auto lg:h-[53px] dark:hidden"
           />
           <Image
             src="/brand/logo-dark.png"
@@ -112,7 +123,7 @@ export async function SiteHeader() {
             width={125}
             height={53}
             priority
-            className="hidden h-[53px] w-auto dark:block"
+            className="hidden h-9 w-auto lg:h-[53px] dark:block"
           />
         </Link>
 
@@ -174,14 +185,24 @@ export async function SiteHeader() {
           }}
         />
 
+        {/* The search pill needs 284px it doesn't have on a phone, so below md
+            the icon goes to /search, which carries its own field. */}
+        <Link
+          href="/search"
+          aria-label={t("search")}
+          className="bg-surface text-ink flex size-10 shrink-0 items-center justify-center rounded-[20px] md:hidden"
+        >
+          <Search className="size-5" aria-hidden />
+        </Link>
+
         <Link
           href="/sell"
-          className="bg-aqua ms-5 flex h-10 shrink-0 items-center rounded-[20px] px-5 text-[13px] font-bold text-black"
+          className="bg-aqua ms-2 flex h-10 shrink-0 items-center rounded-[20px] px-3.5 text-[12px] font-bold text-black lg:ms-5 lg:px-5 lg:text-[13px]"
         >
           {t("sell")}
         </Link>
 
-        <div className="ms-5 flex shrink-0 items-center gap-2">
+        <div className="ms-2 flex shrink-0 items-center gap-1 lg:ms-5 lg:gap-2">
           <IconButton href="/account/wishlist" label={tNav("wishlist")}>
             <HeartFilled className="size-6" />
           </IconButton>
@@ -210,7 +231,13 @@ export async function SiteHeader() {
             </IconButton>
           )}
 
-          <IconButton href="/cart" label={tNav("bag")} badge={bagCount}>
+          {/* The bag is the one icon that stays at every width. */}
+          <IconButton
+            href="/cart"
+            label={tNav("bag")}
+            badge={bagCount}
+            visibility="flex"
+          >
             <CartFilled className="size-6" />
           </IconButton>
         </div>
@@ -247,18 +274,21 @@ function IconButton({
   href,
   label,
   badge = 0,
+  /** Phones have room for one icon; everything else waits for `sm`. */
+  visibility = "hidden sm:flex",
   children,
 }: {
   href: string;
   label: string;
   badge?: number;
+  visibility?: string;
   children: React.ReactNode;
 }) {
   return (
     <Link
       href={href}
       aria-label={badge > 0 ? `${label} (${badge})` : label}
-      className="bg-surface text-ink hover:text-action relative hidden size-10 items-center justify-center rounded-[20px] sm:flex"
+      className={`bg-surface text-ink hover:text-action relative size-10 items-center justify-center rounded-[20px] ${visibility}`}
     >
       {children}
       {badge > 0 && (

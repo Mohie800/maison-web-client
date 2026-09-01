@@ -80,7 +80,7 @@ export default async function WalletEarningsPage({
 
           <div className="flex min-w-0 flex-1 flex-col gap-5">
             {/* card — 651:10607 */}
-            <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3">
               {cards.map((card) => (
                 <li
                   key={card.key}

@@ -278,7 +278,7 @@ export default async function TrendsPage({
           {deals.items.length === 0 ? (
             <Unavailable message={t("hotDealsEmpty")} />
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
               {deals.items.map((listing) => {
                 const photo = resolveMediaUrl(coverPhotoUrl(listing));
                 const percent = discountPercent(

@@ -38,10 +38,15 @@ export async function AccountSidebar({ active }: { active: string }) {
   const avatar = resolveMediaUrl(user?.profilePic);
 
   return (
+    /*
+      Below `lg` the rail becomes a horizontally scrolling pill strip: as a
+      stacked list it was twelve full-width rows, so every account page opened
+      on a screen of navigation with its own content below the fold.
+    */
     <aside className="w-full shrink-0 lg:w-[220px]">
-      <div className="bg-base border-line-200 overflow-hidden rounded-12 border py-5">
-        {/* User — 651:8912 */}
-        <div className="flex flex-col items-center gap-1 px-4 pb-4">
+      <div className="bg-base border-line-200 rounded-12 lg:overflow-hidden lg:border lg:py-5">
+        {/* User — 651:8912. The page's own heading names it on mobile. */}
+        <div className="hidden flex-col items-center gap-1 px-4 pb-4 lg:flex">
           <span className="bg-action-tint text-action flex size-13 items-center justify-center overflow-hidden rounded-[26px] text-[16px] font-bold">
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
@@ -60,22 +65,22 @@ export async function AccountSidebar({ active }: { active: string }) {
           )}
         </div>
 
-        <span className="bg-fill-100 block h-px w-full" aria-hidden />
+        <span className="bg-fill-100 hidden h-px w-full lg:block" aria-hidden />
 
-        <nav>
-          <ul>
+        <nav className="max-lg:-mx-4 max-lg:px-4">
+          <ul className="scrollbar-none flex gap-2 overflow-x-auto lg:flex-col lg:gap-0 lg:overflow-visible">
             {NAV.map(({ key, href }) => {
               const isActive = key === active;
               return (
-                <li key={key}>
+                <li key={key} className="shrink-0">
                   {/* NI — 651:8918 */}
                   <Link
                     href={href}
                     aria-current={isActive ? "page" : undefined}
-                    className={`flex px-5 py-3 text-[13px] ${
+                    className={`flex items-center rounded-[18px] border px-4 py-2 text-[13px] whitespace-nowrap lg:rounded-none lg:border-0 lg:px-5 lg:py-3 ${
                       isActive
-                        ? "bg-action-tint text-action font-semibold"
-                        : "text-ink-700 hover:bg-surface"
+                        ? "bg-action-tint border-action text-action font-semibold lg:border-transparent"
+                        : "border-line-200 text-ink-700 hover:bg-surface lg:border-transparent"
                     }`}
                   >
                     {t(`nav.${key}`)}
@@ -83,21 +88,21 @@ export async function AccountSidebar({ active }: { active: string }) {
                 </li>
               );
             })}
+
+            {/* SO — 651:8933 */}
+            <li className="shrink-0 lg:border-fill-100 lg:mt-0 lg:border-t">
+              <form action={signOutAction}>
+                <input type="hidden" name="locale" value={locale} />
+                <button
+                  type="submit"
+                  className="border-line-200 text-error hover:bg-surface flex items-center rounded-[18px] border px-4 py-2 text-[13px] whitespace-nowrap lg:w-full lg:rounded-none lg:border-0 lg:px-5 lg:py-3 lg:text-start"
+                >
+                  {t("nav.signOut")}
+                </button>
+              </form>
+            </li>
           </ul>
         </nav>
-
-        <span className="bg-fill-100 block h-px w-full" aria-hidden />
-
-        {/* SO — 651:8933 */}
-        <form action={signOutAction}>
-          <input type="hidden" name="locale" value={locale} />
-          <button
-            type="submit"
-            className="text-error hover:bg-surface flex w-full px-5 py-3 text-start text-[13px]"
-          >
-            {t("nav.signOut")}
-          </button>
-        </form>
       </div>
     </aside>
   );

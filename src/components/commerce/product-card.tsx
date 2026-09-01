@@ -63,7 +63,7 @@ export async function ProductCard({
   const isAuction = isAuctionCard(card);
 
   return (
-    <article className="bg-base border-line-200 group flex flex-col overflow-hidden rounded-16 border">
+    <article className="bg-base border-line-200 group @container flex flex-col overflow-hidden rounded-16 border">
       <Link
         href={`/products/${card.id}`}
         className="bg-fill-100 relative block aspect-square overflow-hidden"
@@ -104,7 +104,7 @@ export async function ProductCard({
       </Link>
 
       {/* Ctn — 651:695 */}
-      <div className="flex flex-1 flex-col gap-2 p-3.5">
+      <div className="flex flex-1 flex-col gap-2 p-2.5 @min-[210px]:p-3.5">
         {/* Category first, then the condition pill — the order in the design. */}
         <div className="flex items-center gap-2">
           {card.category?.name && (
@@ -130,7 +130,7 @@ export async function ProductCard({
         <Link
           href={`/products/${card.id}`}
           dir="auto"
-          className="text-ink-900 line-clamp-2 text-[15px] font-semibold hover:underline"
+          className="text-ink-900 line-clamp-2 text-[13px] font-semibold hover:underline @min-[210px]:text-[15px]"
         >
           {card.title}
         </Link>
@@ -153,7 +153,7 @@ export async function ProductCard({
                 <span className="text-ink-500 text-[11px]">
                   {t("currentBid")}
                 </span>
-                <span className="text-ink-900 text-[18px] font-bold">
+                <span className="text-ink-900 text-[15px] font-bold @min-[210px]:text-[18px]">
                   {formatPrice(cardAmount(card), card.currency ?? "SAR")}
                 </span>
               </>
@@ -164,7 +164,7 @@ export async function ProductCard({
                     {formatPrice(card.originalPrice, card.currency ?? "SAR")}
                   </span>
                 ) : null}
-                <span className="text-ink-900 text-[18px] font-bold">
+                <span className="text-ink-900 text-[15px] font-bold @min-[210px]:text-[18px]">
                   {formatPrice(card.price, card.currency ?? "SAR")}
                 </span>
               </>
@@ -186,7 +186,7 @@ export async function ProductCard({
           in plain forms, so they work without JavaScript; signed-out visitors are
           routed to sign-in rather than shown a failure.
         */}
-        <div className="mt-3 flex gap-2">
+        <div className="mt-3 flex flex-col gap-2 @min-[230px]:flex-row">
           {isAuction ? (
             <Link
               href={`/auctions/${card.id}/terms`}

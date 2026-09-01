@@ -15,14 +15,14 @@ export async function CheckoutSteps({ current }: { current: CheckoutStep }) {
 
   return (
     <div className="bg-base border-line border-b">
-      <ol className="mx-auto flex max-w-[1440px] items-center gap-3 px-4 py-4 lg:px-20">
+      <ol className="mx-auto flex max-w-[1440px] items-center gap-2 px-4 py-4 sm:gap-3 lg:px-20">
         {STEPS.map((step, index) => {
           const done = index < currentIndex;
           const active = index === currentIndex;
 
           return (
-            <li key={step} className="flex items-center gap-3">
-              <span className="flex items-center gap-2">
+            <li key={step} className="flex min-w-0 items-center gap-2 sm:gap-3">
+              <span className="flex min-w-0 items-center gap-2">
                 <span
                   className={`flex size-[22px] items-center justify-center rounded-full text-[11px] font-bold ${
                     done
@@ -35,7 +35,7 @@ export async function CheckoutSteps({ current }: { current: CheckoutStep }) {
                   {index + 1}
                 </span>
                 <span
-                  className={`text-body ${
+                  className={`text-body truncate ${
                     active ? "font-semibold" : "text-ink-tertiary"
                   }`}
                   aria-current={active ? "step" : undefined}
@@ -45,7 +45,7 @@ export async function CheckoutSteps({ current }: { current: CheckoutStep }) {
               </span>
               {index < STEPS.length - 1 && (
                 <span
-                  className={`h-0.5 w-12 ${done ? "bg-invert" : "bg-line"}`}
+                  className={`h-0.5 w-4 shrink sm:w-12 ${done ? "bg-invert" : "bg-line"}`}
                   aria-hidden
                 />
               )}

@@ -118,7 +118,8 @@ export function NotificationsMenu({
   const items = data?.items ?? [];
 
   return (
-    <div className="relative" ref={root}>
+    /* Phones reach notifications through the nav drawer instead. */
+    <div className="relative hidden sm:block" ref={root}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}

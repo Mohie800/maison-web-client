@@ -4,12 +4,14 @@ import { Link } from "@/i18n/navigation";
 import { pickLocalized } from "@/lib/i18n/localized";
 import { CONDITIONS } from "@/lib/api/schemas/listing";
 import {
+  activeFilterCount,
   buildHref,
   DISCOUNT_THRESHOLDS,
   FILTER_SUPPORT,
   SALE_MODES,
   type PlpFilters,
 } from "../filters";
+import { FilterDisclosure } from "./filter-disclosure";
 import type {
   Category,
   ListingFacets,
@@ -107,7 +109,10 @@ export async function FilterPanel({
   );
 
   return (
-    <aside className="w-full shrink-0 lg:w-[260px]">
+    <FilterDisclosure
+      label={t("filters")}
+      activeCount={activeFilterCount(filters)}
+    >
       <div className="border-line bg-base divide-line divide-y overflow-hidden rounded-16 border">
         {FILTER_SUPPORT.category && (
           <FilterGroup title={t("category")} open={Boolean(filters.categoryId)}>
@@ -445,7 +450,7 @@ export async function FilterPanel({
           </FilterGroup>
         )}
       </div>
-    </aside>
+    </FilterDisclosure>
   );
 }
 

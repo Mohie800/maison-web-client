@@ -321,7 +321,7 @@ export function VisualSearch() {
             <p className="text-[14px] font-bold">
               {found ? t("similarItems") : t("youMightLike")}
             </p>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
               {similar.map((match) => {
                 const photo = resolveMediaUrl(match.listing.coverPhotoUrl);
                 return (

@@ -87,7 +87,7 @@ export default async function ProductsPage({
         ]}
       />
 
-      <div className="mt-6 flex flex-col gap-10 lg:flex-row">
+      <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:gap-10">
         <FilterPanel
           filters={filters}
           categories={categories}
@@ -110,7 +110,7 @@ export default async function ProductsPage({
               <p className="text-body text-ink-secondary">{t("emptyBody")}</p>
             </div>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">
               {result.items.map((listing, i) => (
                 <ProductCard
                   key={listing.id}

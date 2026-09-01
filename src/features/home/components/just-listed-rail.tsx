@@ -72,7 +72,7 @@ export function JustListedRail({
       ) : (
         // Four across, like every other rail. The extra xl column made these
         // cards narrower than the design and than their neighbours on the page.
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {visible.map((card) => (
             <div key={card.id}>{renderedCards[card.id]}</div>
           ))}

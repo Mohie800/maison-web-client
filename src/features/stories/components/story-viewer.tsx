@@ -147,7 +147,7 @@ export function StoryViewer({
   return (
     <div
       className={`flex items-center justify-center bg-[#1a1a2e] ${
-        mode === "modal" ? "fixed inset-0 z-50" : "min-h-dvh"
+        mode === "modal" ? "fixed inset-0 z-50" : "h-dvh overflow-hidden"
       }`}
       role={mode === "modal" ? "dialog" : undefined}
       aria-modal={mode === "modal" ? true : undefined}
@@ -187,7 +187,7 @@ export function StoryViewer({
             goPrev();
           }}
           aria-label={t("previous")}
-          className="absolute start-10 top-1/2 z-20 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#1a1a2e]"
+          className="absolute start-10 top-1/2 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#1a1a2e] sm:flex"
         >
           <ChevronLeft className="size-5 rtl:rotate-180" aria-hidden />
         </Link>
@@ -200,27 +200,50 @@ export function StoryViewer({
             goNext();
           }}
           aria-label={t("next")}
-          className="absolute end-10 top-1/2 z-20 flex size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#1a1a2e]"
+          className="absolute end-10 top-1/2 z-20 hidden size-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-[#1a1a2e] sm:flex"
         >
           <ChevronRight className="size-5 rtl:rotate-180" aria-hidden />
         </Link>
       )}
 
       {/* StoryCard — 651:2128 */}
-      <article className="relative z-10 flex h-[820px] max-h-[100dvh] w-[420px] max-w-full flex-col overflow-hidden rounded-[24px] bg-[#1a1a1a]">
+      <article className="relative z-10 flex h-full w-full flex-col overflow-hidden bg-[#1a1a1a] sm:h-[820px] sm:max-h-[100dvh] sm:w-[420px] sm:max-w-full sm:rounded-[24px]">
         <div className="relative flex flex-1 flex-col items-center bg-[#2d2d3a]">
+          {/*
+            ProdImg — 651:2130. The frame's 320px square is a desktop
+            composition; on a phone the media is the story, so it fills the
+            slide edge to edge and the overlays sit on top of it.
+          */}
+          <div className="pointer-events-none absolute inset-0 z-0 bg-[#2d2d3a] sm:static sm:mt-[220px] sm:size-[320px] sm:max-w-full sm:overflow-hidden sm:rounded-16 sm:bg-[#f5f5f0]">
+            {slide.mediaUrl && (
+              // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
+              <img
+                src={slide.mediaUrl}
+                alt=""
+                className="size-full object-cover"
+              />
+            )}
+          </div>
+
+          {/* Keeps the white progress bar, name and caption legible on top of
+              a full-bleed photo. Nothing to scrim once the media is framed. */}
+          <div
+            className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-black/55 via-transparent to-black/65 sm:hidden"
+            aria-hidden
+          />
+
           {/*
             Tap zones, as a story has them: the left third goes back, the rest
             goes forward, and holding pauses. Behind the header and the product
             card so those stay clickable.
           */}
-          <div className="absolute inset-0 z-0 flex">
+          <div className="absolute inset-0 z-[2] flex">
             <TapZone onClick={goPrev} onHold={setPaused} label={t("previous")} className="w-1/3" />
             <TapZone onClick={goNext} onHold={setPaused} label={t("next")} className="flex-1" />
           </div>
 
           {/* Progress — 651:2133 */}
-          <div className="pointer-events-none absolute inset-x-4 top-4 z-10 flex h-2 items-center gap-1">
+          <div className="pointer-events-none absolute inset-x-4 top-[calc(1rem+env(safe-area-inset-top))] z-10 flex h-2 items-center gap-1">
             {view.slides.map((segment, i) => (
               <span
                 key={segment.id}
@@ -248,7 +271,7 @@ export function StoryViewer({
           </div>
 
           {/* UserBar — 651:2139 */}
-          <div className="absolute inset-x-4 top-8 z-10 flex h-11 items-center justify-between">
+          <div className="absolute inset-x-4 top-[calc(2rem+env(safe-area-inset-top))] z-10 flex h-11 items-center justify-between">
             <Link
               href={`/sellers/${view.authorId}`}
               className="flex items-center gap-2.5"
@@ -285,22 +308,10 @@ export function StoryViewer({
             </button>
           </div>
 
-          {/* ProdImg — 651:2130 */}
-          <div className="pointer-events-none mt-[220px] size-[320px] max-w-full overflow-hidden rounded-16 bg-[#f5f5f0]">
-            {slide.mediaUrl && (
-              // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-              <img
-                src={slide.mediaUrl}
-                alt=""
-                className="size-full object-cover"
-              />
-            )}
-          </div>
-
           {/* PromoText — 651:2131 */}
           {slide.caption && (
             <p
-              className="pointer-events-none mt-[50px] px-6 text-center text-[20px] font-bold text-white"
+              className="pointer-events-none absolute inset-x-0 bottom-8 z-10 px-6 text-center text-[20px] font-bold text-white sm:static sm:mt-[50px]"
               dir="auto"
             >
               {slide.caption}
@@ -312,7 +323,7 @@ export function StoryViewer({
         {listing && (
           <Link
             href={`/products/${listing.id}`}
-            className="bg-base relative z-10 flex items-center gap-3 px-4 pt-3 pb-4"
+            className="bg-base relative z-10 flex items-center gap-3 rounded-t-16 px-4 pt-3 pb-[calc(1rem+env(safe-area-inset-bottom))] sm:rounded-none sm:pb-4"
           >
             <span className="bg-fill-100 size-[52px] shrink-0 overflow-hidden rounded-10">
               {listing.photoUrl && (

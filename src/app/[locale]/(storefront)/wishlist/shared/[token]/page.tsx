@@ -88,7 +88,7 @@ export default async function SharedWishlistPage({
           {t("sharedEmpty")}
         </p>
       ) : (
-        <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {shared.items.map((item) => {
             const image = resolveMediaUrl(item.coverPhotoUrl);
             const saving = discountPercent(item.originalPrice, item.price);

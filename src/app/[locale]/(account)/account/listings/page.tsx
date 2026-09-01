@@ -145,7 +145,7 @@ export default async function MyListingsPage({
         ) : (
           <>
             {/* The design's four cards — 651:9183. */}
-            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
               <li className="border-line bg-base flex flex-col gap-1 rounded-16 border p-5">
                 <span className="text-[24px] font-bold">
                   {formatCount(counts.live ?? 0, activeLocale)}

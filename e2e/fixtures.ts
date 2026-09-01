@@ -102,6 +102,26 @@ async function api(
   return { ok: response.ok(), status: response.status(), body: await response.json().catch(() => null) };
 }
 
+/** A live, tradeable listing on one probe account, priced for the fixture. */
+async function probeListing(
+  request: APIRequestContext,
+  token: string,
+  title: string,
+  price: number,
+): Promise<string | undefined> {
+  const created = await api(request, "post", "/listings", token, {
+    categoryId: PROBE_CATEGORY,
+    title,
+    description: "E2E fixture listing. Safe to delete.",
+    condition: "like_new",
+    attributes: { size: "M", color: ["Navy"] },
+    price,
+    tradeEnabled: true,
+    imagesBase64: [PIXEL_JPEG],
+  });
+  return created.body?.id as string | undefined;
+}
+
 export interface CounteredTrade {
   id: string;
   /** Signed from the responder's side, as the counter was sent. */
@@ -134,22 +154,8 @@ export async function ensureCounteredTrade(
     .find((row) => row.payerId && row.payerId === row.responderId);
   if (open) return read(open);
 
-  const listing = async (token: string, title: string, price: number) => {
-    const created = await api(request, "post", "/listings", token, {
-      categoryId: PROBE_CATEGORY,
-      title,
-      description: "E2E fixture listing. Safe to delete.",
-      condition: "like_new",
-      attributes: { size: "M", color: ["Navy"] },
-      price,
-      tradeEnabled: true,
-      imagesBase64: [PIXEL_JPEG],
-    });
-    return created.body?.id as string | undefined;
-  };
-
-  const mine = await listing(a, "E2E fixture — mine 300", 300);
-  const theirs = await listing(b, "E2E fixture — theirs 500", 500);
+  const mine = await probeListing(request, a, "E2E fixture — mine 300", 300);
+  const theirs = await probeListing(request, b, "E2E fixture — theirs 500", 500);
   if (!mine || !theirs) return null;
 
   const addresses = await api(request, "get", "/addresses", a);
@@ -182,4 +188,79 @@ function read(row: {
     requesterTotal: Number(row.requesterTotal ?? 0),
     responderTotal: Number(row.responderTotal ?? 0),
   };
+}
+
+export interface PendingTrade {
+  id: string;
+  /**
+   * What the counter screen must open on, signed the way the responder reads
+   * it: negative because they are the one who owes the difference.
+   */
+  startingAmount: number;
+}
+
+/**
+ * A `pending` trade whose auto direction has the **responder** paying — found
+ * or created.
+ *
+ * The counter screen is the target listing's owner's to answer, so an expired
+ * row redirects to the detail page and the amount field is simply absent. This
+ * spec was pinned to `TRD-6827` and started failing the day that row aged out,
+ * exactly as the countered fixture above did before it.
+ *
+ * `payerId === responderId` is the whole condition: `autoDifference` is an
+ * unsigned magnitude and the direction lives in `payerId`, never in the item
+ * values (see `tradeCash`).
+ */
+export async function ensurePendingCounterTrade(
+  request: APIRequestContext,
+): Promise<PendingTrade | null> {
+  const a = await apiToken(request, "a");
+  const b = await apiToken(request, "b");
+  if (!a || !b) return null;
+
+  const found = await api(
+    request,
+    "get",
+    "/trade-requests?role=received&status=pending",
+    b,
+  );
+  const open = (
+    (found.body?.items ?? []) as {
+      id: string;
+      payerId?: string;
+      responderId?: string;
+      autoDifference?: string | number;
+    }[]
+  ).find((row) => row.payerId && row.payerId === row.responderId);
+  if (open) return readPending(open);
+
+  // The offered side is worth 200 more than the target, which is what puts the
+  // responder on the paying end.
+  const offered = await probeListing(request, a, "E2E fixture — offered 500", 500);
+  const target = await probeListing(request, b, "E2E fixture — target 300", 300);
+  if (!offered || !target) return null;
+
+  const addresses = await api(request, "get", "/addresses", a);
+  const addressId = (addresses.body?.[0] ?? addresses.body?.items?.[0])?.id;
+
+  const created = await api(
+    request,
+    "post",
+    `/listings/${target}/trade-requests`,
+    a,
+    {
+      offeredListingIds: [offered],
+      ...(addressId ? { addressId } : {}),
+      message: "Mine is worth more — take the difference back.",
+    },
+  );
+  return created.ok ? readPending(created.body) : null;
+}
+
+function readPending(row: {
+  id: string;
+  autoDifference?: string | number;
+}): PendingTrade {
+  return { id: row.id, startingAmount: -Math.abs(Number(row.autoDifference ?? 0)) };
 }

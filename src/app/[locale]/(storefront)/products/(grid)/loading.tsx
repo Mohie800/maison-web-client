@@ -20,7 +20,7 @@ export default function Loading() {
         <Skeleton className="h-3 w-20" />
       </div>
 
-      <div className="mt-6 flex flex-col gap-10 lg:flex-row">
+      <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:gap-10">
         <FilterPanelSkeleton />
 
         <div className="min-w-0 flex-1">
@@ -35,7 +35,7 @@ export default function Loading() {
             </div>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">
             {Array.from({ length: VISIBLE_CARDS }, (_, i) => (
               <ProductCardSkeleton key={i} />
             ))}

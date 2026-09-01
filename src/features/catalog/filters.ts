@@ -213,3 +213,16 @@ export function hasActiveFilters(filters: PlpFilters): boolean {
     filters.minDiscountPercent,
   );
 }
+
+/** How many filters are on — the badge on the mobile "Filters" button. */
+export function activeFilterCount(filters: PlpFilters): number {
+  return [
+    filters.categoryId,
+    filters.brandId,
+    filters.condition,
+    filters.saleMode,
+    filters.materialId,
+    filters.minDiscountPercent,
+    filters.minPrice || filters.maxPrice,
+  ].filter(Boolean).length;
+}

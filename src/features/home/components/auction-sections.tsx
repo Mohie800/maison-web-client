@@ -54,7 +54,7 @@ export async function AuctionsTeaser({ cards }: { cards: Card[] }) {
             return (
               <article
                 key={card.id}
-                className="bg-ink-800 border-ink-700 flex items-center gap-3 rounded-12 border p-3"
+                className="bg-ink-800 border-ink-700 flex min-w-0 items-center gap-3 rounded-12 border p-3"
               >
                 <Link
                   href={`/products/${card.id}`}
@@ -139,7 +139,7 @@ export async function EndingSoonSection({ cards }: { cards: Card[] }) {
         </div>
 
         {/* R — 651:1352 */}
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {cards.slice(0, 4).map((card) => {
             const photo = resolveMediaUrl(card.coverPhotoUrl);
             const amount = cardAmount(card);

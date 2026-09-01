@@ -88,7 +88,7 @@ export default function Loading() {
           <Skeleton className="h-6 w-52" />
           <Skeleton className="h-3.5 w-16" />
         </div>
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {[0, 1, 2, 3].map((i) => (
             <ProductCardSkeleton key={i} />
           ))}

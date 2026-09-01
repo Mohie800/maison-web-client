@@ -144,7 +144,7 @@ export function StoryComposer({
     /* 01_AddStory_Choose — 651:2162 */
     <div className="bg-base border-line-200 flex w-full max-w-[720px] flex-col overflow-hidden rounded-20 border">
       {/* Hdr — 651:2163 */}
-      <div className="flex items-center justify-between px-6 py-5">
+      <div className="flex items-center justify-between px-4 py-5 sm:px-6">
         <h1 className="text-ink-900 text-[18px] font-bold">
           {labels.titles[step]}
         </h1>
@@ -160,12 +160,12 @@ export function StoryComposer({
       <span className="bg-fill-100 h-px w-full" aria-hidden />
 
       {/* Progress — 651:2168 */}
-      <div className="flex items-center gap-2 px-6 py-4">
+      <div className="flex items-center gap-1.5 px-4 py-4 sm:gap-2 sm:px-6">
         {([1, 2, 3] as Step[]).map((index) => (
-          <div key={index} className="flex items-center gap-2">
+          <div key={index} className="flex min-w-0 items-center gap-1.5 sm:gap-2">
             {index > 1 && (
               <span
-                className={`h-[2px] w-10 ${
+                className={`h-[2px] w-4 shrink sm:w-10 ${
                   step >= index ? "bg-ink-900" : "bg-line-200"
                 }`}
                 aria-hidden
@@ -183,7 +183,7 @@ export function StoryComposer({
               {index}
             </span>
             <span
-              className={`text-[12px] ${
+              className={`truncate text-[12px] ${
                 step === index
                   ? "text-ink-900 font-semibold"
                   : "text-ink-400"

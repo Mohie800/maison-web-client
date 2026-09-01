@@ -265,7 +265,9 @@
     "viewAll": "عرض الكل ›",
     "browseCategory": "تصفّح {name}",
     "browseAllOfType": "تصفّح كل قطع {type} ({count})",
-    "viewAllOfType": "عرض كل {type}"
+    "viewAllOfType": "عرض كل {type}",
+    "menu": "القائمة",
+    "closeMenu": "إغلاق القائمة"
   },
   "Footer": {
     "tagline": "المنصة الرائدة للسلع المستعملة في السعودية.",

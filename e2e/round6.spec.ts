@@ -4,8 +4,10 @@ import {
   apiToken,
   apiGet,
   ensureCounteredTrade,
+  ensurePendingCounterTrade,
   expectNoErrorBoundary,
   type CounteredTrade,
+  type PendingTrade,
 } from "./fixtures";
 
 /**
@@ -15,19 +17,16 @@ import {
  */
 let countered: CounteredTrade | null = null;
 
+/** A trade still `pending`, with the responder on the paying end. Same reason. */
+let pending: PendingTrade | null = null;
+
 test.beforeAll(async ({ request }) => {
   countered = await ensureCounteredTrade(request);
+  pending = await ensurePendingCounterTrade(request);
 });
 
 /** The panel prints the API's total negated: it signs positive when you are paid. */
 const money = (total: number) => `SAR ${Math.abs(total)}`;
-
-/**
- * TRD-6827 — still `pending`, and the offered side is worth 200 more, so the
- * auto direction has the responder paying. The counter screen must open on
- * −200, not +200.
- */
-const PENDING_TRADE = "f2b77ac4-ead4-450e-868c-568b140cb78d";
 
 /**
  * The Round 6 fixes, pinned so they cannot silently come back — signed trade
@@ -160,14 +159,16 @@ test("a trade offer carries its note and its item cards", async ({
 test("the counter screen starts from the direction the payload states", async ({
   page,
 }) => {
+  test.skip(!pending, "no pending trade with the responder paying");
+
   await signIn(page, "b");
-  await page.goto(`/en/account/trades/${PENDING_TRADE}/counter`);
+  await page.goto(`/en/account/trades/${pending!.id}/counter`);
   await expectNoErrorBoundary(page);
   const amount = page.getByLabel(
     "Positive means they pay you. Negative means you pay them.",
   );
   // The offered side is worth more, so the auto amount runs towards them.
-  await expect(amount).toHaveValue("-200");
+  await expect(amount).toHaveValue(String(pending!.startingAmount));
   await expect(page.getByText("You pay them").first()).toBeVisible();
 });
 

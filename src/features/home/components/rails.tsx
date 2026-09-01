@@ -61,7 +61,7 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
         actionHref="/categories"
       />
 
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
         {categories.slice(0, 4).map((category, index) => {
           const image = resolveMediaUrl(category.imageUrl ?? category.iconUrl);
           const tone = CATEGORY_TONE[index % CATEGORY_TONE.length];
@@ -210,7 +210,7 @@ export async function ProductRail({
       {cards.length === 0 ? (
         <SectionUnavailable message={emptyMessage ?? t("nothingYet")} />
       ) : (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           {cards.map((card, i) => (
             <ProductCard key={card.id} card={card} priority={i < 4} />
           ))}
@@ -248,7 +248,7 @@ export async function TopSellersRail({ stores }: { stores: TopStore[] }) {
         // The ranking resets weekly; an empty week is a real state, not an error.
         <SectionUnavailable message={t("topSellersEmpty")} />
       ) : (
-        <div className="grid gap-5 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-3 gap-3 sm:gap-5 lg:grid-cols-6">
           {stores.map((store) => {
             const seller = store.seller;
             const name = seller.fullName ?? seller.username ?? "";
@@ -454,7 +454,7 @@ export async function TrendingRail({ cards }: { cards: Card[] }) {
             ))}
           </ol>
 
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:gap-5">
             {highlights.map((card) => (
               <ProductCard key={card.id} card={card} />
             ))}

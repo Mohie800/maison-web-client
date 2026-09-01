@@ -194,7 +194,7 @@ export default async function OwnProfilePage({
             </Link>
           </div>
         ) : (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
             {rows.map((item) => {
               /* A seller item's `photos` are `{ url }`, not the listing's
                  fuller photo rows — so no `coverPhotoUrl` here. */

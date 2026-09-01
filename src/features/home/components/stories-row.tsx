@@ -49,10 +49,10 @@ export function StoriesRow({
   }
 
   return (
-    <div className="flex items-center gap-5">
+    <div className="flex w-full min-w-0 items-center gap-5">
       <div
         ref={scroller}
-        className="scrollbar-none flex flex-1 items-start gap-5 overflow-x-auto scroll-smooth"
+        className="scrollbar-none flex min-w-0 flex-1 items-start gap-4 overflow-x-auto scroll-smooth sm:gap-5"
       >
         {/* YS — 651:769 */}
         {yourStory && (

@@ -264,7 +264,9 @@
     "viewAll": "View All ›",
     "browseCategory": "Browse {name}",
     "browseAllOfType": "Browse all {count} {type} items",
-    "viewAllOfType": "View All {type}"
+    "viewAllOfType": "View All {type}",
+    "menu": "Menu",
+    "closeMenu": "Close menu"
   },
   "Footer": {
     "tagline": "Saudi Arabia's premier second-hand marketplace.",

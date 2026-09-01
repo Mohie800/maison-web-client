@@ -150,7 +150,7 @@ export default async function StoriesHubPage({
                 <Link
                   key={group.userId}
                   href={`/stories/${group.userId}`}
-                  className="bg-tint relative block h-[300px] overflow-hidden rounded-16"
+                  className="bg-tint relative block h-[240px] overflow-hidden rounded-16 sm:h-[300px]"
                 >
                   {cover && (
                     // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12

@@ -31,6 +31,7 @@ import { amountOf } from "@/lib/api/schemas/auction";
 import { BidPanel } from "@/features/auctions/components/bid-panel";
 import { BidHistory } from "@/features/auctions/components/bid-history";
 import { TradePanel } from "@/features/trade/components/trade-panel";
+import { tradePreferenceChips } from "@/features/trade/preferences";
 import type { Locale } from "@/i18n/routing";
 
 /**
@@ -163,6 +164,10 @@ export default async function ProductPage({
     a price and offers Request trade rather than Buy now.
   */
   const isTrade = listing.saleMode === "trade";
+  /* The chips the trade column draws — empty for a seller open to anything. */
+  const tradePreferences = isTrade
+    ? await tradePreferenceChips(listing.tradePreferredCategories, activeLocale)
+    : [];
 
   /**
    * Structured data so the listing is eligible for rich results. Only fields we
@@ -289,11 +294,13 @@ export default async function ProductPage({
               value={listing.price}
               currency={listing.currency ?? "SAR"}
               authenticityScore={listing.authenticityScore}
+              preferences={tradePreferences}
               locale={locale}
               labels={{
                 badge: t("trade.badge"),
                 estimatedValue: t("trade.estimatedValue"),
                 estimatedValueHint: t("trade.estimatedValueHint"),
+                lookingFor: t("trade.lookingFor"),
                 cashTopUp: t("trade.cashTopUp"),
                 requestTrade: t("trade.requestTrade"),
                 messageSeller: t("trade.messageSeller"),

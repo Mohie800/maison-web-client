@@ -11,20 +11,20 @@ import { formatPrice } from "@/lib/format/money";
  * seller. Everything here is that column; the gallery, description and related
  * rail are the PDP's own and are unchanged.
  *
- * Two things the frame draws that no field carries, both left out rather than
- * invented (plans/09 C57):
+ * "Looking to trade for" is real since GAP-97: the chips are the categories the
+ * seller picked, in the order they picked them. A seller who named nothing is
+ * open to anything, and the section is omitted rather than drawn empty.
  *
- * - **"Looking to trade for" — Bags · Outerwear · Sneakers · Watches.** A
- *   listing has no wanted-categories field of any kind. This is the screen's
- *   defining control, and it is the one thing on it we cannot fill.
- * - **"Usually responds within an hour"** and the seller's "4.9 (38 trades)".
- *   Neither a response time nor a trade count exists on any payload (C42).
+ * Still left out rather than invented (plans/09 C57): "Usually responds within
+ * an hour" and the seller's "4.9 (38 trades)" — neither a response time nor a
+ * trade count exists on any payload (C42).
  */
 export function TradePanel({
   listingId,
   value,
   currency,
   authenticityScore,
+  preferences,
   locale,
   labels,
 }: {
@@ -32,11 +32,14 @@ export function TradePanel({
   value: string | number | null | undefined;
   currency: string;
   authenticityScore: number | null | undefined;
+  /** What the seller will swap for, already localised. `[]` draws nothing. */
+  preferences: { id: string; name: string }[];
   locale: string;
   labels: {
     badge: string;
     estimatedValue: string;
     estimatedValueHint: string;
+    lookingFor: string;
     cashTopUp: string;
     requestTrade: string;
     messageSeller: string;
@@ -69,6 +72,31 @@ export function TradePanel({
         </span>
       </div>
 
+      {/* "Looking to trade for" — 651:4641, chips 651:4642–651:4649. Labels,
+          not controls: the seller stated these, the viewer does not pick them. */}
+      {preferences.length > 0 && (
+        <div className="flex flex-col gap-2.5">
+          <span className="text-ink text-[13px] font-semibold">
+            {labels.lookingFor}
+          </span>
+          <ul className="flex flex-wrap gap-2">
+            {preferences.map((category) => (
+              <li
+                key={category.id}
+                dir="auto"
+                className="bg-surface border-line text-ink-secondary flex h-[34px] items-center rounded-[17px] border px-3.5 text-[13px] font-medium"
+              >
+                {category.name}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/*
+        Platform-wide, not something this seller said — so it stays plain copy
+        under the chips rather than reading as a per-listing claim (plans/09 C57).
+      */}
       <p className="text-ink-tertiary text-[12px]">{labels.cashTopUp}</p>
 
       {/* btn/primary — 651:4651 */}

@@ -1,4 +1,5 @@
 import { apiFetch } from "../client";
+import { viewerApiFetch } from "../server";
 import { parseResponse } from "../parse";
 import { ApiError } from "../errors";
 import {
@@ -51,9 +52,12 @@ export interface SellerItemsQuery {
  * direct children, which matters because the rail is top-level while sellers
  * file on leaves — and the response carries a `categories` rail plus a
  * `category` on every item.
+ *
+ * Viewer-aware since GAP-100: with a session each item carries `isLiked`, so
+ * the Items tab draws the viewer's own hearts.
  */
 export async function getSellerItems(id: string, query: SellerItemsQuery = {}) {
-  const data = await apiFetch<unknown>(`/sellers/${id}/items`, {
+  const data = await viewerApiFetch<unknown>(`/sellers/${id}/items`, {
     params: {
       ...query,
       limit: Math.min(query.limit ?? 24, SELLER_ITEMS_MAX_LIMIT),

@@ -98,6 +98,8 @@ export const sellerItemSchema = z.object({
   originalPrice: money,
   currency: z.string().nullish(),
   likeCount: z.number().nullish(),
+  /** The viewer's own like (GAP-100). Absent without a token, as on listings. */
+  isLiked: z.boolean().nullish(),
   specialTags: z.array(z.string()).nullish(),
   photos: z.array(z.object({ url: z.string() })).nullish(),
   categoryId: z.string().nullish(),

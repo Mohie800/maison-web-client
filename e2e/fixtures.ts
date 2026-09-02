@@ -264,3 +264,77 @@ function readPending(row: {
 }): PendingTrade {
   return { id: row.id, startingAmount: -Math.abs(Number(row.autoDifference ?? 0)) };
 }
+
+export interface TradePreferenceListing {
+  id: string;
+  title: string;
+  /** The categories the seller named, in the seller's order. */
+  categories: { id: string; name: string }[];
+}
+
+/**
+ * A **live** trade listing that states what it wants back — found or created.
+ *
+ * It has to be created rather than patched onto an existing one: a listing is
+ * immutable once live (`PATCH` answers "Listing cannot be edited in its current
+ * state"), so preferences can only be set while it is still a draft or, as
+ * here, in the create body of a listing that publishes with its photo.
+ */
+export async function ensureTradePreferenceListing(
+  request: APIRequestContext,
+): Promise<TradePreferenceListing | null> {
+  const listed = await request.get(
+    `${API}/listings?saleMode=trade&status=live&limit=50`,
+  );
+  const rows = ((await listed.json().catch(() => null))?.items ?? []) as {
+    id: string;
+    tradePreferredCategoryIds?: string[] | null;
+  }[];
+  const stated = rows.find((row) => (row.tradePreferredCategoryIds ?? []).length > 0);
+  if (stated) return await readPreferences(request, stated.id);
+
+  const token = await apiToken(request, "a");
+  if (!token) return null;
+
+  const categories = await request.get(`${API}/categories`);
+  const all = ((await categories.json().catch(() => null)) ?? []) as {
+    id: string;
+    slug?: string;
+  }[];
+  const wanted = ["bags-handbags", "shoes-sneakers", "accessories-watches"]
+    .map((slug) => all.find((category) => category.slug === slug)?.id)
+    .filter((id): id is string => Boolean(id));
+  if (wanted.length === 0) return null;
+
+  const created = await api(request, "post", "/listings", token, {
+    categoryId: PROBE_CATEGORY,
+    title: "E2E fixture — trade prefs",
+    description: "E2E fixture listing. Safe to delete.",
+    condition: "like_new",
+    attributes: { size: "M", color: ["Navy"] },
+    price: 320,
+    tradeEnabled: true,
+    tradePreferredCategoryIds: wanted,
+    imagesBase64: [PIXEL_JPEG],
+  });
+  return created.body?.id ? await readPreferences(request, created.body.id) : null;
+}
+
+/** The names only the detail endpoint resolves. */
+async function readPreferences(
+  request: APIRequestContext,
+  id: string,
+): Promise<TradePreferenceListing | null> {
+  const detail = await request.get(`${API}/listings/${id}`);
+  const body = (await detail.json().catch(() => null)) as {
+    id?: string;
+    title?: string;
+    tradePreferredCategories?: { id: string; name: string }[] | null;
+  } | null;
+  if (!body?.id) return null;
+  return {
+    id: body.id,
+    title: body.title ?? "",
+    categories: body.tradePreferredCategories ?? [],
+  };
+}

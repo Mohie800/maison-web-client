@@ -70,6 +70,16 @@ export const listingSchema = z.object({
   specialTags: z.array(z.string()).nullish(),
   finalSale: z.boolean().nullish(),
   likeCount: z.number().nullish(),
+  /**
+   * The viewer's own row in `listing_likes` (GAP-100). Absent — not `false` —
+   * when the request carries no token, so `null` means "nobody asked".
+   */
+  isLiked: z.boolean().nullish(),
+  /**
+   * What a trade seller will swap for (GAP-97). Always an array; `[]` is
+   * "open to anything". The detail endpoint adds the names below.
+   */
+  tradePreferredCategoryIds: z.array(z.string()).nullish(),
   viewCount: z.number().nullish(),
   ratingAvg: z.union([z.string(), z.number()]).nullish(),
   ratingCount: z.number().nullish(),
@@ -161,10 +171,28 @@ export const listingCategorySchema = z.object({
   iconUrl: z.string().nullish(),
 });
 
+/**
+ * The trade preferences resolved to names, detail endpoint only. Carries no
+ * `nameAr`, unlike every other category object the API returns — so an Arabic
+ * chip label comes from the category tree, not from here.
+ */
+export const tradePreferredCategorySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  nameEn: z.string().nullish(),
+  slug: z.string().nullish(),
+});
+
+export type TradePreferredCategory = z.infer<
+  typeof tradePreferredCategorySchema
+>;
+
 export const listingDetailSchema = listingSchema.extend({
   seller: listingSellerSchema.nullish(),
   brand: listingBrandSchema.nullish(),
   category: listingCategorySchema.nullish(),
+  /** The seller's order, not the database's; a deleted category drops out. */
+  tradePreferredCategories: z.array(tradePreferredCategorySchema).nullish(),
   /** Always `[]` on current data; shape unconfirmed, so it stays opaque. */
   defects: z.array(z.unknown()).nullish(),
 });

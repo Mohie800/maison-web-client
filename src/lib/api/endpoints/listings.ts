@@ -1,4 +1,5 @@
 import { apiFetch } from "../client";
+import { viewerApiFetch } from "../server";
 import { parseResponse } from "../parse";
 import { ApiError } from "../errors";
 import { listingDetailSchema, paginatedListingsSchema } from "../schemas/listing";
@@ -44,6 +45,11 @@ export interface ListingQuery {
 /**
  * GET /listings.
  *
+ * Viewer-aware since GAP-100: the route is still public and returns the same
+ * rows either way, but a request with a session gets `isLiked` on each row and
+ * is therefore uncached. Anonymous traffic — every crawler, every first visit —
+ * keeps the shared 60-second entry.
+ *
  * `saleMode`, price range, city/country and the wider sort set are verified
  * working, and BUG-01 / BUG-02 are fixed: `specialTags` and `minDiscountPercent`
  * now filter `total` as well as `items`, and `materialId` 400s on a malformed
@@ -58,7 +64,7 @@ export interface ListingQuery {
  * which reads as a filter that silently does nothing.
  */
 export async function getListings(query: ListingQuery = {}) {
-  const data = await apiFetch<unknown>("/listings", {
+  const data = await viewerApiFetch<unknown>("/listings", {
     params: { status: "live", ...query },
     next: { revalidate: 60, tags: ["listings"] },
   });
@@ -95,7 +101,7 @@ export async function getListingFacets(query: ListingQuery = {}) {
 
 export async function getListing(id: string) {
   try {
-    const data = await apiFetch<unknown>(`/listings/${id}`, {
+    const data = await viewerApiFetch<unknown>(`/listings/${id}`, {
       next: { revalidate: 60, tags: ["listings", `listing:${id}`] },
     });
     return parseResponse(listingDetailSchema, data, `GET /listings/${id}`);

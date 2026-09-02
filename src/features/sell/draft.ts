@@ -68,6 +68,9 @@ export const VERIFICATION_ITEMS = [
   "dust_bag_accessories",
 ] as const;
 
+/** `tradePreferredCategoryIds` — the API rejects an eleventh id. */
+export const TRADE_PREFERENCES_MAX = 10;
+
 export const TITLE_MAX = 140;
 export const DESCRIPTION_MAX = 500;
 
@@ -85,6 +88,8 @@ export interface SellDraft {
   topCategoryId: string | null;
   saleMode: (typeof SALE_MODES)[number];
   tradeEnabled: boolean;
+  /** What the seller will swap for (GAP-97). `[]` is open to anything. */
+  tradePreferredCategoryIds: string[];
   title: string;
   description: string;
   brandId: string | null;
@@ -112,6 +117,7 @@ export const EMPTY_DRAFT: SellDraft = {
   topCategoryId: null,
   saleMode: "fixed",
   tradeEnabled: false,
+  tradePreferredCategoryIds: [],
   title: "",
   description: "",
   brandId: null,
@@ -183,6 +189,9 @@ export function toCreateBody(draft: SellDraft): Record<string, unknown> {
     isNegotiable: draft.saleMode === "negotiable",
     auctionEnabled: auction,
     tradeEnabled: draft.tradeEnabled,
+    ...(draft.tradePreferredCategoryIds.length
+      ? { tradePreferredCategoryIds: draft.tradePreferredCategoryIds }
+      : {}),
     ...(auction
       ? {
           startingBid: num(draft.startingBid),
@@ -220,10 +229,13 @@ export function stepPatchBody(
   switch (step) {
     case "type":
       // `tradeEnabled` resolves `saleMode` on the server, as it does on create.
+      // The preferences are sent every time, `[]` included: deselecting every
+      // chip is a real statement, and omitting the key would leave the old list.
       return {
         isNegotiable: draft.saleMode === "negotiable",
         auctionEnabled: auction,
         tradeEnabled: draft.tradeEnabled,
+        tradePreferredCategoryIds: draft.tradePreferredCategoryIds,
       };
     case "details":
       return {
@@ -302,6 +314,9 @@ export function fromListing(
         : "fixed",
     // Input only — the server folds it into `saleMode` and stores no column.
     tradeEnabled: str(listing.saleMode) === "trade",
+    tradePreferredCategoryIds: Array.isArray(listing.tradePreferredCategoryIds)
+      ? (listing.tradePreferredCategoryIds as string[])
+      : [],
     price: money(listing.price),
     originalPrice: money(listing.originalPrice),
     quantity: money(listing.quantity),

@@ -13,12 +13,11 @@ import { CopyCode } from "@/features/settings/components/copy-code";
  * `GET /referrals/me` carries the whole screen: the code, a ready-made share
  * message, and the stats behind both counters.
  *
- * **The reward currency is the API's, not ours.** It answers `currency: "AED"`
- * with `rewardAmount: 10`, while every price on the platform is SAR and the
- * frame reads "SAR 10 for you, SAR 10 for them". Rather than hardcode the
- * frame's SAR over the top of it, the amounts render in whatever the endpoint
- * says — so the screen is never confidently wrong about money. Raised as
- * GAP-98 (plans/09 C60).
+ * **The reward currency is the API's, not ours.** It answered `currency: "AED"`
+ * against a SAR-only platform; GAP-98 relabelled it and the endpoint says `SAR`
+ * now, in the stats, in the `shareMessage` and in the spec. Nothing here
+ * changed for it: the amounts have always rendered in whatever the endpoint
+ * says, which is why the fix needed no client work (plans/09 C60).
  */
 export const metadata: Metadata = { robots: { index: false } };
 

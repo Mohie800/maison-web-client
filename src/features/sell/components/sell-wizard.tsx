@@ -9,6 +9,7 @@ import { resolveMediaUrl } from "@/lib/api/media";
 import {
   EMPTY_DRAFT,
   SELL_STEPS,
+  TRADE_PREFERENCES_MAX,
   categoryTypeForSlug,
   stepComplete,
   stepPatchBody,
@@ -261,6 +262,7 @@ export function SellWizard({
       {step === "type" && (
         <StepType
           draft={draft}
+          tree={tree}
           onChange={patch}
           labels={{
             options: {
@@ -278,6 +280,14 @@ export function SellWizard({
               },
             },
             footnote: t("listing.footnote"),
+            preferences: {
+              title: t("tradePreferences.title"),
+              hint: t("tradePreferences.hint", { max: TRADE_PREFERENCES_MAX }),
+              openToAnything: t("tradePreferences.openToAnything"),
+              pickOne: t("tradePreferences.pickOne"),
+              full: t("tradePreferences.full", { max: TRADE_PREFERENCES_MAX }),
+              remove: t("tradePreferences.remove"),
+            },
           }}
         />
       )}

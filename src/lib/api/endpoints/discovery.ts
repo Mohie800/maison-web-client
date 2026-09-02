@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { apiFetch } from "../client";
-import { serverApiFetch } from "../server";
+import { serverApiFetch, viewerApiFetch } from "../server";
 import { parseResponse } from "../parse";
 import {
   paginatedCardsSchema,
@@ -15,9 +15,14 @@ import {
   type TopStore,
 } from "../schemas/cards";
 
-/** Trending Now — live listings ordered by likes, already shaped as cards. */
+/**
+ * Trending Now — live listings ordered by likes, already shaped as cards.
+ *
+ * Viewer-aware since GAP-100: the card DTO has carried `isLiked` all along, but
+ * only answers it to a request it can identify.
+ */
 export async function getTrending(limit = 7): Promise<ProductCard[]> {
-  const data = await apiFetch<unknown>("/trends", {
+  const data = await viewerApiFetch<unknown>("/trends", {
     params: { limit },
     next: { revalidate: 300, tags: ["trends"] },
   });

@@ -426,7 +426,8 @@
       "authenticityOf": "{score} / 100",
       "trusted": "HIGHLY TRUSTED",
       "shippingTitle": "Trade shipping",
-      "shippingBody": "Shipping cost is split 50/50 between both traders via Maison Sale Hub escrow."
+      "shippingBody": "Shipping cost is split 50/50 between both traders via Maison Sale Hub escrow.",
+      "lookingFor": "Looking to trade for"
     },
     "bidHistory": "Bid History ({count} bids)",
     "bidHistoryYou": "You",
@@ -1393,6 +1394,14 @@
         "body": "Live bidding with legal terms, entry fee and anti-snipe."
       },
       "footnote": "You can relist under a different type later. Listings expire after 60 days."
+    },
+    "tradePreferences": {
+      "title": "What would you take in return?",
+      "hint": "Pick up to {max} categories you would swap for. Buyers see them on your listing.",
+      "openToAnything": "Nothing picked — you are open to anything.",
+      "pickOne": "Pick a group to see its sub-categories.",
+      "full": "That is {max} — remove one to add another.",
+      "remove": "Remove"
     },
     "fields": {
       "title": "Title",

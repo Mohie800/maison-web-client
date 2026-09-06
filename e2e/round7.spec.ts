@@ -145,7 +145,13 @@ test("a trending term carries the cover of a listing it matches", async ({
 
   await page.goto("/en/trends");
   await expectNoErrorBoundary(page);
-  const cards = page.getByRole("link", { name: withPhoto[0].term });
+  /*
+    Scoped to <main>: the header's cart link is labelled "Bag", so an unscoped
+    getByRole("link", {name: "bag"}) also matches an SVG icon with no image.
+    That only bites when "bag" is the top trending term, which the suite's own
+    searches make happen — hence a test that passed until it suddenly did not.
+  */
+  const cards = page.locator("main").getByRole("link", { name: withPhoto[0].term });
   await expect(cards.first().locator("img")).toBeVisible();
 });
 

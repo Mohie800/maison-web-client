@@ -33,6 +33,8 @@ const MAP = resolve(ROOT, "../plans/07-figma-screen-map.md");
  * `merged` / `cut` — a recorded decision in plans/09.
  * `blocked` — no endpoint, or a design decision outstanding.
  * `not-a-screen` — a fragment, a handoff note, or a superseded duplicate.
+ * `pending` — in the current work, not yet written. Delete the line when the
+ * screen ships; this reason should trend to empty, unlike the others.
  */
 const ACCOUNTED = {
   // --- built; the code cites child nodes instead of the frame
@@ -69,13 +71,22 @@ const ACCOUNTED = {
   "651:3463": ["blocked", "AISearch_Results_Match — GAP-59, results are invented"],
   "651:3586": ["blocked", "AISearch_Results_NoMatch — GAP-59"],
 
+
+  // --- Flow 15, in progress (01_VP_Dashboard shipped 2026-09-05)
+  "651:15422": ["merged", "14_VP_ReviewDetail — reply is inline on the list (plans/09 C79)"],
+
   // --- in a flow table, but not a screen
   "651:4610": ["not-a-screen", "a 762×73 PDP header sliver"],
   "651:5101": ["not-a-screen", "a 1026×73 PLP header sliver"],
 };
 
-/** Flow 15 is out of scope; its 36 frames are skipped entirely. */
-const SKIP_FLOW = /Vendor Portal/;
+/**
+ * Flow 15's dark section is skipped: it is the same 18 screens as the light
+ * section in the other theme, and one token-driven implementation serves both,
+ * so tracking it would double-count every screen. The light section is the
+ * inventory and is checked like any other flow.
+ */
+const SKIP_FLOW = /Vendor Portal \(Dark\)/;
 
 function walk(dir) {
   const out = [];

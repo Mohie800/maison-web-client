@@ -654,7 +654,8 @@
       "settings": "الإعدادات",
       "signOut": "تسجيل الخروج",
       "referrals": "ادعُ صديقًا",
-      "profile": "ملفي"
+      "profile": "ملفي",
+      "vendorPortal": "بوابة البائع"
     }
   },
   "Dashboard": {
@@ -2600,6 +2601,430 @@
     "status": {
       "live": "معروض",
       "pending": "قيد المراجعة"
+    }
+  },
+  "Vendor": {
+    "title": "بوابة البائع",
+    "badge": "VP",
+    "switchToBuyer": "التبديل إلى واجهة المشتري",
+    "sections": {
+      "main": "الرئيسية",
+      "analytics": "التحليلات",
+      "store": "المتجر",
+      "finance": "المالية"
+    },
+    "nav": {
+      "dashboard": "لوحة التحكم",
+      "products": "منتجاتي",
+      "orders": "الطلبات",
+      "analytics": "مركز التحليلات",
+      "sales": "تحليلات المبيعات",
+      "customers": "رؤى العملاء",
+      "topProducts": "أفضل المنتجات",
+      "storeProfile": "ملف المتجر",
+      "editStore": "تعديل المتجر",
+      "storeSettings": "إعدادات المتجر",
+      "reviews": "التقييمات",
+      "payouts": "التحويلات",
+      "reports": "التقارير",
+      "discounts": "الخصومات"
+    },
+    "greeting": {
+      "morning": "صباح الخير، {name}",
+      "afternoon": "طاب يومك، {name}",
+      "evening": "مساء الخير، {name}"
+    },
+    "addListing": "+ إضافة منتج",
+    "kpi": {
+      "revenue": "إيرادات هذا الشهر",
+      "newOrders": "طلبات جديدة",
+      "followers": "المتابعون",
+      "activeProducts": "منتجات نشطة",
+      "pending": "{count} قيد المراجعة",
+      "avgOrderValue": "متوسط قيمة الطلب",
+      "totalSales": "إجمالي المبيعات هذا الشهر",
+      "pendingPayout": "تحويلات معلّقة",
+      "payoutOrders": "{count} طلبات",
+      "avgDailyRevenue": "متوسط الإيراد اليومي"
+    },
+    "revenue": {
+      "title": "نظرة عامة على الإيرادات",
+      "chart": "مخطط الإيرادات",
+      "range": {
+        "7d": "7 أيام",
+        "30d": "30 يوم",
+        "90d": "90 يوم"
+      }
+    },
+    "recentOrders": {
+      "title": "أحدث الطلبات",
+      "viewAll": "عرض الكل >",
+      "empty": "لا توجد طلبات بعد."
+    },
+    "status": {
+      "placed": "تم الطلب",
+      "pending": "قيد الانتظار",
+      "paid": "مدفوع",
+      "processing": "قيد التجهيز",
+      "packed": "تم التغليف",
+      "shipped": "تم الشحن",
+      "out_for_delivery": "قيد التوصيل",
+      "delivered": "تم التوصيل",
+      "cancelled": "ملغى",
+      "refunded": "مسترجع"
+    },
+    "products": {
+      "title": "منتجاتي",
+      "subtitle": "{live} معروض · {pending} قيد المراجعة · {soldOut} نفد",
+      "add": "+ إضافة منتج",
+      "tabs": {
+        "all": "الكل",
+        "live": "معروض",
+        "pending": "قيد المراجعة",
+        "sold_out": "نفد",
+        "draft": "مسودات"
+      },
+      "columns": {
+        "product": "المنتج",
+        "status": "الحالة",
+        "price": "السعر",
+        "views": "المشاهدات",
+        "sales": "المبيعات",
+        "actions": "إجراءات"
+      },
+      "statuses": {
+        "live": "معروض",
+        "pending": "قيد المراجعة",
+        "pending_review": "قيد المراجعة",
+        "pending_payment": "قيد المراجعة",
+        "draft": "مسودة",
+        "sold_out": "نفد",
+        "sold": "نفد",
+        "traded": "تمت المقايضة",
+        "rejected": "مرفوض",
+        "expired": "منتهٍ",
+        "withdrawn": "مسحوب"
+      },
+      "edit": "تعديل",
+      "delete": "حذف",
+      "view": "عرض",
+      "none": "—",
+      "empty": "لا شيء في هذه العلامة."
+    },
+    "orders": {
+      "title": "الطلبات",
+      "subtitle": "إدارة وتجهيز طلباتك",
+      "alert": "{count, plural, one {طلب واحد يحتاج} other {# طلبات تحتاج}} إلى إجراء منك",
+      "tabs": {
+        "all": "كل الطلبات",
+        "pending": "جديد",
+        "processing": "قيد التجهيز",
+        "shipped": "تم الشحن",
+        "delivered": "تم التوصيل"
+      },
+      "statuses": {
+        "placed": "جديد",
+        "pending": "جديد",
+        "paid": "جديد",
+        "processing": "قيد التجهيز",
+        "packed": "قيد التجهيز",
+        "shipped": "تم الشحن",
+        "out_for_delivery": "تم الشحن",
+        "delivered": "تم التوصيل",
+        "cancelled": "ملغى",
+        "returned": "مرتجع",
+        "action_needed": "يتطلب إجراء"
+      },
+      "advance": {
+        "packed": "تم التغليف",
+        "shipped": "تم الشحن",
+        "delivered": "تم التوصيل"
+      },
+      "viewDetail": "عرض التفاصيل",
+      "orderLine": "#{order} · {buyer}",
+      "items": "{count, plural, one {منتج واحد} other {# منتجات}}",
+      "empty": "لا توجد طلبات في هذه العلامة.",
+      "alertOverdue": "{count, plural, one {طلب واحد تجاوز} other {# طلبات تجاوزت}} موعد الشحن"
+    },
+    "orderDetail": {
+      "breadcrumb": "الطلبات",
+      "order": "طلب #{number}",
+      "steps": {
+        "paid": "مدفوع",
+        "packed": "تم التغليف",
+        "shipped": "تم الشحن",
+        "delivered": "تم التوصيل"
+      },
+      "customer": "العميل",
+      "message": "مراسلة",
+      "shippingAddress": "عنوان الشحن",
+      "addressMissing": "لا يوجد عنوان توصيل لهذا الطلب.",
+      "items": "المنتجات",
+      "payment": "الدفع",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "platformFee": "رسوم المنصة ({percent}%)",
+      "total": "الإجمالي",
+      "earnings": "أرباحك",
+      "earningsPending": "تُسوّى عند توصيل الطلب.",
+      "actions": "إجراءات الطلب",
+      "shippingVia": "الشحن: {carrier}",
+      "notFound": "تعذر العثور على هذا الطلب.",
+      "vat": "ضريبة القيمة المضافة ({percent}%) — تُحصّل من المشتري"
+    },
+    "analytics": {
+      "range": {
+        "7d": "7 أيام",
+        "30d": "30 يوم",
+        "90d": "90 يوم"
+      },
+      "hub": {
+        "title": "التحليلات",
+        "revenueOverview": "نظرة عامة على الإيرادات",
+        "revenueChart": "مخطط الإيرادات"
+      },
+      "sales": {
+        "title": "تحليلات المبيعات",
+        "totalSales": "إجمالي المبيعات",
+        "totalOrders": "إجمالي الطلبات",
+        "avgOrderValue": "متوسط قيمة الطلب",
+        "revenueTrend": "اتجاه الإيرادات",
+        "unitsSold": "الوحدات المباعة",
+        "conversionRate": "معدل التحويل"
+      },
+      "customers": {
+        "title": "رؤى العملاء",
+        "totalCustomers": "إجمالي العملاء",
+        "newVisitors": "زوار جدد",
+        "returningBuyers": "مشترون عائدون",
+        "returnRate": "معدل العودة",
+        "newVsReturning": "العملاء الجدد مقابل العائدين",
+        "new": "جدد",
+        "returning": "عائدون",
+        "byCity": "العملاء حسب المدينة",
+        "byCountry": "العملاء حسب الدولة",
+        "noSplit": "لا يوجد توزيع للعملاء لهذه الفترة بعد.",
+        "visitsChart": "الزيارات"
+      },
+      "top": {
+        "title": "أفضل المنتجات",
+        "revenue": "الإيراد",
+        "units": "الوحدات",
+        "views": "المشاهدات",
+        "empty": "لم يُباع شيء في هذه الفترة.",
+        "sorts": {
+          "revenue": "الإيراد",
+          "units_sold": "الوحدات المباعة",
+          "price_asc": "السعر (تصاعدي)",
+          "price_desc": "السعر (تنازلي)"
+        }
+      }
+    },
+    "reviews": {
+      "title": "التقييمات",
+      "count": "{count, plural, one {تقييم واحد} other {# تقييم}}",
+      "stars": "{count} نجوم",
+      "distribution": "{count} ({percent}%)",
+      "filters": {
+        "all": "الكل",
+        "verified": "موثق",
+        "with_photos": "مع صور"
+      },
+      "reply": "رد",
+      "replied": "تم الرد",
+      "yourReply": "ردك",
+      "replyPlaceholder": "اكتب رداً علنياً…",
+      "send": "نشر الرد",
+      "sending": "جارٍ النشر…",
+      "onceOnly": "رد واحد لكل تقييم — ولا يمكن تعديله لاحقاً.",
+      "empty": "لا توجد تقييمات بعد.",
+      "back": "التقييمات",
+      "notFound": "تعذر العثور على هذا التقييم.",
+      "windows": {
+        "all": "كل الوقت",
+        "3m": "3 أشهر",
+        "30d": "30 يوم",
+        "7d": "7 أيام"
+      }
+    },
+    "discounts": {
+      "title": "الخصومات والعروض",
+      "subtitle": "{active} نشط · {saved} وفرها العملاء",
+      "create": "+ إنشاء خصم",
+      "createTitle": "إنشاء خصم جديد",
+      "editTitle": "تعديل الخصم",
+      "tabs": {
+        "all": "الكل",
+        "active": "نشط",
+        "scheduled": "مجدول",
+        "expired": "منتهٍ"
+      },
+      "statuses": {
+        "active": "نشط",
+        "scheduled": "مجدول",
+        "expired": "منتهٍ",
+        "inactive": "موقوف"
+      },
+      "usesLabel": "استخدام",
+      "savedLabel": "وُفّر",
+      "edit": "تعديل",
+      "delete": "حذف",
+      "save": "حفظ الخصم",
+      "cancel": "إلغاء",
+      "details": "تفاصيل الخصم",
+      "type": "نوع الخصم",
+      "types": {
+        "percentage": "نسبة مئوية",
+        "fixed": "مبلغ ثابت",
+        "free_shipping": "شحن مجاني"
+      },
+      "code": "رمز الخصم",
+      "name": "الوصف",
+      "namePlaceholder": "مثال: خصم 10% للعملاء الجدد",
+      "valuePercent": "قيمة الخصم (%)",
+      "valueAmount": "قيمة الخصم (ر.س)",
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ الانتهاء",
+      "minOrder": "الحد الأدنى للطلب (ر.س)",
+      "usageLimit": "حد الاستخدام (فارغ = غير محدود)",
+      "preview": "معاينة",
+      "percentOff": "خصم {value}%",
+      "amountOff": "خصم {value} ر.س",
+      "freeShipping": "شحن مجاني",
+      "useCode": "استخدم الرمز: {code}",
+      "previewType": "النوع",
+      "previewValue": "القيمة",
+      "previewMinOrder": "أقل طلب",
+      "previewLimit": "حد الاستخدام",
+      "uses": "{count} استخدام",
+      "unlimited": "غير محدود",
+      "empty": "لا توجد خصومات في هذه العلامة.",
+      "scheduledHidden": "تُنشأ الخصومات المجدولة لكن واجهة القائمة لا تعيدها بعد (GAP-104).",
+      "notFound": "هذا الخصم غير موجود في القائمة — راجع GAP-104."
+    },
+    "payouts": {
+      "title": "التحويلات",
+      "request": "طلب تحويل",
+      "available": "المتاح للتحويل",
+      "totalEarned": "إجمالي الأرباح",
+      "pending": "معلّق",
+      "destination": "وجهة التحويل",
+      "destinationNone": "لم يتم ربط حساب بنكي بعد.",
+      "arrival": "تصل التحويلات عادةً خلال يوم إلى يومين عمل",
+      "change": "تغيير",
+      "add": "إضافة حساب بنكي",
+      "history": "سجل التحويلات",
+      "empty": "لا توجد تحويلات بعد.",
+      "statuses": {
+        "completed": "مكتمل",
+        "pending": "معلّق",
+        "failed": "فشل"
+      }
+    },
+    "reports": {
+      "title": "التقارير",
+      "subtitle": "تنزيل التقارير للمحاسبة والضرائب والطلبات",
+      "download": "تنزيل",
+      "unavailable": "غير متاح",
+      "cards": {
+        "sales": {
+          "title": "تقرير المبيعات",
+          "body": "الإيرادات والطلبات اليومية لآخر 90 يوم"
+        },
+        "orders": {
+          "title": "تقرير الطلبات",
+          "body": "كل شحنة مع الحالة والإجمالي والتتبع"
+        },
+        "tax": {
+          "title": "ملخص الضريبة",
+          "body": "ضريبة القيمة المضافة المحصّلة على مبيعاتك مع الرسوم والصافي"
+        },
+        "payments": {
+          "title": "تقرير المدفوعات",
+          "body": "سجل المحفظة مع الرسوم والتحويلات"
+        },
+        "inventory": {
+          "title": "تقرير المخزون",
+          "body": "كل منتج مع المشاهدات والإعجابات"
+        },
+        "customers": {
+          "title": "تقرير العملاء",
+          "body": "توزيع المشترين حسب المدينة والدولة"
+        }
+      },
+      "taxNote": "لا توفر واجهة البرمجة أي بيانات ضريبية بعد (GAP-115)."
+    },
+    "store": {
+      "title": "ملف المتجر",
+      "edit": "تعديل المتجر",
+      "preview": "وضع المعاينة — هكذا يرى المشترون متجرك",
+      "banner": "بانر المتجر",
+      "verified": "موثق",
+      "followers": "المتابعون",
+      "rating": "التقييم",
+      "products": "المنتجات",
+      "tabs": {
+        "products": "المنتجات ({count})",
+        "reviews": "التقييمات ({count})",
+        "about": "نبذة"
+      },
+      "noProducts": "لا توجد منتجات بعد.",
+      "noAbout": "لا يوجد وصف للمتجر بعد."
+    },
+    "editStore": {
+      "title": "تعديل المتجر",
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "name": "اسم المتجر",
+      "handle": "معرّف المتجر",
+      "city": "المدينة",
+      "readOnly": "يقبل البانر رابطاً فقط — لا توجد واجهة رفع له بعد.",
+      "saved": "تم حفظ بيانات المتجر.",
+      "error": "تعذر الحفظ. قد يكون المعرّف مستخدماً.",
+      "bio": "نبذة المتجر",
+      "about": "عن متجرك",
+      "tags": "وسوم المتجر",
+      "tagsPlaceholder": "فنتاج، فاخر، ستريت وير",
+      "banner": "رابط صورة البانر",
+      "shipsFrom": "يُشحن من (المدينة)",
+      "policies": "الشحن والإرجاع",
+      "freeShipping": "شحن مجاني للطلبات فوق (ر.س)",
+      "returnWindow": "مدة الإرجاع (أيام)",
+      "returnsAccepted": "قبول الإرجاع"
+    },
+    "storeSettings": {
+      "title": "إعدادات المتجر",
+      "delivery": "طرق التوصيل",
+      "deliveryNote": "تحددها المنصة وهي نفسها لكل البائعين.",
+      "days": "{min}–{max} يوم",
+      "sameDay": "نفس اليوم",
+      "free": "مجاني",
+      "status": "حالة المتجر",
+      "live": "المتجر مفتوح",
+      "liveNote": "يمكن للعملاء التصفح والشراء",
+      "vacation": "وضع الإجازة",
+      "vacationNote": "إخفاء منتجاتك مؤقتاً",
+      "vacationOn": "مفعل",
+      "vacationOff": "معطل",
+      "manage": "إدارة",
+      "omitted": "مناطق الشحن وساعات العمل وحذف المتجر لا تملك واجهات بعد (GAP-116).",
+      "policies": "الشحن والإرجاع",
+      "policiesRow": "حد الشحن المجاني وسياسة الإرجاع",
+      "policiesNote": "تُعدّل مع بقية بيانات المتجر"
+    },
+    "productDetail": {
+      "breadcrumb": "منتجاتي",
+      "views": "المشاهدات",
+      "likes": "الإعجابات",
+      "sold": "مباع",
+      "inStock": "متوفر",
+      "description": "الوصف",
+      "noDescription": "لا يوجد وصف.",
+      "edit": "تعديل المنتج",
+      "withdraw": "سحب المنتج",
+      "withdrawNote": "السحب نهائي — لا يمكن إعادة نشر منتج مسحوب.",
+      "editDrafts": "لا يمكن تعديل منتج منشور؛ يجب سحبه وإعادة إنشائه.",
+      "notFound": "تعذر العثور على هذا المنتج."
     }
   }
 }

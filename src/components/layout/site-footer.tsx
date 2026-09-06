@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 import { SocialLinks } from "./social-links";
 
@@ -67,6 +68,20 @@ const VAT_NUMBER = "314734077200003";
 
 const RULE = "h-px w-full shrink-0 bg-line";
 
+/**
+ * Trust marks all sit on the same light plate. The supplied art is dark-on-
+ * transparent with soft (alpha ~200) edges, which goes muddy straight on
+ * `surface/invert`; the padding also stands in for the clear space the files
+ * are cropped without.
+ */
+function MarkPlate({ children }: { children: ReactNode }) {
+  return (
+    <div className="rounded-8 flex h-[88px] shrink-0 items-center justify-center border border-line bg-white px-4">
+      {children}
+    </div>
+  );
+}
+
 export async function SiteFooter() {
   const t = await getTranslations("Footer");
 
@@ -98,23 +113,6 @@ export async function SiteFooter() {
             <p className="max-w-[240px] text-[13px] leading-5 text-balance text-white/70">
               {t("tagline")}
             </p>
-            {/* Marks — Saudi Made and Saudi Tech, bottom-aligned. */}
-            <div className="flex items-end gap-4 pt-1">
-              <Image
-                src="/brand/saudi-made.jpg"
-                alt={t("marks.saudiMade")}
-                width={114}
-                height={38}
-                className="h-[38px] w-auto"
-              />
-              <Image
-                src="/brand/saudi-tech.jpg"
-                alt={t("marks.saudiTech")}
-                width={35}
-                height={64}
-                className="h-16 w-auto"
-              />
-            </div>
           </div>
 
           <div className="grid flex-1 grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4 lg:gap-x-16">
@@ -143,22 +141,50 @@ export async function SiteFooter() {
           </div>
         </div>
 
-        {/* Certification marks, 100px tall and 3px apart. */}
-        <div className="flex items-start gap-[3px]">
-          <Image
-            src="/brand/iso-9001.png"
-            alt={t("marks.iso9001")}
-            width={95}
-            height={100}
-            className="h-[100px] w-auto"
-          />
-          <Image
-            src="/brand/iso-27001.png"
-            alt={t("marks.iso27001")}
-            width={120}
-            height={100}
-            className="h-[100px] w-auto"
-          />
+        {/*
+          Provenance and certification marks as one set. Heights are tuned per
+          mark rather than shared: a wide lockup, a portrait badge and two
+          roundels at the same pixel height read as wildly different sizes.
+        */}
+        {/* Two-up on mobile — free wrapping strands the last mark on its own
+            row at 390px. */}
+        <div className="grid grid-cols-2 justify-items-start gap-3 sm:flex sm:flex-wrap sm:items-center">
+          <MarkPlate>
+            <Image
+              src="/brand/saudi-made.png"
+              alt={t("marks.saudiMade")}
+              width={111}
+              height={36}
+              className="h-9 w-auto"
+            />
+          </MarkPlate>
+          <MarkPlate>
+            <Image
+              src="/brand/saudi-tech.png"
+              alt={t("marks.saudiTech")}
+              width={36}
+              height={64}
+              className="h-16 w-auto"
+            />
+          </MarkPlate>
+          <MarkPlate>
+            <Image
+              src="/brand/iso-9001.png"
+              alt={t("marks.iso9001")}
+              width={65}
+              height={64}
+              className="h-16 w-auto"
+            />
+          </MarkPlate>
+          <MarkPlate>
+            <Image
+              src="/brand/iso-27001.png"
+              alt={t("marks.iso27001")}
+              width={65}
+              height={64}
+              className="h-16 w-auto"
+            />
+          </MarkPlate>
         </div>
 
         <SocialLinks label={t("followUs")} />

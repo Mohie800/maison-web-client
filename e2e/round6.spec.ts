@@ -192,9 +192,11 @@ test("the sell wizard can mark a listing tradeable", async ({
 
   await page.getByRole("button", { name: /^Fashion/ }).first().click();
   const cont = page.getByRole("button", { name: "Continue" });
-  // Group, then leaf — the wizard only enables Continue on a leaf category.
-  await page.getByRole("button", { name: "Bags", exact: true }).click();
-  await page.getByRole("button", { name: "Handbags", exact: true }).click();
+  /* Group, then leaf — the wizard only enables Continue on a leaf category.
+     The catalogue was restructured: Fashion's groups are Women/Men/Kids now,
+     not Bags, and the leaves under Women are Dresses, Tops & Blouses, Abayas. */
+  await page.getByRole("button", { name: "Women", exact: true }).click();
+  await page.getByRole("button", { name: "Dresses", exact: true }).click();
   await expect(cont).toBeEnabled();
   await cont.click();
 

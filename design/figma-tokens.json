@@ -315,6 +315,42 @@
       "dark": "#6B7280",
       "tw": "ink-550",
       "_note": "Search placeholder in the header (Figma 651:556). Absent from the HANDOFF dark table — dark value INFERRED as t/ink-500's dark. Confirm with design."
+    },
+    "t-ink-450": {
+      "light": "#8B8FA8",
+      "dark": "#8B8FA8",
+      "tw": "ink-450",
+      "_note": "Vendor Portal dark-theme sidebar (Figma 651:10850) — the muted nav row and section label on the #0F1117 rail. The light rail (651:13489) uses t/ink-500 instead, so this token is only ever consumed in dark; the light value is recorded for completeness, not because anything reads it."
+    },
+    "t-vp-panel": {
+      "light": "#F7F8FA",
+      "dark": "#0D1017",
+      "tw": "vp-panel",
+      "_note": "Inset panel on a portal card - the dashboard's chart well (651:13582 light / 651:10945 dark). Vendor Portal only. The Flow 15 dark frames use their own tint ramp rather than the global dark tints — none of these dark values matches the token the light frame binds, so mapping them onto action-tint / info-tint / warn-tint / error-tint would be visibly wrong in dark. Light values are the global ones, so a single utility serves both themes. Do not use outside (vendor)."
+    },
+    "t-vp-tint-action": {
+      "light": "#ECFDF5",
+      "dark": "#1E3A2F",
+      "tw": "vp-action",
+      "_note": "Positive tint: delta badges, Delivered pills, the rail avatar and verified pill (651:10916 / 651:10970 / 651:10856). Vendor Portal only. The Flow 15 dark frames use their own tint ramp rather than the global dark tints — none of these dark values matches the token the light frame binds, so mapping them onto action-tint / info-tint / warn-tint / error-tint would be visibly wrong in dark. Light values are the global ones, so a single utility serves both themes. Do not use outside (vendor)."
+    },
+    "t-vp-tint-info": {
+      "light": "#DBEAFE",
+      "dark": "#1E2D5E",
+      "tw": "vp-info",
+      "_note": "Shipped / in-transit pills (651:10979). Vendor Portal only. The Flow 15 dark frames use their own tint ramp rather than the global dark tints — none of these dark values matches the token the light frame binds, so mapping them onto action-tint / info-tint / warn-tint / error-tint would be visibly wrong in dark. Light values are the global ones, so a single utility serves both themes. Do not use outside (vendor)."
+    },
+    "t-vp-tint-warn": {
+      "light": "#FEF3C7",
+      "dark": "#3A2E1E",
+      "tw": "vp-warn",
+      "_note": "Processing / packed pills (651:10988). Vendor Portal only. The Flow 15 dark frames use their own tint ramp rather than the global dark tints — none of these dark values matches the token the light frame binds, so mapping them onto action-tint / info-tint / warn-tint / error-tint would be visibly wrong in dark. Light values are the global ones, so a single utility serves both themes. Do not use outside (vendor)."
+    },
+    "t-vp-tint-error": {
+      "light": "#FEF2F2",
+      "dark": "#3A1E1E",
+      "tw": "vp-error",
+      "_note": "Alert tint: pending-listing and pending-payout badges, cancelled pills (651:10934). Vendor Portal only. The Flow 15 dark frames use their own tint ramp rather than the global dark tints — none of these dark values matches the token the light frame binds, so mapping them onto action-tint / info-tint / warn-tint / error-tint would be visibly wrong in dark. Light values are the global ones, so a single utility serves both themes. Do not use outside (vendor)."
     }
   },
   "typography": {

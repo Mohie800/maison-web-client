@@ -653,7 +653,8 @@
       "settings": "Settings",
       "signOut": "Sign Out",
       "referrals": "Refer a Friend",
-      "profile": "My Profile"
+      "profile": "My Profile",
+      "vendorPortal": "Vendor Portal"
     }
   },
   "Dashboard": {
@@ -2599,6 +2600,430 @@
     "status": {
       "live": "LIVE",
       "pending": "PENDING"
+    }
+  },
+  "Vendor": {
+    "title": "Vendor Portal",
+    "badge": "VP",
+    "switchToBuyer": "Switch to Buyer View",
+    "sections": {
+      "main": "MAIN",
+      "analytics": "ANALYTICS",
+      "store": "STORE",
+      "finance": "FINANCE"
+    },
+    "nav": {
+      "dashboard": "Dashboard",
+      "products": "My Products",
+      "orders": "Orders",
+      "analytics": "Analytics Hub",
+      "sales": "Sales Analytics",
+      "customers": "Customer Insights",
+      "topProducts": "Top Products",
+      "storeProfile": "Store Profile",
+      "editStore": "Edit Store",
+      "storeSettings": "Store Settings",
+      "reviews": "Reviews",
+      "payouts": "Payouts",
+      "reports": "Reports",
+      "discounts": "Discounts"
+    },
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}"
+    },
+    "addListing": "+ Add Listing",
+    "kpi": {
+      "revenue": "Revenue This Month",
+      "newOrders": "New Orders",
+      "followers": "Followers",
+      "activeProducts": "Active Products",
+      "pending": "{count} pending",
+      "avgOrderValue": "Avg Order Value",
+      "totalSales": "Total Sales this month",
+      "pendingPayout": "Pending Payout",
+      "payoutOrders": "{count} orders",
+      "avgDailyRevenue": "Avg Daily Revenue"
+    },
+    "revenue": {
+      "title": "Revenue Overview",
+      "chart": "Revenue Chart",
+      "range": {
+        "7d": "7D",
+        "30d": "30D",
+        "90d": "90D"
+      }
+    },
+    "recentOrders": {
+      "title": "Recent Orders",
+      "viewAll": "View All >",
+      "empty": "No orders yet."
+    },
+    "status": {
+      "placed": "Placed",
+      "pending": "Pending",
+      "paid": "Paid",
+      "processing": "Processing",
+      "packed": "Packed",
+      "shipped": "Shipped",
+      "out_for_delivery": "Out for delivery",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "refunded": "Refunded"
+    },
+    "products": {
+      "title": "My Products",
+      "subtitle": "{live} live · {pending} pending · {soldOut} sold out",
+      "add": "+ Add Product",
+      "tabs": {
+        "all": "All",
+        "live": "Live",
+        "pending": "Pending",
+        "sold_out": "Sold Out",
+        "draft": "Drafts"
+      },
+      "columns": {
+        "product": "Product",
+        "status": "Status",
+        "price": "Price",
+        "views": "Views",
+        "sales": "Sales",
+        "actions": "Actions"
+      },
+      "statuses": {
+        "live": "Live",
+        "pending": "Pending",
+        "pending_review": "Pending",
+        "pending_payment": "Pending",
+        "draft": "Draft",
+        "sold_out": "Sold Out",
+        "sold": "Sold Out",
+        "traded": "Traded",
+        "rejected": "Rejected",
+        "expired": "Expired",
+        "withdrawn": "Withdrawn"
+      },
+      "edit": "Edit",
+      "delete": "Delete",
+      "view": "View",
+      "none": "—",
+      "empty": "Nothing in this tab."
+    },
+    "orders": {
+      "title": "Orders",
+      "subtitle": "Manage and fulfill your orders",
+      "alert": "{count, plural, one {# order needs} other {# orders need}} your action",
+      "tabs": {
+        "all": "All Orders",
+        "pending": "New",
+        "processing": "Processing",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      },
+      "statuses": {
+        "placed": "New",
+        "pending": "New",
+        "paid": "New",
+        "processing": "Processing",
+        "packed": "Processing",
+        "shipped": "Shipped",
+        "out_for_delivery": "Shipped",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled",
+        "returned": "Returned",
+        "action_needed": "Action Needed"
+      },
+      "advance": {
+        "packed": "Mark as Packed",
+        "shipped": "Mark as Shipped",
+        "delivered": "Mark as Delivered"
+      },
+      "viewDetail": "View Detail",
+      "orderLine": "#{order} · {buyer}",
+      "items": "{count, plural, one {# item} other {# items}}",
+      "empty": "No orders in this tab yet.",
+      "alertOverdue": "{count, plural, one {# order is} other {# orders are}} past the ship-by date"
+    },
+    "orderDetail": {
+      "breadcrumb": "Orders",
+      "order": "Order #{number}",
+      "steps": {
+        "paid": "Paid",
+        "packed": "Packed",
+        "shipped": "Shipped",
+        "delivered": "Delivered"
+      },
+      "customer": "Customer",
+      "message": "Message",
+      "shippingAddress": "Shipping Address",
+      "addressMissing": "No delivery address on this order.",
+      "items": "Items",
+      "payment": "Payment",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "platformFee": "Platform Fee ({percent}%)",
+      "total": "Total",
+      "earnings": "Your Earnings",
+      "earningsPending": "Settles when the order is delivered.",
+      "actions": "Order Actions",
+      "shippingVia": "Shipping: {carrier}",
+      "notFound": "That order could not be found.",
+      "vat": "VAT ({percent}%) — collected from the buyer"
+    },
+    "analytics": {
+      "range": {
+        "7d": "7D",
+        "30d": "30D",
+        "90d": "90D"
+      },
+      "hub": {
+        "title": "Analytics",
+        "revenueOverview": "Revenue Overview",
+        "revenueChart": "Revenue Chart"
+      },
+      "sales": {
+        "title": "Sales Analytics",
+        "totalSales": "Total Sales",
+        "totalOrders": "Total Orders",
+        "avgOrderValue": "Avg Order Value",
+        "revenueTrend": "Revenue Trend",
+        "unitsSold": "Units Sold",
+        "conversionRate": "Conversion Rate"
+      },
+      "customers": {
+        "title": "Customer Insights",
+        "totalCustomers": "Total Customers",
+        "newVisitors": "New Visitors",
+        "returningBuyers": "Returning Buyers",
+        "returnRate": "Return Rate",
+        "newVsReturning": "New vs Returning Customers",
+        "new": "New",
+        "returning": "Returning",
+        "byCity": "Customers by City",
+        "byCountry": "Customers by Country",
+        "noSplit": "No customer split for this window yet.",
+        "visitsChart": "Visits"
+      },
+      "top": {
+        "title": "Top Products",
+        "revenue": "Revenue",
+        "units": "Units",
+        "views": "Views",
+        "empty": "Nothing sold in this window.",
+        "sorts": {
+          "revenue": "Revenue",
+          "units_sold": "Units Sold",
+          "price_asc": "Price (low to high)",
+          "price_desc": "Price (high to low)"
+        }
+      }
+    },
+    "reviews": {
+      "title": "Reviews",
+      "count": "{count, plural, one {# review} other {# reviews}}",
+      "stars": "{count} stars",
+      "distribution": "{count} ({percent}%)",
+      "filters": {
+        "all": "All",
+        "verified": "Verified",
+        "with_photos": "With photos"
+      },
+      "reply": "Reply",
+      "replied": "Replied",
+      "yourReply": "Your reply",
+      "replyPlaceholder": "Write a public reply…",
+      "send": "Post reply",
+      "sending": "Posting…",
+      "onceOnly": "One reply per review — it cannot be edited afterwards.",
+      "empty": "No reviews yet.",
+      "back": "Reviews",
+      "notFound": "That review could not be found.",
+      "windows": {
+        "all": "All Time",
+        "3m": "3 months",
+        "30d": "30 days",
+        "7d": "7 days"
+      }
+    },
+    "discounts": {
+      "title": "Discounts & Promotions",
+      "subtitle": "{active} active · {saved} saved by customers",
+      "create": "+ Create Discount",
+      "createTitle": "Create New Discount",
+      "editTitle": "Edit Discount",
+      "tabs": {
+        "all": "All",
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "expired": "Expired"
+      },
+      "statuses": {
+        "active": "Active",
+        "scheduled": "Scheduled",
+        "expired": "Expired",
+        "inactive": "Inactive"
+      },
+      "usesLabel": "Uses",
+      "savedLabel": "Saved",
+      "edit": "Edit",
+      "delete": "Delete",
+      "save": "Save Discount",
+      "cancel": "Cancel",
+      "details": "Discount Details",
+      "type": "Discount Type",
+      "types": {
+        "percentage": "Percentage",
+        "fixed": "Fixed Amount",
+        "free_shipping": "Free Shipping"
+      },
+      "code": "Discount Code",
+      "name": "Description",
+      "namePlaceholder": "e.g. 10% off for new customers",
+      "valuePercent": "Discount Value (%)",
+      "valueAmount": "Discount Value (SAR)",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "minOrder": "Minimum Order Amount (SAR)",
+      "usageLimit": "Limit Total Uses (blank = unlimited)",
+      "preview": "Preview",
+      "percentOff": "{value}% OFF",
+      "amountOff": "SAR {value} OFF",
+      "freeShipping": "FREE SHIPPING",
+      "useCode": "Use code: {code}",
+      "previewType": "Type",
+      "previewValue": "Value",
+      "previewMinOrder": "Min Order",
+      "previewLimit": "Usage Limit",
+      "uses": "{count} uses",
+      "unlimited": "Unlimited",
+      "empty": "No discounts in this tab.",
+      "scheduledHidden": "Scheduled discounts are created but the list endpoint does not return them yet (GAP-104), so this tab stays empty even when the counter above is not.",
+      "notFound": "That discount is not in the list. Scheduled discounts cannot be opened yet — see GAP-104."
+    },
+    "payouts": {
+      "title": "Payouts",
+      "request": "Request Payout",
+      "available": "Available for Payout",
+      "totalEarned": "Total Earned",
+      "pending": "Pending",
+      "destination": "Payout Destination",
+      "destinationNone": "No bank account linked yet.",
+      "arrival": "Transfers usually arrive within 1–2 business days",
+      "change": "Change",
+      "add": "Add bank account",
+      "history": "Payout History",
+      "empty": "No payouts yet.",
+      "statuses": {
+        "completed": "Completed",
+        "pending": "Pending",
+        "failed": "Failed"
+      }
+    },
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Download reports for accounting, taxes, and orders",
+      "download": "Download",
+      "unavailable": "Not available",
+      "cards": {
+        "sales": {
+          "title": "Sales Report",
+          "body": "Daily revenue and orders over the last 90 days"
+        },
+        "orders": {
+          "title": "Orders Report",
+          "body": "Every shipment with status, totals and tracking"
+        },
+        "tax": {
+          "title": "Tax Summary",
+          "body": "VAT collected on your sales, with the fee and net split"
+        },
+        "payments": {
+          "title": "Payments Report",
+          "body": "Wallet ledger with the fee and payout split"
+        },
+        "inventory": {
+          "title": "Inventory Report",
+          "body": "Every listing with views, likes and stock"
+        },
+        "customers": {
+          "title": "Customer Report",
+          "body": "Buyer split by city and country"
+        }
+      },
+      "taxNote": "Nothing in the API exposes VAT, so this one cannot be generated yet (GAP-115)."
+    },
+    "store": {
+      "title": "Store Profile",
+      "edit": "Edit Store",
+      "preview": "Preview Mode — this is how buyers see your store",
+      "banner": "Store Banner",
+      "verified": "Verified",
+      "followers": "Followers",
+      "rating": "Rating",
+      "products": "Products",
+      "tabs": {
+        "products": "Products ({count})",
+        "reviews": "Reviews ({count})",
+        "about": "About"
+      },
+      "noProducts": "Nothing listed yet.",
+      "noAbout": "No store description yet."
+    },
+    "editStore": {
+      "title": "Edit Store",
+      "save": "Save",
+      "cancel": "Cancel",
+      "name": "Store Name",
+      "handle": "Store Handle",
+      "city": "Location (City)",
+      "readOnly": "The banner takes a URL: there is no upload endpoint for it yet.",
+      "saved": "Store details saved.",
+      "error": "That could not be saved. The handle may already be taken.",
+      "bio": "Store Bio",
+      "about": "About Your Store",
+      "tags": "Store Tags",
+      "tagsPlaceholder": "vintage, luxury, streetwear",
+      "banner": "Banner image URL",
+      "shipsFrom": "Ships From (City)",
+      "policies": "Shipping & Returns",
+      "freeShipping": "Free shipping on orders above (SAR)",
+      "returnWindow": "Return window (days)",
+      "returnsAccepted": "Accept returns"
+    },
+    "storeSettings": {
+      "title": "Store Settings",
+      "delivery": "Delivery Methods",
+      "deliveryNote": "Set by the platform, the same for every seller.",
+      "days": "{min}–{max} days",
+      "sameDay": "Same day",
+      "free": "Free",
+      "status": "Store Status",
+      "live": "Store is Live",
+      "liveNote": "Customers can browse and buy",
+      "vacation": "Vacation Mode",
+      "vacationNote": "Hide your listings temporarily",
+      "vacationOn": "On",
+      "vacationOff": "Off",
+      "manage": "Manage",
+      "omitted": "Shipping zones, business hours and store deletion have no endpoints yet (GAP-116).",
+      "policies": "Shipping & Returns",
+      "policiesRow": "Free shipping threshold and return policy",
+      "policiesNote": "Edited with the rest of your store details"
+    },
+    "productDetail": {
+      "breadcrumb": "My Products",
+      "views": "Views",
+      "likes": "Likes",
+      "sold": "Sold",
+      "inStock": "In Stock",
+      "description": "Description",
+      "noDescription": "No description.",
+      "edit": "Edit Product",
+      "withdraw": "Withdraw Listing",
+      "withdrawNote": "Withdrawing is permanent — the API only relists drafts, so a withdrawn listing cannot go live again.",
+      "editDrafts": "A live listing cannot be edited; it has to be withdrawn and recreated.",
+      "notFound": "That product could not be found."
     }
   }
 }

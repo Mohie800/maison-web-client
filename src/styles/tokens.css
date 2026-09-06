@@ -61,6 +61,12 @@
   --t-aqua-tint: #E4FBEF;
   --t-aqua-tint2: #DCEEFF;
   --t-ink-550: #8B949E;
+  --t-ink-450: #8B8FA8;
+  --t-vp-panel: #F7F8FA;
+  --t-vp-tint-action: #ECFDF5;
+  --t-vp-tint-info: #DBEAFE;
+  --t-vp-tint-warn: #FEF3C7;
+  --t-vp-tint-error: #FEF2F2;
 }
 
 .dark {
@@ -120,6 +126,12 @@
   --t-aqua-tint: #052E1B;
   --t-aqua-tint2: #052A3B;
   --t-ink-550: #6B7280;
+  --t-ink-450: #8B8FA8;
+  --t-vp-panel: #0D1017;
+  --t-vp-tint-action: #1E3A2F;
+  --t-vp-tint-info: #1E2D5E;
+  --t-vp-tint-warn: #3A2E1E;
+  --t-vp-tint-error: #3A1E1E;
 }
 
 @theme inline {
@@ -179,6 +191,12 @@
   --color-aqua-tint: var(--t-aqua-tint);
   --color-aqua-tint2: var(--t-aqua-tint2);
   --color-ink-550: var(--t-ink-550);
+  --color-ink-450: var(--t-ink-450);
+  --color-vp-panel: var(--t-vp-panel);
+  --color-vp-action: var(--t-vp-tint-action);
+  --color-vp-info: var(--t-vp-tint-info);
+  --color-vp-warn: var(--t-vp-tint-warn);
+  --color-vp-error: var(--t-vp-tint-error);
 
   --text-display: 2rem;
   --text-display--line-height: 2.75rem;

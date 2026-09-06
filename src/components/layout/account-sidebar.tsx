@@ -13,9 +13,18 @@ import { signOutAction } from "@/features/auth/sign-out";
  * frame lists it, and the header bell now opens the dropdown with its own "See
  * all" link, so the rail entry was a second door to one room (plans/09 C52).
  *
- * "Vendor Portal" stays omitted: Flow 15 is out of scope and the route does not
- * exist. **Sign Out** is new here — the design has always drawn it and nothing
- * in the app rendered it, so there was no way to sign out at all.
+ * **Vendor Portal** is the only way into the seller side. `651:8935` puts it
+ * last, below Sign Out — fine for an individual who sells occasionally, wrong
+ * for a business account, whose whole reason for existing is the portal. So the
+ * row moves to the top for `accountType: "business"` and stays where the frame
+ * puts it for everyone else.
+ *
+ * That split is what `accountType` is for, and `features/auth/schemas.ts` has
+ * been carrying a note since sign-up was built saying business accounts "will
+ * need their own entry point in a later flow". This is it. Recorded as C85.
+ *
+ * **Sign Out** is also here — the design has always drawn it and nothing in the
+ * app rendered it, so there was no way to sign out at all.
  */
 const NAV = [
   { key: "dashboard", href: "/account" },
@@ -36,6 +45,21 @@ export async function AccountSidebar({ active }: { active: string }) {
   const locale = await getLocale();
   const user = await getCurrentUser();
   const avatar = resolveMediaUrl(user?.profilePic);
+  const isBusiness = user?.accountType === "business";
+
+  /* One row, two homes — see the note above. */
+  const vendorLink = (
+    <li className="shrink-0">
+      <Link
+        href="/vendor"
+        className={`border-line-200 hover:bg-surface flex items-center rounded-[18px] border px-4 py-2 text-[13px] whitespace-nowrap lg:rounded-none lg:border-0 lg:px-5 lg:py-3 ${
+          isBusiness ? "text-action font-semibold" : "text-ink-700"
+        }`}
+      >
+        {t("nav.vendorPortal")}
+      </Link>
+    </li>
+  );
 
   return (
     /*
@@ -69,6 +93,7 @@ export async function AccountSidebar({ active }: { active: string }) {
 
         <nav className="max-lg:-mx-4 max-lg:px-4">
           <ul className="scrollbar-none flex gap-2 overflow-x-auto lg:flex-col lg:gap-0 lg:overflow-visible">
+            {isBusiness && vendorLink}
             {NAV.map(({ key, href }) => {
               const isActive = key === active;
               return (
@@ -101,6 +126,9 @@ export async function AccountSidebar({ active }: { active: string }) {
                 </button>
               </form>
             </li>
+
+            {/* NI — 651:8935, where the frame puts it. */}
+            {!isBusiness && vendorLink}
           </ul>
         </nav>
       </div>

@@ -74,9 +74,20 @@ export async function getSellerItems(id: string, query: SellerItemsQuery = {}) {
  * profile's own `ratingAvg` / `ratingCount` are never incremented for seeded
  * sellers and read null/0 against real reviews (GAP-36).
  */
+/**
+ * `filter` accepts `all | with_photos | verified`, and since Round 9 the
+ * endpoint also takes `startDate`/`endDate` — the `summary` block honours the
+ * window too, so the average matches the rows (GAP-114).
+ */
 export async function getSellerReviews(
   id: string,
-  query: { page?: number; limit?: number } = {},
+  query: {
+    page?: number;
+    limit?: number;
+    filter?: "all" | "with_photos" | "verified";
+    startDate?: string;
+    endDate?: string;
+  } = {},
 ) {
   const data = await apiFetch<unknown>(`/sellers/${id}/reviews`, {
     params: { ...query, limit: query.limit ?? 10 },

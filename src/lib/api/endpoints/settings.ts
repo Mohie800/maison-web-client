@@ -65,6 +65,22 @@ const feesSchema = z.object({
   currency: z.string(),
   /** "seller" — the buyer pays the listed price, the fee comes off the payout. */
   chargedTo: z.string(),
+  /**
+   * VAT (GAP-115), added in Round 9. Note it is the same 15% as the platform
+   * fee and is **not** the same money: VAT is collected from the buyer and
+   * remitted by the platform to ZATCA, while the fee is deducted from the
+   * seller's payout. Anything user-facing has to keep those apart.
+   */
+  vat: z
+    .object({
+      ratePercent: z.number().nullish(),
+      rate: z.number().nullish(),
+      collectedBy: z.string().nullish(),
+      remittedBy: z.string().nullish(),
+      authority: z.string().nullish(),
+      sellerNote: z.string().nullish(),
+    })
+    .nullish(),
 });
 
 export type PlatformFees = z.infer<typeof feesSchema>;

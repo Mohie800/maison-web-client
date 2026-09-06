@@ -55,8 +55,10 @@ export type SignInValues = z.infer<typeof signInSchema>;
  *
  * The design has no individual/business selector either, so `accountType` isn't
  * collected — registration falls back to the API's own default of `individual`.
- * Business accounts (which create `/stores` records) will need their own entry
- * point in a later flow.
+ * Business accounts (which create `/stores` records) get their entry point in
+ * the account rail, which promotes the Vendor Portal to the top for them
+ * (`components/layout/account-sidebar.tsx`). **There is still no way to become
+ * one from this form** — that needs either a selector here or an admin flip.
  */
 export const signUpSchema = z
   .object({

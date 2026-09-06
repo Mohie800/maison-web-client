@@ -22,11 +22,49 @@ import { trackSchemaSchema } from "../schemas/track-schema";
  * Fetched on the server with a long revalidate rather than per-request.
  */
 
+/**
+ * The category tree, tolerant of both response shapes.
+ *
+ * Round 9's answer to GAP-118 proposes wrapping this as `{ tree, warnings }`.
+ * Ten modules read this function, including `site-header.tsx`, which renders on
+ * every page — an unannounced switch to an object would `.map()` over a
+ * non-array and take the whole storefront down. Accepting both shapes now means
+ * the change can land whenever they like, with no coordinated deploy.
+ *
+ * `warnings` is deliberately dropped: it is diagnostic, no screen shows it, and
+ * the orphaned categories it reports are already handled by
+ * `getCategoriesFlat()`.
+ */
 export async function getCategoryTree(): Promise<Category[]> {
   const data = await apiFetch<unknown>("/categories/tree", {
     next: { revalidate: 3600, tags: ["categories"] },
   });
-  return parseResponse(z.array(categoryTreeSchema), data, "GET /categories/tree");
+  const rows =
+    data && typeof data === "object" && !Array.isArray(data) && "tree" in data
+      ? (data as { tree: unknown }).tree
+      : data;
+  return parseResponse(z.array(categoryTreeSchema), rows, "GET /categories/tree");
+}
+
+/**
+ * The flat category list — every category, including any the tree has been
+ * restructured away from.
+ *
+ * As of 2026-09-06 `/categories` returns 40 rows while `/categories/tree`
+ * reaches only 29: Bags, Shoes and Accessories and their leaves are still
+ * assignable to listings but no longer hang off a root (GAP-118). Anything that
+ * needs to resolve an arbitrary category id has to fall back to this.
+ */
+export async function getCategoriesFlat(): Promise<Category[]> {
+  const data = await apiFetch<unknown>("/categories", {
+    next: { revalidate: 3600, tags: ["categories"] },
+  });
+  /* Same tolerance as the tree: Round 9 may grow a wrapper here too. */
+  const rows =
+    data && typeof data === "object" && !Array.isArray(data) && "items" in data
+      ? (data as { items: unknown }).items
+      : data;
+  return parseResponse(z.array(categoryTreeSchema), rows, "GET /categories");
 }
 
 export async function getBanners(

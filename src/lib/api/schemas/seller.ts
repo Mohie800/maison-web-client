@@ -38,6 +38,10 @@ export const sellerProfileSchema = z.object({
   country: z.string().nullish(),
   createdAt: z.string().nullish(),
 
+  /** Writable since Round 9 (GAP-116). */
+  tags: z.array(z.string()).nullish(),
+  bannerUrl: z.string().nullish(),
+
   isPro: z.boolean().nullish(),
   isFastShipper: z.boolean().nullish(),
   isTopSeller: z.boolean().nullish(),

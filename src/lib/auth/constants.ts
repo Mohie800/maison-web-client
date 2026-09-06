@@ -17,6 +17,16 @@ export const REFRESH_TOKEN_COOKIE = "maison_rt";
  */
 export const PROTECTED_PREFIXES = [
   "/account",
+  /*
+    The Vendor Portal is gated on a session and nothing more. Every
+    `/vendor-portal/*` route answers 200 for an `accountType: individual`
+    account, so the portal is scoped to "any seller" rather than to business
+    accounts — confirmed against dev 2026-09-05 and raised as the opening note
+    of API-GAPS-ROUND-9. A seller with no listings sees zeros, which is the
+    right first-run state; a hard gate on listing count would hide the portal
+    from exactly the people about to use it.
+  */
+  "/vendor",
   "/sell",
   "/cart",
   "/checkout",

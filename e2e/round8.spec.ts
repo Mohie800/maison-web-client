@@ -322,20 +322,31 @@ test("the sell wizard writes the seller's trade preferences", async ({
   await expectNoErrorBoundary(page);
 
   const cont = page.getByRole("button", { name: "Continue" });
+  // Fashion > Women > Dresses since the catalogue was restructured — see round6.
   await page.getByRole("button", { name: /^Fashion/ }).first().click();
-  await page.getByRole("button", { name: "Bags", exact: true }).click();
-  await page.getByRole("button", { name: "Handbags", exact: true }).click();
+  await page.getByRole("button", { name: "Women", exact: true }).click();
+  await page.getByRole("button", { name: "Dresses", exact: true }).click();
   await cont.click();
 
+  // Wait for step 2 before clicking into it, as round6 does — without this the
+  // click races the transition and lands on step 1.
+  await expect(
+    page.getByRole("heading", { name: "How do you want to sell it?" }),
+  ).toBeVisible();
   await page.getByText("Trade · Request Trade").click();
   await expect(page.getByText("What would you take in return?")).toBeVisible();
 
-  // The root chip is the browsing row; only the leaves under it are picked.
-  await page.getByRole("button", { name: "Bags", exact: true }).click();
-  await page.getByRole("button", { name: "Handbags", exact: true }).click();
-  await page.getByRole("button", { name: "Clutches", exact: true }).click();
+  /*
+    The root chip is the browsing row; only the leaves under it are picked.
+    Women rather than Bags: Bags, Shoes and Accessories are still assignable
+    categories but no longer hang off any root in `/categories/tree`, so the
+    picker cannot reach them at all (GAP-118).
+  */
+  await page.getByRole("button", { name: "Women", exact: true }).click();
+  await page.getByRole("button", { name: "Dresses", exact: true }).click();
+  await page.getByRole("button", { name: "Abayas", exact: true }).click();
   // Picked chips read back as their own removable row.
-  await expect(page.getByRole("button", { name: "Remove Handbags" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Remove Dresses" })).toBeVisible();
   await cont.click();
 
   await expect(page.getByRole("heading", { name: "Item details" })).toBeVisible();
@@ -355,7 +366,7 @@ test("the sell wizard writes the seller's trade preferences", async ({
     expect(
       row.tradePreferredCategories?.map((category) => category.name),
       "the wizard did not write what the seller picked, in order",
-    ).toEqual(["Handbags", "Clutches"]);
+    ).toEqual(["Dresses", "Abayas"]);
   } finally {
     // The API caps an account at three drafts, so this run must not leave one.
     await write(request, "delete", `/listings/${draft.id}`, token!);

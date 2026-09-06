@@ -1,5 +1,5 @@
 import "server-only";
-import { getCategoryTree } from "@/lib/api/endpoints/catalog";
+import { getCategoriesFlat, getCategoryTree } from "@/lib/api/endpoints/catalog";
 import { pickLocalized } from "@/lib/i18n/localized";
 import type { Category } from "@/lib/api/schemas/catalog";
 import type { TradePreferredCategory } from "@/lib/api/schemas/listing";
@@ -44,6 +44,21 @@ export async function tradePreferenceChips(
     }
   };
   walk(tree);
+
+  /*
+    The tree no longer reaches every category: Bags, Shoes and Accessories are
+    still assignable to a listing but hang off no root (GAP-118), and those are
+    exactly the ones sellers pick to trade for. Fill the misses from the flat
+    list, which still has all 40 with their `nameAr`.
+  */
+  if (wanted.some((category) => !names.has(category.id))) {
+    const flat = await getCategoriesFlat().catch(() => null);
+    for (const node of flat ?? []) {
+      if (!names.has(node.id)) {
+        names.set(node.id, pickLocalized(node, "name", locale) || node.name);
+      }
+    }
+  }
 
   return wanted.map((category) => ({
     id: category.id,

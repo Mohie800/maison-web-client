@@ -89,6 +89,9 @@ export async function generateMetadata(props: {
       description,
       images: [shareImage],
     },
+    verification: {
+      google: "z_ChIsr1ajXRLE9_JEOEKrp6olF2NJyU6H0qrKvbrz8",
+    },
   };
 }
 

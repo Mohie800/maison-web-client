@@ -90,7 +90,7 @@ export async function generateMetadata(props: {
       images: [shareImage],
     },
     verification: {
-      google: "z_ChIsr1ajXRLE9_JEOEKrp6olF2NJyU6H0qrKvbrz8",
+      google: "0uiSpoyxvJ6yjf-2wiNFCUQi7oQ18qkPZ66F_PAakA0",
     },
   };
 }

@@ -10,8 +10,8 @@ import type { Locale } from "@/i18n/routing";
 /**
  * All Categories — Figma `651:2815` (Web_CategoriesOverview).
  *
- * One section per top-level category: a tinted panel with the category's photo,
- * name and count, then its children as cards. Everything is real — `imageUrl`
+ * One section per top-level category: a tinted panel with the category's icon,
+ * name and count, then its children as cards. Everything is real — `iconUrl`
  * and the rolled-up `listingCount` both arrived with GAP-31, and the children
  * come from `GET /categories/tree`.
  *
@@ -59,7 +59,7 @@ export default async function CategoriesPage({
       <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-4 pt-10 pb-16 lg:px-20">
         {categories.map((category, index) => {
           const tone = TONES[index % TONES.length];
-          const image = resolveMediaUrl(category.imageUrl ?? category.iconUrl);
+          const icon = resolveMediaUrl(category.iconUrl);
           const children = category.children ?? [];
 
           return (
@@ -71,14 +71,17 @@ export default async function CategoriesPage({
               <div
                 className={`flex shrink-0 flex-col items-center justify-center gap-3 px-6 py-8 lg:w-[260px] ${tone.band}`}
               >
-                {image && (
-                  // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                  <img
-                    src={image}
-                    alt=""
-                    className="h-[155px] w-full rounded-12 object-cover"
-                    loading="lazy"
-                  />
+                {icon && (
+                  // Icons ship on a white ground; the tile keeps that from reading as a stray square.
+                  <span className="bg-base flex size-28 items-center justify-center overflow-hidden rounded-[28px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12 */}
+                    <img
+                      src={icon}
+                      alt=""
+                      className="size-24 object-contain"
+                      loading="lazy"
+                    />
+                  </span>
                 )}
                 <p className={`text-[16px] font-bold ${tone.text}`} dir="auto">
                   {pickLocalized(category, "name", activeLocale)}

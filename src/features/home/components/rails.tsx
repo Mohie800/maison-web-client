@@ -41,9 +41,7 @@ const CATEGORY_TONE = [
 /**
  * Shop by Category — Figma `651:601`.
  *
- * The band shows `imageUrl`, the photograph, not `iconUrl` — the small mark
- * that belongs on chips. Both arrived with GAP-31, along with `listingCount`,
- * which rolls up the subtree.
+ * The band shows the category's `iconUrl`, centred on the tone colour.
  *
  * The design's second line ("Clothing, shoes, accessories") has no field behind
  * it: categories carry no description. It's built from the category's own first
@@ -63,7 +61,7 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
 
       <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
         {categories.slice(0, 4).map((category, index) => {
-          const image = resolveMediaUrl(category.imageUrl ?? category.iconUrl);
+          const icon = resolveMediaUrl(category.iconUrl);
           const tone = CATEGORY_TONE[index % CATEGORY_TONE.length];
           const children = (category.children ?? [])
             .slice(0, 3)
@@ -76,15 +74,20 @@ export async function CategoryRail({ categories }: { categories: Category[] }) {
               className="bg-base border-line-200 flex flex-col overflow-hidden rounded-16 border"
             >
               {/* Band — 651:607 */}
-              <div className={`h-[180px] ${tone.band}`}>
-                {image ? (
-                  // eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12
-                  <img
-                    src={image}
-                    alt=""
-                    className="size-full object-cover"
-                    loading="lazy"
-                  />
+              <div
+                className={`flex h-[180px] items-center justify-center ${tone.band}`}
+              >
+                {icon ? (
+                  // Icons ship on a white ground; the tile keeps that from reading as a stray square.
+                  <span className="bg-base flex size-28 items-center justify-center overflow-hidden rounded-[28px]">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- see plans/06 G12 */}
+                    <img
+                      src={icon}
+                      alt=""
+                      className="size-24 object-contain"
+                      loading="lazy"
+                    />
+                  </span>
                 ) : null}
               </div>
               {/* Ctn — 651:609 */}

@@ -9,7 +9,7 @@ import { apiToken, expectNoErrorBoundary, signIn } from "./fixtures";
  * on a session alone), the dashboard renders the server's own metrics, and the
  * 7D/30D/90D control actually re-queries rather than being the frame's flat text.
  */
-const API = "https://maison.dockbox.cloud/api/v1";
+const API = "https://api.maisonsale.com.sa/api/v1";
 
 test.describe("Vendor Portal", () => {
   test("signed out, /vendor redirects to sign-in", async ({ page }) => {

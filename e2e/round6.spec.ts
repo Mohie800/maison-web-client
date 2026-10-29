@@ -89,7 +89,7 @@ test("the add-story composer posts with a duration and an audience", async ({
 
   // Leave the shared feed as it was found.
   await request.delete(
-    `https://maison.dockbox.cloud/api/v1/stories/${(posted as { id: string }).id}`,
+    `https://api.maisonsale.com.sa/api/v1/stories/${(posted as { id: string }).id}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
 });
@@ -220,7 +220,7 @@ test("the sell wizard can mark a listing tradeable", async ({
 
   // The API caps an account at three drafts, so this run must not leave one.
   await request.delete(
-    `https://maison.dockbox.cloud/api/v1/listings/${rows[0].id}`,
+    `https://api.maisonsale.com.sa/api/v1/listings/${rows[0].id}`,
     { headers: { Authorization: `Bearer ${token}` } },
   );
 });

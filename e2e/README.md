@@ -31,7 +31,7 @@ it fail, so it is a real guard rather than a passing assertion.
 ## They run against shared dev data
 
 There is no fixture database. These drive the real app against
-`maison.dockbox.cloud` using accounts and rows seeded while building — listed
+`api.maisonsale.com.sa` using accounts and rows seeded while building — listed
 under "Test data created on the backend" in `plans/STATUS.md` and named in
 `fixtures.ts`.
 

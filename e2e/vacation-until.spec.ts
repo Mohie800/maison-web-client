@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { ACCOUNTS, signIn, apiToken, apiGet, expectNoErrorBoundary } from "./fixtures";
 
-const API = "https://maison.dockbox.cloud/api/v1";
+const API = "https://api.maisonsale.com.sa/api/v1";
 const FLASH_ON = "Vacation mode is on. Your listings are hidden.";
 
 /**

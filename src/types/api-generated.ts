@@ -401,7 +401,7 @@ export interface paths {
          *
          *     The tabs are the seven `NotificationCategory` values, and they are the same seven the preferences endpoint offers and `unread-count` counts — nothing can be muted that cannot be filtered for, or the other way round.
          *
-         *     Each row is `title` + `body` for the text (there is no `message` field) and `payload` for the destination: `{ orderId }`, `{ listingId }`, `{ conversationId }`, `{ tradeId }` or `{ userId }` depending on `type`. There is no `link` — the client builds the URL from the id.
+         *     Each row is `title` + `body` for the text (there is no `message` field) and `payload` for the destination — `{ orderId, orderNumber, shipmentId }`, `{ listingId }`, `{ conversationId, messageId }`, `{ tradeRequestId, tradeNumber }`, `{ reviewId, listingId }` or `{ userId }` depending on `type`. `NotificationDto.payload` carries the full per-type table, and it is exhaustive. There is no `link` — the client builds the URL from the id.
          */
         get: operations["NotificationsController_list_v1"];
         put?: never;
@@ -551,6 +551,10 @@ export interface paths {
         /**
          * List listings with filtering, sorting, pagination
          * @description Every row carries the same joined `seller { id, handle, profilePic, isVerified, isTopSeller }`, `brand { id, name }` and `category { id, name }` objects that `GET /trends` returns, alongside the raw `sellerId` / `brandId` / `categoryId`.
+         *
+         *     **Public, but personalised by a bearer token.** Send one and every row also carries `isLiked` — whether *this* caller has saved it, as opposed to `likeCount`, which is how many people have. Omit the token and the key is absent rather than `false`, so an anonymous card can tell "not saved" from "unknown". Liking is `POST /listings/{id}/like`; the same rows are what `GET /wishlist` lists.
+         *
+         *     `tradePreferredCategoryIds` is what a trade seller will swap for, `[]` when they have not said.
          */
         get: operations["ListingsController_findAll_v1"];
         put?: never;
@@ -587,6 +591,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/listings/verification-items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get verification checklist items for authenticity scoring
+         * @description Returns the list of verification items sellers can check during product creation to build trust with buyers. Each item awards points towards the authenticity score. Includes both English and Arabic labels/descriptions for i18n support.
+         */
+        get: operations["ListingsController_getVerificationItems_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/listings/me": {
         parameters: {
             query?: never;
@@ -611,7 +635,12 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get a single listing with photos, defects, brand, category */
+        /**
+         * Get a single listing with photos, defects, brand, category
+         * @description Public. A bearer token adds `isLiked` (this caller’s wishlist state, as opposed to the global `likeCount`); without one the key is absent rather than `false`.
+         *
+         *     Trade listings carry both `tradePreferredCategoryIds` (the ids, what you write back on a `PATCH`) and `tradePreferredCategories` (`{ id, name, nameEn, slug }` in the seller’s chosen order, what the "Looking to trade for" chips render). Both are `[]` when the seller has named nothing.
+         */
         get: operations["ListingsController_findOne_v1"];
         put?: never;
         post?: never;
@@ -738,6 +767,26 @@ export interface paths {
             cookie?: never;
         };
         get: operations["CategoriesController_findTree_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/categories/orphans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List orphaned categories
+         * @description Returns categories whose parent is inactive or deleted. These are unreachable via the normal tree and may need reassignment.
+         */
+        get: operations["CategoriesController_findOrphans_v1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1865,6 +1914,8 @@ export interface paths {
         /**
          * Get trending search terms with week-over-week growth
          * @description Counts and growth are measured over the last seven days against the seven before them — the same window the seller leaderboard uses. `growthPercent` is null when a term has no previous week to compare against, and the curated starter list (`source: "seed"`) stands in until the current window has anything in it.
+         *
+         *     Each row carries `imageUrl`: the cover photo of the most-viewed live listing the term matches, resolved with the same `title contains` rule that searching the term uses. It is null when the term matches no live listing with a photo — a card with no picture behind it, and a signal that its results page would be empty.
          */
         get: operations["SearchController_getTrendingSearches_v1"];
         put?: never;
@@ -2362,7 +2413,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Per-item return eligibility + estimated refund for an order (buyer only) */
+        /**
+         * Per-item return eligibility + estimated refund for an order (buyer only)
+         * @description `estimatedRefund` is the eligible items’ subtotal, before any deduction. `returnShippingFee` is what a return costs the buyer and `returnShippingWaivedFor` names the reasons that waive it — the reason is chosen on the next screen, so this endpoint states the rule rather than applying it.
+         */
         get: operations["ReturnsController_eligibility_v1"];
         put?: never;
         post?: never;
@@ -2382,7 +2436,10 @@ export interface paths {
         /** List the buyer's returns (paginated) */
         get: operations["ReturnsController_findMany_v1"];
         put?: never;
-        /** Initiate a return for delivered items (buyer only) */
+        /**
+         * Initiate a return for delivered items (buyer only)
+         * @description Returns the created return, with each line carrying its listing id and cover photo, and the refund split into `itemsSubtotal`, `returnShippingFee` and the net `refundAmount`.
+         */
         post: operations["ReturnsController_create_v1"];
         delete?: never;
         options?: never;
@@ -2414,7 +2471,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Get a return with its tracking timeline (buyer or seller) */
+        /**
+         * Get a return with its tracking timeline (buyer or seller)
+         * @description Everything the Return Tracking screen draws: the six-step `timeline`, both parties, each `items[]` line with its `listingId` and `coverPhotoUrl`, and the refund as the subtraction it is printed as — `itemsSubtotal − returnShippingFee = refundAmount`.
+         */
         get: operations["ReturnsController_findOne_v1"];
         put?: never;
         post?: never;
@@ -2648,7 +2708,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Items tab — listings filtered by all/available/on_sale/sold */
+        /**
+         * Items tab — listings filtered by all/available/on_sale/sold
+         * @description Public. A bearer token adds `isLiked` to every row, on the same contract as `GET /listings`: the caller’s own wishlist state, absent rather than `false` when nobody is signed in.
+         */
         get: operations["SellerProfileController_getItems_v1"];
         put?: never;
         post?: never;
@@ -3153,6 +3216,43 @@ export interface paths {
         };
         /** Platform analytics aggregated from real data */
         get: operations["AdminController_getAnalytics_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/analytics/heatmap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Orders heat map: KPI deltas plus per-region and per-city rollups
+         * @description Geographic distribution of orders across Saudi Arabia. Regions are derived from the city snapshotted on each order at checkout; anything unrecognised is reported under `unmapped` rather than dropped. KPI deltas compare the window against the equal-length window before it (null for timeRange=all). `region` drills down: `summary`, `cities` and `unmapped` narrow to it, while `regions` stays nationwide so the map keeps every bubble.
+         */
+        get: operations["AdminController_getOrdersHeatmap_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/analytics/heatmap/export": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Orders heat map as CSV (all regions + up to 500 cities) */
+        get: operations["AdminController_exportOrdersHeatmap_v1"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3963,8 +4063,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * The platform fee rate the marketplace charges sellers
-         * @description Public and cacheable. `platformFeePercent` is the number to print (15 ⇒ "15%"); `platformFeeRate` is the same thing as a fraction, for arithmetic. This is the single source the listings quote and the payout both compute from, so a page reading it cannot drift from what sellers are actually charged.
+         * Platform fees and VAT information
+         * @description Public and cacheable. Returns both the platform commission rate and VAT details. The platform fee (commission) and VAT are separate charges that happen to have the same rate (15%) in Saudi Arabia. The platform fee is a commission deducted from seller payouts. VAT is a tax collected from buyers and remitted by the platform.
          */
         get: operations["SettingsController_fees_v1"];
         put?: never;
@@ -3991,6 +4091,258 @@ export interface paths {
          *     PNG/JPEG/WEBP, 5MB or smaller; the format is checked from the file’s magic bytes, not its declared type. Files are written under `/uploads/media/` — deliberately not `/uploads/stories/`, which stories expiry may one day sweep.
          */
         post: operations["MediaController_upload_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/shipments/{shipmentId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarriersController_createShipment_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/shipments/{shipmentId}/label": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersController_getLabel_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/shipments/{shipmentId}/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarriersController_syncTracking_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/pickup-address": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersController_getPickupAddress_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["CarriersController_updatePickupAddress_v1"];
+        trace?: never;
+    };
+    "/api/v1/carriers/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersController_getCarrierConfig_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/users/{id}/carrier-config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["CarriersAdminController_updateUserCarrierConfig_v1"];
+        trace?: never;
+    };
+    "/api/v1/admin/shipments/{id}/sync": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarriersAdminController_syncShipment_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/carriers/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersAdminController_getCarrierStats_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/carriers/sellers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersAdminController_getSellersWithCarriers_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/carriers/errors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["CarriersAdminController_getShipmentErrors_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/webhook/spl": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarriersWebhookController_handleSplWebhook_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/carriers/webhook/aramex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["CarriersWebhookController_handleAramexWebhook_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/bnpl/options": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Tabby / Tamara availability for an order total
+         * @description Call with `totalAmount` from checkout preview to decide which instalment options to show. `available: false` comes with a `reason` (`not_enabled`, `order_amount_too_low`, `order_amount_too_high`). The provider can still decline the buyer at checkout.
+         */
+        get: operations["PaymentsController_options_v1"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/bnpl/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a Tabby / Tamara checkout
+         * @description Same body as `POST /orders/checkout` without the payment fields, plus `provider`. Reserves the items and returns a `checkoutUrl` to open. **No order exists yet**: it is created once the provider confirms the payment, after which the buyer is redirected to the result URL with `sessionId`, `status` and `orderId`.
+         */
+        post: operations["PaymentsController_checkout_v1"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/payments/bnpl/sessions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Payment session status (poll on the result screen)
+         * @description Checks the provider while the session is open. `completed` carries the `orderId`; `failed` / `cancelled` / `expired` mean no charge and the items are back on sale.
+         */
+        get: operations["PaymentsController_session_v1"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -4133,6 +4485,50 @@ export interface components {
              * @example true
              */
             notifyPriceDrops?: boolean;
+            /**
+             * @description Short bio displayed on seller profile
+             * @example Vintage fashion enthusiast
+             */
+            bio?: string;
+            /**
+             * @description Extended "About" text for seller profile
+             * @example I curate unique pieces from around the world...
+             */
+            aboutText?: string;
+            /**
+             * @description Tags describing the seller's store
+             * @example [
+             *       "vintage",
+             *       "luxury",
+             *       "streetwear"
+             *     ]
+             */
+            tags?: string[];
+            /**
+             * @description Banner image URL for seller profile
+             * @example /uploads/banners/seller-banner.jpg
+             */
+            bannerUrl?: string;
+            /**
+             * @description City the seller ships from
+             * @example Riyadh
+             */
+            shipsFromCity?: string;
+            /**
+             * @description Order total above which shipping is free (SAR)
+             * @example 200
+             */
+            freeShippingThreshold?: number;
+            /**
+             * @description Whether the seller accepts returns
+             * @example true
+             */
+            returnsAccepted?: boolean;
+            /**
+             * @description Return window in days
+             * @example 14
+             */
+            returnWindowDays?: number;
         };
         FavoriteCategoriesDto: {
             /**
@@ -4217,7 +4613,24 @@ export interface components {
             body: string;
             /** @description Thumbnail for the row, when the event has one. */
             imageUrl: string | null;
-            /** @description Where the row’s action button goes. Type-specific and always the id of the thing the notification is about: `{ orderId }` for the ORDER_* types ("Track Order"), `{ listingId }` for PRICE_DROP / LISTING_SOLD / the AUCTION_* types ("Bid Again"), `{ conversationId }` for NEW_MESSAGE ("Reply"), `{ tradeId }` for the TRADE_* types, `{ userId }` for NEW_FOLLOWER. There is no `link` field — the client builds the URL from the id and its own routes. */
+            /**
+             * @description Where the row’s action button goes. Type-specific, and the **complete** set of keys per type — every key listed here is sent, and no others are. There is no `link` field: the client builds the URL from the id and its own routes.
+             *
+             *     | type | payload |
+             *     |---|---|
+             *     | `ORDER_PLACED` | `{ orderId, orderNumber }` |
+             *     | `ORDER_SHIPPED`, `ORDER_DELIVERED` | `{ orderId, orderNumber, shipmentId }` |
+             *     | `LISTING_SOLD` | `{ orderId, orderNumber, shipmentId }` — the seller’s copy of the sale, so it lands on the shipment to pack, not on the listing |
+             *     | `AUCTION_OUTBID` | `{ listingId }` |
+             *     | `AUCTION_WON` | `{ listingId, dueAt }` — `dueAt` is an ISO timestamp; the win lapses if it passes unpaid |
+             *     | `TRADE_RECEIVED`, `TRADE_ACCEPTED` | `{ tradeRequestId, tradeNumber }` |
+             *     | `NEW_MESSAGE` | `{ conversationId, messageId }` |
+             *     | `NEW_FOLLOWER` | `{ userId }` — the new follower |
+             *     | `NEW_REVIEW` | `{ reviewId, listingId }` — `listingId` is null when the reviewed line was a bundle |
+             *     | `PRICE_DROP`, `FLASH_SALE` | nothing emits these yet; see `NotificationEventsService` |
+             *
+             *     The trade key is `tradeRequestId`, the primary key of `GET /trade-requests/{id}`. This description used to say `{ tradeId }`, which was never a key this API sent, and a client routing from the description got `undefined` on both trade types (GAP-96). The key is unchanged and the description is now what is actually emitted.
+             */
             payload: {
                 [key: string]: unknown;
             } | null;
@@ -4326,10 +4739,24 @@ export interface components {
             /** @default false */
             auctionEnabled: boolean;
             /**
-             * @description Marks the listing as open to barter offers instead of cash sale
+             * @description Marks the listing as open to barter offers instead of cash sale.
+             *
+             *     **Write-only.** It is not a column: it is folded into `saleMode`, and a listing read back carries `saleMode: "trade"` with no `tradeEnabled` field at all. Rehydrating a draft has to derive the toggle from `saleMode === "trade"`, or reopening it silently loses the choice.
              * @default false
              */
             tradeEnabled: boolean;
+            /**
+             * @description What the seller wants in return — the trade PDP’s "Looking to trade for" chips. Category ids, any level; each is checked to exist.
+             *
+             *     Unlike `tradeEnabled` this **is** a column and is read straight back on `GET /listings` and `GET /listings/{id}`, always as an array — `[]` means "open to anything" and is what a listing that has never set it returns. Send `[]` to clear.
+             *
+             *     Accepted on any listing, not just a trade one, so toggling `tradeEnabled` off and on again in the wizard does not discard the answer. It also weights `GET /trade/suggestions`: a candidate in a category the other seller asked for ranks above one that merely matches your own.
+             * @example [
+             *       "…bags-uuid…",
+             *       "…sneakers-uuid…"
+             *     ]
+             */
+            tradePreferredCategoryIds?: string[];
             /**
              * @description Required when auctionEnabled is true
              * @example 100
@@ -4416,10 +4843,24 @@ export interface components {
             /** @default false */
             auctionEnabled: boolean;
             /**
-             * @description Marks the listing as open to barter offers instead of cash sale
+             * @description Marks the listing as open to barter offers instead of cash sale.
+             *
+             *     **Write-only.** It is not a column: it is folded into `saleMode`, and a listing read back carries `saleMode: "trade"` with no `tradeEnabled` field at all. Rehydrating a draft has to derive the toggle from `saleMode === "trade"`, or reopening it silently loses the choice.
              * @default false
              */
             tradeEnabled: boolean;
+            /**
+             * @description What the seller wants in return — the trade PDP’s "Looking to trade for" chips. Category ids, any level; each is checked to exist.
+             *
+             *     Unlike `tradeEnabled` this **is** a column and is read straight back on `GET /listings` and `GET /listings/{id}`, always as an array — `[]` means "open to anything" and is what a listing that has never set it returns. Send `[]` to clear.
+             *
+             *     Accepted on any listing, not just a trade one, so toggling `tradeEnabled` off and on again in the wizard does not discard the answer. It also weights `GET /trade/suggestions`: a candidate in a category the other seller asked for ranks above one that merely matches your own.
+             * @example [
+             *       "…bags-uuid…",
+             *       "…sneakers-uuid…"
+             *     ]
+             */
+            tradePreferredCategoryIds?: string[];
             /**
              * @description Required when auctionEnabled is true
              * @example 100
@@ -4930,6 +5371,44 @@ export interface components {
              */
             photos?: string[];
         };
+        ReturnPartyDto: {
+            id: string;
+            username: string | null;
+            fullName: string | null;
+        };
+        ReturnEligibilityItemDto: {
+            orderItemId: string;
+            shipmentId: string;
+            sellerId: string;
+            seller: components["schemas"]["ReturnPartyDto"];
+            title: string;
+            /** @example 950 */
+            price: number;
+            eligible: boolean;
+            /**
+             * @description Why not, when `eligible` is false. Null when it is true.
+             * @enum {string|null}
+             */
+            ineligibleReason: "not_delivered" | "window_expired" | "final_sale" | "already_returned" | null;
+            /** @description Null until the shipment is delivered — the clock starts then. */
+            daysLeftToReturn: number | null;
+        };
+        ReturnEligibilityDto: {
+            orderId: string;
+            /** @example 7 */
+            returnWindowDays: number;
+            items: components["schemas"]["ReturnEligibilityItemDto"][];
+            /** @description The eligible items’ prices, summed. */
+            itemsSubtotal: number;
+            /** @description What return shipping *would* cost. The reason is chosen on the next screen, so this endpoint states the fee rather than applying it. */
+            returnShippingFee: number;
+            /** @description The reasons that waive the fee — the seller’s-fault ones. */
+            returnShippingWaivedFor: ("doesnt_match_description" | "wrong_size" | "damaged_defective" | "not_authentic" | "changed_mind" | "other")[];
+            /** @description The subtotal, before any deduction. `POST /returns` returns the settled split once a reason is known. */
+            estimatedRefund: number;
+            /** @example SAR */
+            currency: string;
+        };
         CreateReturnDto: {
             /** @description Order items to return. Must all belong to the same seller shipment. */
             orderItemIds: string[];
@@ -4946,6 +5425,208 @@ export interface components {
              *     ]
              */
             evidencePhotos?: string[];
+        };
+        ReturnItemListingDto: {
+            id: string;
+            title: string | null;
+            coverPhotoUrl: string | null;
+        };
+        ReturnItemDto: {
+            id: string;
+            returnRequestId: string;
+            /** @description The order line being returned — not a listing id. Use `listingId` to reach the product. */
+            orderItemId: string;
+            /** @description The listing this line was bought from. Null on a bundle line, and null if the listing has since been deleted. */
+            listingId: string | null;
+            /** @description Title as it was at checkout. Never null — it is a snapshot. */
+            titleSnapshot: string;
+            /** @example 950 */
+            priceSnapshot: string;
+            /** @description The item card’s thumbnail, joined live off the listing. Null when the listing is gone or was a bundle line — the title and price stay, because those are snapshots. */
+            coverPhotoUrl: string | null;
+            /** @description The same `{ id, title, coverPhotoUrl }` object an order shipment line carries, so one item-card component renders either. */
+            listing: components["schemas"]["ReturnItemListingDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
+        };
+        ReturnDto: {
+            id: string;
+            /** @example R-2401 */
+            returnNumber: string;
+            orderId: string;
+            shipmentId: string;
+            buyerId: string;
+            sellerId: string;
+            /** @enum {string} */
+            reason: "doesnt_match_description" | "wrong_size" | "damaged_defective" | "not_authentic" | "changed_mind" | "other";
+            reasonNote: string | null;
+            /** @description Relative upload paths, as issued by `POST /media`. */
+            evidencePhotos: string[] | null;
+            /** @enum {string} */
+            status: "requested" | "approved" | "rejected" | "pickup_scheduled" | "in_transit" | "delivered_to_seller" | "refunded" | "cancelled";
+            /**
+             * @description What the returned items were worth — the sum of `items[].priceSnapshot`, and the first row of the refund panel.
+             * @example 950
+             */
+            itemsSubtotal: string;
+            /**
+             * @description What the buyer pays to send the parcel back, deducted from the refund. `"0"` when the return is the seller’s fault (`doesnt_match_description`, `damaged_defective`, `not_authentic`) — the buyer never pays to return something that arrived wrong. Configurable per environment.
+             * @example 25
+             */
+            returnShippingFee: string;
+            /**
+             * @description **Net** — `itemsSubtotal − returnShippingFee`, and what is actually paid back. The three fields are the three rows the refund panel draws, so nothing has to be inferred from a total.
+             * @example 925
+             */
+            refundAmount: string;
+            /**
+             * @description Where the refund goes, snapshotted from the order.
+             * @example Visa •••• 4242
+             */
+            refundMethodSnapshot: string | null;
+            /** @example SAR */
+            currency: string;
+            trackingCarrier: string | null;
+            trackingNumber: string | null;
+            rejectionReason: string | null;
+            items: components["schemas"]["ReturnItemDto"][];
+            /** Format: date-time */
+            requestedAt: string;
+            /** Format: date-time */
+            approvedAt: string | null;
+            /** Format: date-time */
+            rejectedAt: string | null;
+            /** Format: date-time */
+            pickupScheduledAt: string | null;
+            /** Format: date-time */
+            inTransitAt: string | null;
+            /**
+             * Format: date-time
+             * @description When the parcel reached the seller — not the order delivery.
+             */
+            deliveredAt: string | null;
+            /** Format: date-time */
+            refundedAt: string | null;
+            /** Format: date-time */
+            cancelledAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        ReturnTabCountsDto: {
+            all: number;
+            requested: number;
+            approved: number;
+            /** @description pickup_scheduled + in_transit + delivered */
+            in_progress: number;
+            /** @description refunded */
+            completed: number;
+            /** @description rejected + cancelled */
+            cancelled: number;
+        };
+        ReturnListResponseDto: {
+            items: components["schemas"]["ReturnDto"][];
+            /** @description Matching the current filter. */
+            total: number;
+            page: number;
+            limit: number;
+            /** @example all */
+            tab: string;
+            /** @description Unaffected by the current `tab` filter. */
+            counts: components["schemas"]["ReturnTabCountsDto"];
+        };
+        ReturnShipmentRefDto: {
+            id: string;
+            /** @example delivered */
+            status: string;
+            trackingNumber: string | null;
+        };
+        ReturnTimelineStepDto: {
+            /**
+             * @description Matches the `ReturnStatus` the step represents.
+             * @example pickup_scheduled
+             */
+            key: string;
+            /** @example Pickup scheduled */
+            label: string;
+            /**
+             * Format: date-time
+             * @description When it happened. Null while the step is still ahead.
+             */
+            at: string | null;
+            /** @description `at !== null`, stated so the client need not. */
+            completed: boolean;
+        };
+        ReturnDetailDto: {
+            id: string;
+            /** @example R-2401 */
+            returnNumber: string;
+            orderId: string;
+            shipmentId: string;
+            buyerId: string;
+            sellerId: string;
+            /** @enum {string} */
+            reason: "doesnt_match_description" | "wrong_size" | "damaged_defective" | "not_authentic" | "changed_mind" | "other";
+            reasonNote: string | null;
+            /** @description Relative upload paths, as issued by `POST /media`. */
+            evidencePhotos: string[] | null;
+            /** @enum {string} */
+            status: "requested" | "approved" | "rejected" | "pickup_scheduled" | "in_transit" | "delivered_to_seller" | "refunded" | "cancelled";
+            /**
+             * @description What the returned items were worth — the sum of `items[].priceSnapshot`, and the first row of the refund panel.
+             * @example 950
+             */
+            itemsSubtotal: string;
+            /**
+             * @description What the buyer pays to send the parcel back, deducted from the refund. `"0"` when the return is the seller’s fault (`doesnt_match_description`, `damaged_defective`, `not_authentic`) — the buyer never pays to return something that arrived wrong. Configurable per environment.
+             * @example 25
+             */
+            returnShippingFee: string;
+            /**
+             * @description **Net** — `itemsSubtotal − returnShippingFee`, and what is actually paid back. The three fields are the three rows the refund panel draws, so nothing has to be inferred from a total.
+             * @example 925
+             */
+            refundAmount: string;
+            /**
+             * @description Where the refund goes, snapshotted from the order.
+             * @example Visa •••• 4242
+             */
+            refundMethodSnapshot: string | null;
+            /** @example SAR */
+            currency: string;
+            trackingCarrier: string | null;
+            trackingNumber: string | null;
+            rejectionReason: string | null;
+            items: components["schemas"]["ReturnItemDto"][];
+            /** Format: date-time */
+            requestedAt: string;
+            /** Format: date-time */
+            approvedAt: string | null;
+            /** Format: date-time */
+            rejectedAt: string | null;
+            /** Format: date-time */
+            pickupScheduledAt: string | null;
+            /** Format: date-time */
+            inTransitAt: string | null;
+            /**
+             * Format: date-time
+             * @description When the parcel reached the seller — not the order delivery.
+             */
+            deliveredAt: string | null;
+            /** Format: date-time */
+            refundedAt: string | null;
+            /** Format: date-time */
+            cancelledAt: string | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            seller: components["schemas"]["ReturnPartyDto"];
+            buyer: components["schemas"]["ReturnPartyDto"];
+            shipment: components["schemas"]["ReturnShipmentRefDto"];
+            /** @description The six milestones in order, completed or not. `rejected` and `cancelled` are terminal states rather than steps — read `status` for those. */
+            timeline: components["schemas"]["ReturnTimelineStepDto"][];
         };
         RejectReturnDto: {
             rejectionReason?: string;
@@ -4965,6 +5646,20 @@ export interface components {
         UpdateSellerProfileDto: {
             bio?: string;
             aboutText?: string;
+            /**
+             * @description Tags describing the seller's store
+             * @example [
+             *       "vintage",
+             *       "luxury",
+             *       "streetwear"
+             *     ]
+             */
+            tags?: string[];
+            /**
+             * @description Banner image URL for seller profile
+             * @example /uploads/banners/seller-banner.jpg
+             */
+            bannerUrl?: string;
             /** @description City the seller ships from */
             shipsFromCity?: string;
             /** @description Free shipping above this order total */
@@ -5294,8 +5989,82 @@ export interface components {
              */
             endsAt?: string;
         };
-        CreateDiscountDto: Record<string, never>;
-        UpdateDiscountDto: Record<string, never>;
+        CreateDiscountDto: {
+            /**
+             * @description Unique coupon code (will be uppercased)
+             * @example SUMMER20
+             */
+            code: string;
+            /**
+             * @description Display name for the coupon
+             * @example Summer Sale 20% Off
+             */
+            name: string;
+            /**
+             * @description Type of discount: percentage (% off), fixed (SAR off), or free_shipping
+             * @example percentage
+             * @enum {string}
+             */
+            discountType: "percentage" | "fixed" | "free_shipping";
+            /**
+             * @description Discount value: percentage (0-100) for percentage type, SAR amount for fixed type
+             * @example 20
+             */
+            discountValue: number;
+            /**
+             * @description Maximum discount in SAR (caps percentage discounts). Only applies to percentage type.
+             * @example 50
+             */
+            maxDiscountAmount?: number;
+            /**
+             * @description Minimum order subtotal in SAR required to apply this coupon
+             * @example 100
+             */
+            minOrderAmount?: number;
+            /**
+             * @description Maximum number of times this coupon can be used (total)
+             * @example 100
+             */
+            usageLimit?: number;
+            /**
+             * @description When the coupon becomes active. If set in the future, coupon is "scheduled".
+             * @example 2024-01-15T00:00:00.000Z
+             */
+            startsAt?: string;
+            /**
+             * @description When the coupon expires. Null means no expiration.
+             * @example 2024-02-28T23:59:59.000Z
+             */
+            expiresAt?: string;
+            /**
+             * @description Whether the coupon is active. Inactive coupons cannot be used.
+             * @default true
+             * @example true
+             */
+            isActive: boolean;
+        };
+        UpdateDiscountDto: {
+            /**
+             * @description New display name for the coupon
+             * @example Updated Summer Sale
+             */
+            name?: string;
+            /**
+             * @description New usage limit (must be greater than current usedCount)
+             * @example 200
+             */
+            usageLimit?: number;
+            /**
+             * @description New expiration date
+             * @example 2024-03-31T23:59:59.000Z
+             */
+            expiresAt?: string;
+            /**
+             * @description Set to false to deactivate the coupon
+             * @example false
+             */
+            isActive?: boolean;
+        };
         WalletBalanceDto: {
             /**
              * @description Available balance
@@ -5474,6 +6243,32 @@ export interface components {
              * @description The image as a binary file. Any field name is accepted — `file`, `media` and `image` all work.
              */
             file?: string;
+        };
+        CreateCarrierShipmentDto: Record<string, never>;
+        UpdatePickupAddressDto: Record<string, never>;
+        UpdateCarrierConfigDto: Record<string, never>;
+        SplWebhookDto: Record<string, never>;
+        AramexWebhookDto: Record<string, never>;
+        BnplCheckoutDto: {
+            addressId: string;
+            bagItemIds?: string[];
+            shipments: components["schemas"]["ShipmentSelectionDto"][];
+            couponCode?: string;
+            donationAmount?: number;
+            charityId?: string;
+            /** @enum {string} */
+            provider: "tabby" | "tamara";
+            /**
+             * @description Picks the return URL: web → CHECKOUT_RESULT_URL_WEB, mobile → CHECKOUT_RESULT_URL_MOBILE (deep link)
+             * @default web
+             * @enum {string}
+             */
+            platform: "web" | "mobile";
+            /**
+             * @default ar
+             * @enum {string}
+             */
+            lang: "ar" | "en";
         };
     };
     responses: never;
@@ -5759,7 +6554,7 @@ export interface operations {
                     "application/json": {
                         /** @example LUCKYDAA8 */
                         referralCode?: string;
-                        /** @example Use my code LUCKYDAA8 to get AED 10 off your first order on Maison! */
+                        /** @example Use my code LUCKYDAA8 to get SAR 10 off your first order on Maison! */
                         shareMessage?: string;
                         stats?: {
                             /** @example 5 */
@@ -5770,7 +6565,7 @@ export interface operations {
                             completedReferrals?: number;
                             /** @example 30 */
                             totalEarned?: number;
-                            /** @example AED */
+                            /** @example SAR */
                             currency?: string;
                             /** @example 10 */
                             rewardAmount?: number;
@@ -5809,7 +6604,7 @@ export interface operations {
                             status?: "pending" | "completed" | "expired";
                             /** @example 10 */
                             rewardAmount?: number;
-                            /** @example AED */
+                            /** @example SAR */
                             currency?: string;
                             /** Format: date-time */
                             joinedAt?: string;
@@ -6213,7 +7008,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                status?: "draft" | "pending_review" | "live" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
+                status?: "draft" | "pending_review" | "live" | "reserved" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
                 condition?: "new" | "new_with_tags" | "new_without_tags" | "like_new" | "good" | "fair";
                 /** @description Filter by sale mode: fixed, negotiable, auction, or trade */
                 saleMode?: "fixed" | "negotiable" | "auction" | "trade";
@@ -6281,7 +7076,7 @@ export interface operations {
             query?: {
                 page?: number;
                 limit?: number;
-                status?: "draft" | "pending_review" | "live" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
+                status?: "draft" | "pending_review" | "live" | "reserved" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
                 condition?: "new" | "new_with_tags" | "new_without_tags" | "like_new" | "good" | "fair";
                 /** @description Filter by sale mode: fixed, negotiable, auction, or trade */
                 saleMode?: "fixed" | "negotiable" | "auction" | "trade";
@@ -6308,6 +7103,23 @@ export interface operations {
                 /** @description Sort order: price_asc, price_desc, created_at_desc (default), created_at_asc, popular (by likes), views_desc, ending_soon (auctions), discount_desc, rating_desc */
                 sort?: "price_asc" | "price_desc" | "created_at_desc" | "created_at_asc" | "popular" | "views_desc" | "ending_soon" | "discount_desc" | "rating_desc";
             };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ListingsController_getVerificationItems_v1: {
+        parameters: {
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;
@@ -6533,6 +7345,23 @@ export interface operations {
         };
     };
     CategoriesController_findTree_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CategoriesController_findOrphans_v1: {
         parameters: {
             query?: never;
             header?: never;
@@ -8736,7 +9565,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnEligibilityDto"];
+                };
             };
         };
     };
@@ -8760,7 +9591,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnListResponseDto"];
+                };
             };
         };
     };
@@ -8777,11 +9610,13 @@ export interface operations {
             };
         };
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDto"];
+                };
             };
         };
     };
@@ -8805,7 +9640,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnListResponseDto"];
+                };
             };
         };
     };
@@ -8824,7 +9661,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDetailDto"];
+                };
             };
         };
     };
@@ -8839,11 +9678,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDto"];
+                };
             };
         };
     };
@@ -8862,11 +9703,13 @@ export interface operations {
             };
         };
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDto"];
+                };
             };
         };
     };
@@ -8881,11 +9724,13 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDto"];
+                };
             };
         };
     };
@@ -8908,7 +9753,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["ReturnDto"];
+                };
             };
         };
     };
@@ -9123,6 +9970,10 @@ export interface operations {
                 filter?: "all" | "with_photos" | "verified";
                 /** @description Filter by an exact star rating (the 5★…1★ chips) */
                 rating?: number;
+                /** @description Start date filter (YYYY-MM-DD) */
+                startDate?: string;
+                /** @description End date filter (YYYY-MM-DD) */
+                endDate?: string;
                 page?: number;
                 limit?: number;
             };
@@ -9397,7 +10248,9 @@ export interface operations {
                 limit?: number;
                 /** @description Search by listing title */
                 search?: string;
-                status?: "draft" | "pending_review" | "live" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
+                status?: "draft" | "pending_review" | "live" | "reserved" | "rejected" | "expired" | "pending_payment" | "sold" | "traded" | "withdrawn";
+                /** @description Only listings AI photo screening sent to review (implies status=pending_review) */
+                aiFlagged?: boolean;
             };
             header?: never;
             path?: never;
@@ -9932,6 +10785,64 @@ export interface operations {
             };
         };
     };
+    AdminController_getOrdersHeatmap_v1: {
+        parameters: {
+            query?: {
+                metric?: "orders" | "gmv" | "customers" | "avg_order";
+                timeRange?: "7d" | "30d" | "90d" | "12m" | "all";
+                /** @description Only count orders containing an item in this category */
+                categoryId?: string;
+                /** @description Defaults to every status — GMV is not paid-only unless set */
+                paymentStatus?: "pending" | "paid" | "failed" | "refunded";
+                /** @description Drill down: narrows `summary`, `cities` and `totals` to one region. `regions` still covers the whole country so the map stays intact. */
+                region?: "riyadh" | "makkah" | "eastern_province" | "madinah" | "qassim" | "asir" | "tabuk" | "hail" | "jazan" | "najran" | "al_bahah" | "northern_borders" | "al_jawf";
+                /** @description How many ranked cities to return */
+                cityLimit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AdminController_exportOrdersHeatmap_v1: {
+        parameters: {
+            query?: {
+                metric?: "orders" | "gmv" | "customers" | "avg_order";
+                timeRange?: "7d" | "30d" | "90d" | "12m" | "all";
+                /** @description Only count orders containing an item in this category */
+                categoryId?: string;
+                /** @description Defaults to every status — GMV is not paid-only unless set */
+                paymentStatus?: "pending" | "paid" | "failed" | "refunded";
+                /** @description Drill down: narrows `summary`, `cities` and `totals` to one region. `regions` still covers the whole country so the map stays intact. */
+                region?: "riyadh" | "makkah" | "eastern_province" | "madinah" | "qassim" | "asir" | "tabuk" | "hail" | "jazan" | "najran" | "al_bahah" | "northern_borders" | "al_jawf";
+                /** @description How many ranked cities to return */
+                cityLimit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/csv": string;
+                };
+            };
+        };
+    };
     AdminController_listAuctions_v1: {
         parameters: {
             query?: {
@@ -10451,7 +11362,12 @@ export interface operations {
     };
     VendorPortalController_getCustomerDemographics_v1: {
         parameters: {
-            query?: never;
+            query?: {
+                endDate?: unknown;
+                startDate?: unknown;
+                /** @description Period for demographics (7d, 30d, 90d, 1y) */
+                period?: "7d" | "30d" | "90d" | "1y";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -10489,7 +11405,7 @@ export interface operations {
                 limit?: unknown;
                 page?: unknown;
                 /** @description Filter by tab (active, scheduled, expired) */
-                tab?: "active" | "scheduled" | "expired";
+                tab?: "all" | "active" | "scheduled" | "expired";
             };
             header?: never;
             path?: never;
@@ -10617,6 +11533,8 @@ export interface operations {
                 reason?: ("auction_entry_fee_refund" | "auction_non_payment_penalty" | "admin_adjustment" | "referral_bonus_referrer" | "referral_bonus_referee" | "topup" | "withdrawal" | "sale_earnings" | "refund_received" | "transfer_sent" | "transfer_received" | "trade_settlement")[];
                 /** @description Named groups behind the history filter chips, so a client does not have to hardcode which reasons belong to which chip. Applied on top of `type`; ignored when `reason` is sent explicitly. */
                 group?: "all" | "trades" | "auctions" | "sales" | "transfers";
+                /** @description Filter by order shipment ID to find the transaction for a specific shipment */
+                orderShipmentId?: string;
             };
             header?: never;
             path?: never;
@@ -10990,6 +11908,321 @@ export interface operations {
                         path: string;
                     };
                 };
+            };
+        };
+    };
+    CarriersController_createShipment_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                shipmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateCarrierShipmentDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersController_getLabel_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                shipmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersController_syncTracking_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                shipmentId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersController_getPickupAddress_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersController_updatePickupAddress_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdatePickupAddressDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersController_getCarrierConfig_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersAdminController_updateUserCarrierConfig_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateCarrierConfigDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersAdminController_syncShipment_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersAdminController_getCarrierStats_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersAdminController_getSellersWithCarriers_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersAdminController_getShipmentErrors_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersWebhookController_handleSplWebhook_v1: {
+        parameters: {
+            query?: never;
+            header: {
+                "x-spl-signature": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SplWebhookDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    CarriersWebhookController_handleAramexWebhook_v1: {
+        parameters: {
+            query?: never;
+            header: {
+                "x-aramex-signature": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AramexWebhookDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentsController_options_v1: {
+        parameters: {
+            query: {
+                /** @description Order total in SAR (from checkout preview) */
+                amount: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentsController_checkout_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BnplCheckoutDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    PaymentsController_session_v1: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
         };
     };

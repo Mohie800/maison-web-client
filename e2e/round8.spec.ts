@@ -17,7 +17,7 @@ import {
  * a heart that had been set coming back empty.
  */
 
-const API = "https://maison.dockbox.cloud/api/v1";
+const API = "https://api.maisonsale.com.sa/api/v1";
 
 interface Row {
   id: string;

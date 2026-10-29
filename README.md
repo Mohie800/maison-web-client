@@ -49,7 +49,7 @@ Tailwind utilities use cleaned token names: `bg-surface`, `text-ink`, `border-li
 
 ## API notes
 
-Base URL `https://maison.dockbox.cloud`, all routes under `/api/v1`. Spec at `/docs-json`.
+Base URL `https://api.maisonsale.com.sa`, all routes under `/api/v1`. Spec at `/docs-json`.
 
 The spec documents request DTOs but **no response bodies**, so response types are hand-written as Zod schemas in `src/lib/api/schemas/` and validated at the boundary — throwing in development, logging in production. See `../plans/02-api-integration.md`.
 

@@ -68,7 +68,7 @@ export async function generateMetadata(props: {
       prefixes onto the relative path below; without it Next falls back to
       localhost and the card is unloadable for every scraper.
     */
-    metadataBase: new URL("https://maison.dockbox.cloud"),
+    metadataBase: new URL("https://maisonsale.com.sa"),
     title: { default: title, template: `%s · ${title}` },
     description,
     openGraph: {

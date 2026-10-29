@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "tokens": "node scripts/generate-tokens.mjs",
-    "api:types": "openapi-typescript https://maison.dockbox.cloud/docs-json -o src/types/api-generated.ts",
+    "api:types": "openapi-typescript https://api.maisonsale.com.sa/docs-json -o src/types/api-generated.ts",
     "typecheck": "tsc --noEmit",
     "check:tokens": "node scripts/check-tokens.mjs",
     "check:screens": "node scripts/check-screens.mjs",

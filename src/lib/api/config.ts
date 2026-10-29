@@ -4,7 +4,7 @@
  * backend team — see plans/06 G14.
  */
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL ?? "https://maison.dockbox.cloud";
+  process.env.NEXT_PUBLIC_API_URL ?? "https://api.maisonsale.com.sa";
 
 /** Media is served from the API origin as relative /uploads/* paths. */
 export const MEDIA_BASE_URL =

@@ -45,7 +45,7 @@ export async function apiGet(
   token?: string,
 ): Promise<{ ok: boolean; status: number; body: unknown }> {
   const response = await request.get(
-    `https://maison.dockbox.cloud/api/v1${path}`,
+    `https://api.maisonsale.com.sa/api/v1${path}`,
     { headers: token ? { Authorization: `Bearer ${token}` } : {} },
   );
   const body = await response.json().catch(() => null);
@@ -57,7 +57,7 @@ export async function apiToken(
   who: keyof typeof ACCOUNTS,
 ): Promise<string | null> {
   const response = await request.post(
-    "https://maison.dockbox.cloud/api/v1/auth/login",
+    "https://api.maisonsale.com.sa/api/v1/auth/login",
     { data: ACCOUNTS[who] },
   );
   if (!response.ok()) return null;
@@ -79,7 +79,7 @@ export async function expectNoErrorBoundary(page: Page): Promise<void> {
   ).not.toMatch(/Application error|a client-side exception|Internal Server Error/i);
 }
 
-const API = "https://maison.dockbox.cloud/api/v1";
+const API = "https://api.maisonsale.com.sa/api/v1";
 
 /** A 1×1 JPEG, so a probe listing can reach `live` without a real photo. */
 const PIXEL_JPEG =

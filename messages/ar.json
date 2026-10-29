@@ -433,7 +433,9 @@
     "bidHistory": "سجل المزايدات ({count} مزايدة)",
     "bidHistoryYou": "أنت",
     "bidHistoryBidder": "مزايد {n}",
-    "bidHistoryEmpty": "لا مزايدات بعد. كن الأول."
+    "bidHistoryEmpty": "لا مزايدات بعد. كن الأول.",
+    "reserved": "محجوز",
+    "unavailable": "لم يعد متاحًا"
   },
   "Seller": {
     "tabs": {
@@ -638,7 +640,39 @@
     "tradeFee": "رسوم المقايضة",
     "insuranceFee": "التأمين",
     "auctionFee": "رسوم المزاد",
-    "vatAt": "ضريبة القيمة المضافة ({rate})"
+    "vatAt": "ضريبة القيمة المضافة ({rate})",
+    "bnpl": {
+      "blurb": {
+        "tabby": "قسّمها على {instalments} دفعات بدون فوائد، كل دفعة {amount}",
+        "tamara": "قسّمها على {instalments} دفعات بدون رسوم، كل دفعة {amount}"
+      },
+      "range": "متاح للطلبات بين {min} و{max}",
+      "rangeMin": "متاح للطلبات التي تزيد عن {min}",
+      "rangeMax": "متاح للطلبات حتى {max}",
+      "addPhone": "إضافة رقم الجوال",
+      "errors": {
+        "rejected": "لا يمكن استخدام {provider} لهذا الطلب. يُرجى اختيار طريقة دفع أخرى.",
+        "outOfRange": "{provider} غير متاح لقيمة هذا الطلب. يُرجى اختيار طريقة دفع أخرى.",
+        "notAvailable": "{provider} غير متاح حاليًا. يُرجى اختيار طريقة دفع أخرى.",
+        "profileIncomplete": "أضف رقم جوالك للدفع بالتقسيط.",
+        "providerError": "{provider} غير متوفر حاليًا. جرّب طريقة دفع أخرى.",
+        "generic": "تعذّر بدء الدفع عبر {provider}. يُرجى المحاولة مرة أخرى."
+      },
+      "result": {
+        "confirmingTitle": "جارٍ تأكيد الدفع…",
+        "confirmingBody": "يستغرق ذلك عادةً بضع ثوانٍ. يُرجى عدم إغلاق هذه الصفحة.",
+        "lateTitle": "ما زلنا نؤكد عملية الدفع",
+        "lateBody": "سنُعلمك فور تأكيد طلبك، وسيظهر في طلباتي.",
+        "failedTitle": "لم تكتمل عملية الدفع",
+        "failedBody": "لم يتم خصم أي مبلغ. يمكنك المحاولة مرة أخرى أو اختيار طريقة دفع أخرى.",
+        "expiredTitle": "انتهت صلاحية جلسة الدفع",
+        "expiredBody": "يُرجى المحاولة مرة أخرى.",
+        "notFoundTitle": "تعذّر العثور على عملية الدفع هذه",
+        "notFoundBody": "إذا أكملت الدفع، سيظهر طلبك في طلباتي.",
+        "backToCheckout": "العودة إلى الدفع",
+        "viewOrders": "الانتقال إلى طلباتي"
+      }
+    }
   },
   "Account": {
     "nav": {
@@ -838,7 +872,8 @@
       "shipped": "تم الشحن",
       "delivered": "تم التوصيل",
       "cancelled": "ملغى",
-      "paid": "مدفوعة"
+      "paid": "مدفوعة",
+      "refunded": "مُسترد"
     },
     "itemCount": "{count, plural, one {قطعة واحدة} two {قطعتان} few {# قطع} other {# قطعة}}",
     "andMore": "{count, plural, one {وقطعة أخرى} two {وقطعتان أخريان} few {و# قطع أخرى} other {و# قطعة أخرى}}",
@@ -2703,13 +2738,15 @@
         "traded": "تمت المقايضة",
         "rejected": "مرفوض",
         "expired": "منتهٍ",
-        "withdrawn": "مسحوب"
+        "withdrawn": "مسحوب",
+        "reserved": "محجوز"
       },
       "edit": "تعديل",
       "delete": "حذف",
       "view": "عرض",
       "none": "—",
-      "empty": "لا شيء في هذه العلامة."
+      "empty": "لا شيء في هذه العلامة.",
+      "reservedHint": "محجوز، المشتري يُكمل الدفع"
     },
     "orders": {
       "title": "الطلبات",

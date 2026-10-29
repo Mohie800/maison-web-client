@@ -40,6 +40,7 @@ export default async function InvoicePage({
   if (!order) notFound();
 
   const t = await getTranslations("Orders");
+  const tPay = await getTranslations("Checkout.paymentTypes");
   const activeLocale = (await getLocale()) as Locale;
   const currency = invoice?.currency ?? order.currency ?? "SAR";
 
@@ -72,12 +73,17 @@ export default async function InvoicePage({
         : null;
 
   const paid = invoice?.paymentStatus === "paid";
+  const refunded = invoice?.paymentStatus === "refunded";
   const card = invoice?.payment;
   const cardLabel = card?.cardBrand
     ? `${card.cardBrand.charAt(0).toUpperCase()}${card.cardBrand.slice(1)}${
         card.cardLast4 ? ` •••• ${card.cardLast4}` : ""
       }`
-    : (card?.methodType ?? null);
+    : card?.methodType
+      ? tPay.has(card.methodType)
+        ? tPay(card.methodType)
+        : card.methodType
+      : null;
 
   return (
     <div className="bg-surface min-h-full">
@@ -296,7 +302,7 @@ export default async function InvoicePage({
             </div>
 
             {/* Payment — 651:8506 */}
-            {(cardLabel || paid) && (
+            {(cardLabel || paid || refunded) && (
               <div className="bg-surface mt-6 flex flex-wrap items-center justify-between gap-3 rounded-12 p-4">
                 <div>
                   {cardLabel && (
@@ -322,6 +328,11 @@ export default async function InvoicePage({
                 {paid && (
                   <span className="bg-action-tint text-action rounded-[6px] px-2 py-1 text-[10px] font-bold uppercase">
                     {t("statuses.paid")}
+                  </span>
+                )}
+                {refunded && (
+                  <span className="bg-fill-100 text-ink-500 rounded-[6px] px-2 py-1 text-[10px] font-bold uppercase">
+                    {t("statuses.refunded")}
                   </span>
                 )}
               </div>

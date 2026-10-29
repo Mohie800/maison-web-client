@@ -12,7 +12,10 @@ import { formatPrice } from "@/lib/format/money";
 import { OrderSummary } from "@/features/checkout/components/order-summary";
 import { CheckoutSteps } from "@/features/checkout/components/checkout-steps";
 import { PaymentMethodList } from "@/features/checkout/components/payment-method-list";
-import { OtherPaymentMethods } from "@/features/checkout/components/other-payment-methods";
+import {
+  OtherPaymentMethods,
+  rangeNote,
+} from "@/features/checkout/components/other-payment-methods";
 import { NewPaymentForm } from "@/features/checkout/components/new-payment-form";
 import { CouponCard } from "@/features/checkout/components/coupon-card";
 import { DonationCard } from "@/features/checkout/components/donation-card";
@@ -27,11 +30,22 @@ import {
   primaryCta,
 } from "@/features/checkout/components/checkout-shell";
 import { placeOrder, validateCoupon } from "@/features/checkout/actions";
-import {
-  PAYMENT_TYPES,
-  type PaymentType,
-  type ShipmentSelection,
-} from "@/lib/api/schemas/checkout";
+import { getBnplOptions } from "@/lib/api/endpoints/bnpl";
+import { isBnplProvider } from "@/lib/api/schemas/bnpl";
+import { Link } from "@/i18n/navigation";
+import type { PaymentType, ShipmentSelection } from "@/lib/api/schemas/checkout";
+
+/** `?add=` values that open a form; BNPL and Apple Pay have none. */
+const FORM_TYPES: PaymentType[] = ["card", "mada", "stc_pay"];
+
+const BNPL_ERRORS = [
+  "rejected",
+  "outOfRange",
+  "notAvailable",
+  "profileIncomplete",
+  "providerError",
+  "generic",
+] as const;
 
 /**
  * Checkout step 2 — payment method, coupon, charity donation, place order.
@@ -101,6 +115,7 @@ export default async function PaymentPage({
   ]);
 
   const currency = preview.currency ?? "SAR";
+  const bnpl = await getBnplOptions(preview.totalAmount);
   const suggested = Number(preview.suggestedDonationAmount ?? 0);
 
   /**
@@ -163,7 +178,7 @@ export default async function PaymentPage({
   /* ------------------------------------------------ add-a-method state */
 
   const adding = firstParam(query.add);
-  if (adding && (PAYMENT_TYPES as readonly string[]).includes(adding)) {
+  if (adding && (FORM_TYPES as string[]).includes(adding)) {
     return (
       <>
         <CheckoutSteps current="payment" />
@@ -220,6 +235,12 @@ export default async function PaymentPage({
 
   const defaultMethod = methods.find((m) => m.isDefault) ?? methods[0];
 
+  const bnplProvider = firstParam(query.provider);
+  const bnplError = BNPL_ERRORS.find((e) => e === firstParam(query.bnplError));
+  const bnplName = isBnplProvider(bnplProvider)
+    ? t(`paymentTypes.${bnplProvider}`)
+    : "";
+  const failedOption = bnpl.find((o) => o.provider === bnplProvider);
 
   return (
     <>
@@ -250,7 +271,41 @@ export default async function PaymentPage({
           <CardDivider />
 
           <SectionLabel>{t("otherPaymentMethods")}</SectionLabel>
-          <OtherPaymentMethods hrefFor={(type) => carry({ add: type })} />
+          {bnplError && (
+            <p
+              role="alert"
+              className="bg-error-tint text-error text-caption mb-3 rounded-12 p-3"
+            >
+              {bnplError === "outOfRange" && failedOption
+                ? rangeNote(t, failedOption, currency)
+                : t(`bnpl.errors.${bnplError}`, { provider: bnplName })}
+              {bnplError === "profileIncomplete" && (
+                <>
+                  {" "}
+                  <Link
+                    href="/account/settings/profile"
+                    className="font-semibold underline"
+                  >
+                    {t("bnpl.addPhone")}
+                  </Link>
+                </>
+              )}
+            </p>
+          )}
+          <OtherPaymentMethods
+            hrefFor={(type) => carry({ add: type })}
+            bnpl={bnpl}
+            currency={currency}
+            bnplFields={{
+              returnTo: carry(),
+              addressId,
+              shipments: JSON.stringify(shipments),
+              ...(couponCode ? { couponCode } : {}),
+              ...(donationOn && charityId
+                ? { charityId, donationAmount: String(donationAmount) }
+                : {}),
+            }}
+          />
 
           {ehsan && (
             <>

@@ -37,6 +37,7 @@ const STATUS_TONE: Record<string, string> = {
   pending: "bg-vp-warn text-amber-deep",
   pending_review: "bg-vp-warn text-amber-deep",
   pending_payment: "bg-vp-warn text-amber-deep",
+  reserved: "bg-vp-warn text-amber-deep",
   expired: "bg-vp-warn text-amber-deep",
   sold_out: "bg-vp-error text-error",
   sold: "bg-vp-error text-error",
@@ -174,6 +175,9 @@ export default async function VendorProductsPage({
 
               <div className={`shrink-0 ps-2 ${COL.status}`}>
                 <span
+                  title={
+                    status === "reserved" ? t("reservedHint") : undefined
+                  }
                   className={`flex h-[22px] w-fit items-center rounded-[11px] px-2 text-[10px] font-bold ${
                     STATUS_TONE[status] ??
                     "bg-fill-100 text-ink-500 dark:text-ink-450"

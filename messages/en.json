@@ -432,7 +432,9 @@
     "bidHistory": "Bid History ({count} bids)",
     "bidHistoryYou": "You",
     "bidHistoryBidder": "Bidder {n}",
-    "bidHistoryEmpty": "No bids yet. Be the first."
+    "bidHistoryEmpty": "No bids yet. Be the first.",
+    "reserved": "Reserved",
+    "unavailable": "No longer available"
   },
   "Seller": {
     "tabs": {
@@ -637,7 +639,39 @@
     "tradeFee": "Trade fee",
     "insuranceFee": "Insurance",
     "auctionFee": "Auction fee",
-    "vatAt": "VAT ({rate})"
+    "vatAt": "VAT ({rate})",
+    "bnpl": {
+      "blurb": {
+        "tabby": "Pay in {instalments} interest-free payments of {amount}",
+        "tamara": "Split in {instalments} payments of {amount}, no fees"
+      },
+      "range": "Available for orders between {min} and {max}",
+      "rangeMin": "Available for orders over {min}",
+      "rangeMax": "Available for orders up to {max}",
+      "addPhone": "Add phone number",
+      "errors": {
+        "rejected": "{provider} can't be used for this order. Please choose another payment method.",
+        "outOfRange": "{provider} isn't available for this order total. Please choose another payment method.",
+        "notAvailable": "{provider} isn't available right now. Please choose another payment method.",
+        "profileIncomplete": "Add your phone number to pay in instalments.",
+        "providerError": "{provider} is unavailable right now. Try another payment method.",
+        "generic": "We couldn't start the payment with {provider}. Please try again."
+      },
+      "result": {
+        "confirmingTitle": "Confirming your payment…",
+        "confirmingBody": "This usually takes a few seconds. Please don't close this page.",
+        "lateTitle": "We're still confirming your payment",
+        "lateBody": "You'll be notified once your order is confirmed, and it will appear in My Orders.",
+        "failedTitle": "Payment wasn't completed",
+        "failedBody": "You haven't been charged. You can try again or choose another payment method.",
+        "expiredTitle": "Your payment session expired",
+        "expiredBody": "Please try again.",
+        "notFoundTitle": "We couldn't find this payment",
+        "notFoundBody": "If you completed a payment, your order will appear in My Orders.",
+        "backToCheckout": "Back to checkout",
+        "viewOrders": "Go to My Orders"
+      }
+    }
   },
   "Account": {
     "nav": {
@@ -837,7 +871,8 @@
       "shipped": "Shipped",
       "delivered": "Delivered",
       "cancelled": "Cancelled",
-      "paid": "Paid"
+      "paid": "Paid",
+      "refunded": "Refunded"
     },
     "itemCount": "{count, plural, one {# item} other {# items}}",
     "andMore": "{count, plural, one {and # more item} other {and # more items}}",
@@ -2702,13 +2737,15 @@
         "traded": "Traded",
         "rejected": "Rejected",
         "expired": "Expired",
-        "withdrawn": "Withdrawn"
+        "withdrawn": "Withdrawn",
+        "reserved": "Reserved"
       },
       "edit": "Edit",
       "delete": "Delete",
       "view": "View",
       "none": "—",
-      "empty": "Nothing in this tab."
+      "empty": "Nothing in this tab.",
+      "reservedHint": "Reserved, buyer is paying"
     },
     "orders": {
       "title": "Orders",

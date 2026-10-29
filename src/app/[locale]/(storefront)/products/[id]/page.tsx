@@ -328,7 +328,13 @@ export default async function ProductPage({
             correct next step rather than being dead buttons.
           */}
           {/* A trade listing's actions are the TradePanel's, above. */}
-          {!isTrade && (
+          {/* `reserved` = a buyer is mid-payment with Tabby/Tamara; it frees itself in 30 min. */}
+          {!isTrade && !isAuction && listing.status !== "live" && (
+            <p className="bg-fill-100 text-ink-500 text-label flex h-12 items-center justify-center rounded-[24px] font-semibold">
+              {listing.status === "reserved" ? t("reserved") : t("unavailable")}
+            </p>
+          )}
+          {!isTrade && listing.status === "live" && (
             <div className="flex flex-col gap-3">
               {!isAuction && (
                 <Link

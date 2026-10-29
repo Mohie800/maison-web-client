@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { serverApiFetch } from "@/lib/api/server";
 import { parseResponse } from "@/lib/api/parse";
+import { getLocale } from "next-intl/server";
 import { ApiError } from "@/lib/api/errors";
 import {
   couponValidationSchema,
@@ -11,6 +12,12 @@ import {
   type CouponValidation,
   type ShipmentSelection,
 } from "@/lib/api/schemas/checkout";
+import {
+  isBnplProvider,
+  paymentSessionSchema,
+  type PaymentSession,
+} from "@/lib/api/schemas/bnpl";
+import { rememberBnplAttempt, safePaymentStep } from "./bnpl-session";
 
 /**
  * Cart and checkout mutations as Server Actions.
@@ -228,6 +235,79 @@ export async function placeOrder(formData: FormData): Promise<void> {
   redirect(orderId ? `/checkout/confirmed/${orderId}` : "/account/orders");
 }
 
+/** `code` on a failed `POST /payments/bnpl/checkout` → `?bnplError=` on the payment step. */
+const BNPL_ERRORS: Record<string, string> = {
+  BNPL_REJECTED: "rejected",
+  BNPL_AMOUNT_OUT_OF_RANGE: "outOfRange",
+  BNPL_NOT_AVAILABLE: "notAvailable",
+  BNPL_PROFILE_INCOMPLETE: "profileIncomplete",
+  BNPL_PROVIDER_ERROR: "providerError",
+};
+
+/**
+ * Tabby / Tamara — `POST /payments/bnpl/checkout`, then a full-page redirect to
+ * the provider. No order exists until `/checkout/result` sees the session complete.
+ */
+export async function startBnplCheckout(formData: FormData): Promise<void> {
+  const provider = str(formData, "provider");
+  const back = safePaymentStep(str(formData, "returnTo"));
+  if (!isBnplProvider(provider)) redirect(back);
+
+  const couponCode = str(formData, "couponCode");
+  const charityId = str(formData, "charityId");
+  const donationAmount = Number(str(formData, "donationAmount") || "0");
+  let shipments: ShipmentSelection[] = [];
+  try {
+    shipments = JSON.parse(str(formData, "shipments") || "[]");
+  } catch {
+    shipments = [];
+  }
+
+  let session: PaymentSession | null = null;
+  let failure = "generic";
+  try {
+    const data = await serverApiFetch<unknown>("/payments/bnpl/checkout", {
+      method: "POST",
+      body: {
+        provider,
+        platform: "web",
+        lang: (await getLocale()) === "en" ? "en" : "ar",
+        addressId: str(formData, "addressId"),
+        shipments,
+        ...(couponCode ? { couponCode } : {}),
+        ...(donationAmount > 0 && charityId
+          ? { donationAmount, charityId }
+          : {}),
+      },
+    });
+    session = parseResponse(
+      paymentSessionSchema,
+      data,
+      "POST /payments/bnpl/checkout",
+    );
+  } catch (error) {
+    if (!(error instanceof ApiError)) throw error;
+    // Sold or reserved by someone else — the only signal is the message.
+    if (error.messages.some((m) => /no longer available/i.test(m))) {
+      revalidatePath("/cart");
+      redirect("/cart");
+    }
+    failure = (error.code && BNPL_ERRORS[error.code]) || "generic";
+  }
+
+  const checkoutUrl = session?.checkoutUrl;
+  if (!session || !checkoutUrl?.startsWith("https://")) {
+    const [path, query = ""] = back.split("?");
+    const params = new URLSearchParams(query);
+    params.set("bnplError", failure);
+    params.set("provider", provider);
+    redirect(`${path}?${params.toString()}`);
+  }
+
+  await rememberBnplAttempt({ sessionId: session.sessionId, returnTo: back });
+  redirect(checkoutUrl);
+}
+
 /**
  * A card or wallet entered on the Add New Card screen, paid with in the same
  * submit — `CheckoutDto.newPaymentMethod`, which is what the design's
@@ -241,7 +321,8 @@ function newPaymentMethod(
   formData: FormData,
 ): { newPaymentMethod: Record<string, unknown> } | null {
   const type = str(formData, "newPaymentType");
-  if (!type) return null;
+  // The API answers 400 USE_BNPL_CHECKOUT; these go through startBnplCheckout.
+  if (!type || isBnplProvider(type)) return null;
 
   const saveForFuture = formData.get("saveForFuture") === "on";
 

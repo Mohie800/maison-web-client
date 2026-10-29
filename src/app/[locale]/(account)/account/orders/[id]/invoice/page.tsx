@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale, getLocale } from "next-intl/server";
+import { isBnplProvider } from "@/lib/api/schemas/bnpl";
+import { BnplLogo } from "@/features/checkout/components/bnpl-logo";
 import { getInvoice, getOrder } from "@/lib/api/endpoints/orders";
 import { formatPrice } from "@/lib/format/money";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
@@ -306,7 +308,14 @@ export default async function InvoicePage({
               <div className="bg-surface mt-6 flex flex-wrap items-center justify-between gap-3 rounded-12 p-4">
                 <div>
                   {cardLabel && (
-                    <p className="text-label" dir="ltr">
+                    <p className="text-label flex items-center gap-2" dir="ltr">
+                      {isBnplProvider(card?.methodType) && (
+                        <BnplLogo
+                          provider={card.methodType}
+                          locale={activeLocale}
+                          height={20}
+                        />
+                      )}
                       {t("paidWith", { method: cardLabel })}
                     </p>
                   )}

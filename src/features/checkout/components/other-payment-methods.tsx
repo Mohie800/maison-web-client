@@ -1,9 +1,10 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { formatPrice } from "@/lib/format/money";
 import type { BnplOption } from "@/lib/api/schemas/bnpl";
 import { startBnplCheckout } from "../actions";
+import { BnplLogo } from "./bnpl-logo";
 
 /**
  * OTHER PAYMENT METHODS — Figma `651:7740`.
@@ -16,8 +17,6 @@ const OFFERED = [
   { type: "mada", tile: "MA" },
   { type: "stc_pay", tile: "ST" },
 ] as const;
-
-const BNPL_TILES = { tabby: "TB", tamara: "TM" } as const;
 
 const rowClass = "border-line flex items-center gap-3 rounded-12 border p-3";
 
@@ -35,6 +34,7 @@ export async function OtherPaymentMethods({
   currency: string;
 }) {
   const t = await getTranslations("Checkout");
+  const locale = await getLocale();
 
   return (
     <ul className="flex flex-col gap-3">
@@ -66,7 +66,9 @@ export async function OtherPaymentMethods({
             return (
               <li key={option.provider}>
                 <div className={`${rowClass} opacity-50`} aria-disabled>
-                  <Tile>{BNPL_TILES[option.provider]}</Tile>
+                  <LogoSlot>
+                    <BnplLogo provider={option.provider} locale={locale} />
+                  </LogoSlot>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-label">{name}</span>
                     <span className="text-caption text-ink-tertiary">
@@ -86,7 +88,9 @@ export async function OtherPaymentMethods({
                 ))}
                 <input type="hidden" name="provider" value={option.provider} />
                 <button type="submit" className={`${rowClass} w-full text-start`}>
-                  <Tile>{BNPL_TILES[option.provider]}</Tile>
+                  <LogoSlot>
+                    <BnplLogo provider={option.provider} locale={locale} />
+                  </LogoSlot>
                   <span className="flex min-w-0 flex-1 flex-col">
                     <span className="text-label">{name}</span>
                     <span className="text-caption text-ink-tertiary">{blurb}</span>
@@ -122,6 +126,15 @@ function Tile({ children }: { children: React.ReactNode }) {
       aria-hidden
       className="bg-tint text-ink-secondary flex size-9 shrink-0 items-center justify-center rounded-full text-[11px] font-bold"
     >
+      {children}
+    </span>
+  );
+}
+
+/** Badges are wider than the round tiles; a fixed slot keeps the names aligned with each other. */
+function LogoSlot({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="flex w-[74px] shrink-0 items-center justify-start">
       {children}
     </span>
   );
